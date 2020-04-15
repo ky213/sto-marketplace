@@ -3,7 +3,7 @@
   "version": "0.0.1-SNAPSHOT",
   "description": "Description for exchange",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "ALPINETECH",
   "cacheDirectories": [
     "node_modules"
   ],
