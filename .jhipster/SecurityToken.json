@@ -1,0 +1,183 @@
+{
+    "name": "SecurityToken",
+    "fields": [
+        {
+            "fieldName": "idRed",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "minlength",
+                "maxlength"
+            ],
+            "fieldValidateRulesMinlength": "2",
+            "fieldValidateRulesMaxlength": "15"
+        },
+        {
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "minlength",
+                "maxlength"
+            ],
+            "fieldValidateRulesMinlength": "2",
+            "fieldValidateRulesMaxlength": "50"
+        },
+        {
+            "fieldName": "laucheDate",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "logo",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "image"
+        },
+        {
+            "fieldName": "symbol",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "juridiction",
+            "fieldType": "COUNTRY",
+            "fieldValues": "FRANCE,USA,SWITZERLAND,GERMANY,ITALY,IRAN,CHINA,NORTH_KOREA,CANADA,SENEGAL"
+        },
+        {
+            "fieldName": "issuerName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "issuerCounty",
+            "fieldType": "COUNTRY",
+            "fieldValues": "FRANCE,USA,SWITZERLAND,GERMANY,ITALY,IRAN,CHINA,NORTH_KOREA,CANADA,SENEGAL"
+        },
+        {
+            "fieldName": "tokenizationFirmName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "tokenizationFirmCountry",
+            "fieldType": "COUNTRY",
+            "fieldValues": "FRANCE,USA,SWITZERLAND,GERMANY,ITALY,IRAN,CHINA,NORTH_KOREA,CANADA,SENEGAL"
+        },
+        {
+            "fieldName": "kycProviderName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "kycProviderCountry",
+            "fieldType": "COUNTRY",
+            "fieldValues": "FRANCE,USA,SWITZERLAND,GERMANY,ITALY,IRAN,CHINA,NORTH_KOREA,CANADA,SENEGAL"
+        },
+        {
+            "fieldName": "stoPrice",
+            "fieldType": "Double",
+            "fieldValidateRules": [
+                "min"
+            ],
+            "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldName": "amountRaised",
+            "fieldType": "Double",
+            "fieldValidateRules": [
+                "min"
+            ],
+            "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldName": "category",
+            "fieldType": "CATEGORY",
+            "fieldValues": "EQUITY,FUNDS,REAL_ESTATE,DERIVATIVE"
+        },
+        {
+            "fieldName": "summary",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": "1024"
+        },
+        {
+            "fieldName": "description",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "maxlength"
+            ],
+            "fieldValidateRulesMaxlength": "4096"
+        },
+        {
+            "fieldName": "restrictionCounty",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "restrictionNationality",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "prospectus",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "any"
+        },
+        {
+            "fieldName": "status",
+            "fieldType": "STSTATUS",
+            "fieldValues": "DRAFT,DISABLED,ACTIVE,REMOVE"
+        },
+        {
+            "fieldName": "registrationDate",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "updateDate",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "dueDiligenceDate",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "lastSellingprice",
+            "fieldType": "Double",
+            "fieldValidateRules": [
+                "min"
+            ],
+            "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldName": "lastBuyingPrice",
+            "fieldType": "Double",
+            "fieldValidateRules": [
+                "min"
+            ],
+            "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldName": "smartcontractAddress",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "kycAddress",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "website",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [],
+    "changelogDate": "20200412223500",
+    "javadoc": "Security Token.\\n@author Charles",
+    "entityTableName": "security_token",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "readOnly": false,
+    "embedded": false,
+    "clientRootFolder": "",
+    "applications": "*"
+}

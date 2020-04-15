@@ -1,0 +1,142 @@
+{
+    "name": "Transaction",
+    "fields": [
+        {
+            "fieldName": "idTx",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "createDate",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "updateDate",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "closeDate",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "securityTokenName",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "symbol",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "limitOrMarket",
+            "fieldType": "ORDERTYPE",
+            "fieldValues": "LIMIT,MARKET"
+        },
+        {
+            "fieldName": "volume",
+            "fieldType": "Double",
+            "fieldValidateRules": [
+                "min",
+                "required"
+            ],
+            "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldName": "price",
+            "fieldType": "Double",
+            "fieldValidateRules": [
+                "min"
+            ],
+            "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldName": "totalAmount",
+            "fieldType": "Double",
+            "fieldValidateRules": [
+                "min"
+            ],
+            "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldName": "categoryToken",
+            "fieldType": "CATEGORY",
+            "fieldValues": "EQUITY,FUNDS,REAL_ESTATE,DERIVATIVE"
+        },
+        {
+            "fieldName": "status",
+            "fieldType": "STATUS",
+            "fieldValues": "NONE,INIT,PENDING,SUCCESS,FAIL,REMOVE"
+        },
+        {
+            "fieldName": "active",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "feeTransaction",
+            "fieldType": "Long"
+        },
+        {
+            "fieldName": "numBlockchainTx",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "numBankTx",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "confBlkDate",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "confBankDate",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "sellerBlkAddress",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "buyerBlkAddress",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "buyerIban",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "sellerIban",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "buyerid",
+            "fieldType": "Long"
+        },
+        {
+            "fieldName": "sellerid",
+            "fieldType": "Long"
+        }
+    ],
+    "relationships": [],
+    "changelogDate": "20200412223900",
+    "javadoc": "Home page Dashborad.\\n@author Charles",
+    "entityTableName": "transaction",
+    "dto": "no",
+    "pagination": "infinite-scroll",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "readOnly": false,
+    "embedded": false,
+    "clientRootFolder": "",
+    "applications": "*"
+}

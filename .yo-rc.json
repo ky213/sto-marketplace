@@ -1,0 +1,40 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "swiss.alpinetech.exchange"
+    },
+    "jhipsterVersion": "6.8.0",
+    "applicationType": "monolith",
+    "baseName": "exchange",
+    "packageName": "swiss.alpinetech.exchange",
+    "packageFolder": "swiss/alpinetech/exchange",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "ehcache",
+    "enableHibernateCache": true,
+    "websocket": "spring-websocket",
+    "databaseType": "sql",
+    "devDatabaseType": "h2Disk",
+    "prodDatabaseType": "mysql",
+    "searchEngine": "elasticsearch",
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "maven",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "OTE5MDRlYjNkYWY3ZGE3NmMwNTNiMmY5MTM0NTViODc1ZTAxN2JhOWY1NTM1NzJlOGRhYzZiMTY3ZDJmZTg2NDE1NTkxOGMxZWJiMTU1NmU1Y2QwY2I3YTQ0OGJkOTZlNDY0NWM1MWI2OWQ3NDViZjNkZmJmMjA2MmNmMTAyYWY=",
+    "embeddableLaunchScript": false,
+    "useSass": true,
+    "clientPackageManager": "npm",
+    "clientFramework": "react",
+    "clientTheme": "materia",
+    "clientThemeVariant": "primary",
+    "creationTimestamp": 1586729836654,
+    "testFrameworks": ["protractor"],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": false,
+    "blueprints": []
+  }
+}

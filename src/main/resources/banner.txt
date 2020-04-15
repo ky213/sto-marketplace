@@ -1,0 +1,12 @@
+
+ ${AnsiColor.GREEN}           _      _____ _____ _   _ ______  ${AnsiColor.CYAN} _______ ______ _____ _    _
+ ${AnsiColor.GREEN}     /\   | |    |  __ \_   _| \ | |  ____| ${AnsiColor.CYAN}|__   __|  ____/ ____| |  | |
+ ${AnsiColor.GREEN}    /  \  | |    | |__) || | |  \| | |__    ${AnsiColor.CYAN}   | |  | |__ | |    | |__| |
+ ${AnsiColor.GREEN}   / /\ \ | |    |  ___/ | | | . ` |  __|   ${AnsiColor.CYAN}   | |  |  __|| |    |  __  |
+ ${AnsiColor.GREEN}  / ____ \| |____| |    _| |_| |\  | |____  ${AnsiColor.CYAN}   | |  | |___| |____| |  | |
+ ${AnsiColor.GREEN} /_/    \_\______|_|   |_____|_| \_|______| ${AnsiColor.CYAN}   |_|  |______\_____|_|  |_|
+
+
+
+${AnsiColor.BRIGHT_BLUE}:: Alpine Tech 🤓  :: Running Spring Boot ${spring-boot.version} ::
+:: https://alpinetech.swiss/ ::${AnsiColor.DEFAULT}

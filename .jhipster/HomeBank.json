@@ -1,0 +1,71 @@
+{
+    "name": "HomeBank",
+    "fields": [
+        {
+            "fieldName": "dateEvent",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "custodyBalance",
+            "fieldType": "Double",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "totalUser",
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "volumeOrder",
+            "fieldType": "Double"
+        },
+        {
+            "fieldName": "totalRevenu",
+            "fieldType": "Double"
+        },
+        {
+            "fieldName": "equityAllocation",
+            "fieldType": "Float"
+        },
+        {
+            "fieldName": "fundsAllocation",
+            "fieldType": "Float"
+        },
+        {
+            "fieldName": "realEstateAllocation",
+            "fieldType": "Float"
+        },
+        {
+            "fieldName": "derivativeAllocation",
+            "fieldType": "Float"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "user",
+            "otherEntityRelationshipName": "homeBank",
+            "relationshipName": "user",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20200412223300",
+    "javadoc": "Home page Bank.\\n@author Charles",
+    "entityTableName": "home_bank",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "readOnly": false,
+    "embedded": false,
+    "clientRootFolder": "",
+    "applications": "*"
+}

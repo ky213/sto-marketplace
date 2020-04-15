@@ -1,0 +1,79 @@
+{
+    "name": "HomeCustomer",
+    "fields": [
+        {
+            "fieldName": "dateEvent",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "tokenBalance",
+            "fieldType": "Double",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "bigestTokenName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "bigestTokenValue",
+            "fieldType": "Double"
+        },
+        {
+            "fieldName": "secondTokenName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "secondTokenValue",
+            "fieldType": "Double"
+        },
+        {
+            "fieldName": "bankBalance",
+            "fieldType": "Double",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "equityAllocation",
+            "fieldType": "Float"
+        },
+        {
+            "fieldName": "fundsAllocation",
+            "fieldType": "Float"
+        },
+        {
+            "fieldName": "realEstateAllocation",
+            "fieldType": "Float"
+        },
+        {
+            "fieldName": "derivativeAllocation",
+            "fieldType": "Float"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "user",
+            "otherEntityRelationshipName": "homeCustomer",
+            "relationshipName": "user",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20200412223400",
+    "javadoc": "Home page Customer.\\n@author Charles",
+    "entityTableName": "home_customer",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "readOnly": false,
+    "embedded": false,
+    "clientRootFolder": "",
+    "applications": "*"
+}

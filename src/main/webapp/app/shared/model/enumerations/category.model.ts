@@ -1,0 +1,6 @@
+export const enum CATEGORY {
+  EQUITY = 'EQUITY',
+  FUNDS = 'FUNDS',
+  REAL_ESTATE = 'REAL_ESTATE',
+  DERIVATIVE = 'DERIVATIVE'
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <property name="now" value="now()" dbms="h2"/>
+    <property name="now" value="now()" dbms="mysql"/>
+
+    <property name="floatType" value="float4" dbms="postgresql, h2"/>
+    <property name="floatType" value="float" dbms="mysql, oracle, mssql, mariadb"/>
+    <property name="clobType" value="clob" dbms="h2"/>
+    <property name="clobType" value="clob" dbms="mysql, oracle, mssql, mariadb, postgresql"/>
+    <property name="uuidType" value="varchar(36)" dbms="h2, mysql, mariadb"/>
+
+    <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200412223300_added_entity_HomeBank.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200412223400_added_entity_HomeCustomer.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200412223500_added_entity_SecurityToken.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200412223600_added_entity_UserSetting.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200412223700_added_entity_BankInfo.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200412223800_added_entity_Order.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200412223900_added_entity_Transaction.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200412224000_added_entity_WhiteListing.xml" relativeToChangelogFile="false"/>
+    <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
+    <include file="config/liquibase/changelog/20200412223300_added_entity_constraints_HomeBank.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200412223400_added_entity_constraints_HomeCustomer.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200412223600_added_entity_constraints_UserSetting.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200412223800_added_entity_constraints_Order.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20200412224000_added_entity_constraints_WhiteListing.xml" relativeToChangelogFile="false"/>
+    <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
+</databaseChangeLog>

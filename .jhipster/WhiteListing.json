@@ -1,0 +1,78 @@
+{
+    "name": "WhiteListing",
+    "fields": [
+        {
+            "fieldName": "dateEvent",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "status",
+            "fieldType": "STATUS",
+            "fieldValues": "NONE,INIT,PENDING,SUCCESS,FAIL,REMOVE"
+        },
+        {
+            "fieldName": "active",
+            "fieldType": "Boolean",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "ethAddress",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "dateSynchBlk",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "stName",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "customerName",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "balance",
+            "fieldType": "Double"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "user",
+            "otherEntityRelationshipName": "whiteListing",
+            "relationshipName": "user",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "securityToken",
+            "otherEntityRelationshipName": "whiteListing",
+            "relationshipName": "securitytoken",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20200412224000",
+    "javadoc": "Home page Whitelisting.\\n@author Charles",
+    "entityTableName": "white_listing",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "readOnly": false,
+    "embedded": false,
+    "clientRootFolder": "",
+    "applications": "*"
+}

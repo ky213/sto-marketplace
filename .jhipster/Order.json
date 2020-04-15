@@ -1,0 +1,127 @@
+{
+    "name": "Order",
+    "fields": [
+        {
+            "fieldName": "idOrder",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "refOrder",
+            "fieldType": "Long",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "createDate",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "updateDate",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "closeDate",
+            "fieldType": "ZonedDateTime"
+        },
+        {
+            "fieldName": "securityTokenName",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "symbol",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "type",
+            "fieldType": "ACTIONTYPE",
+            "fieldValues": "BUY,SELL"
+        },
+        {
+            "fieldName": "limitOrMarket",
+            "fieldType": "ORDERTYPE",
+            "fieldValues": "LIMIT,MARKET"
+        },
+        {
+            "fieldName": "volume",
+            "fieldType": "Double",
+            "fieldValidateRules": [
+                "min",
+                "required"
+            ],
+            "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldName": "price",
+            "fieldType": "Double",
+            "fieldValidateRules": [
+                "min",
+                "required"
+            ],
+            "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldName": "totalAmount",
+            "fieldType": "Double",
+            "fieldValidateRules": [
+                "min",
+                "required"
+            ],
+            "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldName": "categoryToken",
+            "fieldType": "CATEGORY",
+            "fieldValues": "EQUITY,FUNDS,REAL_ESTATE,DERIVATIVE"
+        },
+        {
+            "fieldName": "status",
+            "fieldType": "STATUS",
+            "fieldValues": "NONE,INIT,PENDING,SUCCESS,FAIL,REMOVE"
+        },
+        {
+            "fieldName": "active",
+            "fieldType": "Boolean"
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "user",
+            "otherEntityRelationshipName": "order",
+            "relationshipName": "user",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "transaction",
+            "otherEntityRelationshipName": "order",
+            "relationshipName": "transaction",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20200412223800",
+    "javadoc": "Order\\n@author Charles",
+    "entityTableName": "order",
+    "dto": "no",
+    "pagination": "infinite-scroll",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "readOnly": false,
+    "embedded": false,
+    "clientRootFolder": "",
+    "applications": "*"
+}

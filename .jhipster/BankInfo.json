@@ -1,0 +1,75 @@
+{
+    "name": "BankInfo",
+    "fields": [
+        {
+            "fieldName": "bankName",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "logo",
+            "fieldType": "byte[]",
+            "fieldTypeBlobContent": "image"
+        },
+        {
+            "fieldName": "country",
+            "fieldType": "COUNTRY",
+            "fieldValues": "FRANCE,USA,SWITZERLAND,GERMANY,ITALY,IRAN,CHINA,NORTH_KOREA,CANADA,SENEGAL"
+        },
+        {
+            "fieldName": "bicNumber",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "minlength",
+                "maxlength"
+            ],
+            "fieldValidateRulesMinlength": "10",
+            "fieldValidateRulesMaxlength": "12"
+        },
+        {
+            "fieldName": "omnibusAccount",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "minlength",
+                "maxlength"
+            ],
+            "fieldValidateRulesMinlength": "14",
+            "fieldValidateRulesMaxlength": "35"
+        },
+        {
+            "fieldName": "fixedFee",
+            "fieldType": "Double",
+            "fieldValidateRules": [
+                "min",
+                "required"
+            ],
+            "fieldValidateRulesMin": "0"
+        },
+        {
+            "fieldName": "percentFee",
+            "fieldType": "Float",
+            "fieldValidateRules": [
+                "min",
+                "max",
+                "required"
+            ],
+            "fieldValidateRulesMin": "0",
+            "fieldValidateRulesMax": "100"
+        }
+    ],
+    "relationships": [],
+    "changelogDate": "20200412223700",
+    "javadoc": "Home page Bank Info.\\n@author Charles",
+    "entityTableName": "bank_info",
+    "dto": "no",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "readOnly": false,
+    "embedded": false,
+    "clientRootFolder": "",
+    "applications": "*"
+}
