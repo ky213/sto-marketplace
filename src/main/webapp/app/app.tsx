@@ -34,7 +34,7 @@ export const App = (props: IAppProps) => {
   const paddingTop = '60px';
   return (
     <Router basename={baseHref}>
-      <div className="app-container" style={{ paddingTop }}>
+      <div className="app-container h-100" style={{ paddingTop }}>
         <ToastContainer position={toast.POSITION.TOP_LEFT} className="toastify-container" toastClassName="toastify-toast" />
         <ErrorBoundary>
           <Header
@@ -45,13 +45,13 @@ export const App = (props: IAppProps) => {
             isSwaggerEnabled={props.isSwaggerEnabled}
           />
         </ErrorBoundary>
-        <div className="container-fluid view-container" id="app-view-container">
-          <Card className="jh-card">
-            <ErrorBoundary>
-              <AppRoutes />
-            </ErrorBoundary>
-          </Card>
-          <Footer />
+        <div className="container-fluid view-container p-0" id="app-view-container" style={{ height: '100%' }}>
+          {/* <Card className="jh-card"> */}
+          <ErrorBoundary>
+            <AppRoutes />
+          </ErrorBoundary>
+          {/* </Card> */}
+          {/* <Footer /> */}
         </div>
       </div>
     </Router>

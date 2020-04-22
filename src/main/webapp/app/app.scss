@@ -9,6 +9,16 @@ body {
   margin: 0;
 }
 
+html,
+body,
+#root {
+  height: 100% !important;
+}
+
+#root > div {
+  height: 100% !important;
+}
+
 a {
   color: #533f03;
   font-weight: bold;
@@ -321,4 +331,8 @@ Custom Styles
 .navbar-nav .svg-inline--fa {
   width: auto !important;
   padding-right: 0.5rem !important;
+}
+
+.auth-image {
+  background-image: url('../content/images/hero_alpine-2.jpg');
 }
