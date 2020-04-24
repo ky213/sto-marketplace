@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Header Renders a Header component in dev profile with LoadingBar, Navbar, Nav and dev ribbon. 1`] = `
+exports[`Header Renders a Header component in dev profile with LoadingBar, Navbar, Nav. 1`] = `
 <div
   id="app-header"
 >

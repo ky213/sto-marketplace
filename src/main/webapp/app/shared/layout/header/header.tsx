@@ -25,7 +25,7 @@ const Header = (props: IHeaderProps) => {
   const renderDevRibbon = () =>
     props.isInProduction === false ? (
       <div className="ribbon dev">
-        <a href="">Development</a>
+        <a to="">Development</a>
       </div>
     ) : null;
 
@@ -43,7 +43,7 @@ const Header = (props: IHeaderProps) => {
         <Collapse isOpen={menuOpen} navbar>
           <Nav id="header-tabs" className="ml-auto" navbar>
             <Home />
-            {props.isAuthenticated && <EntitiesMenu />}
+            {props.isAuthenticated && props.isAdmin && <EntitiesMenu />}
             {props.isAuthenticated && props.isAdmin && (
               <AdminMenu showSwagger={props.isSwaggerEnabled} showDatabase={!props.isInProduction} />
             )}
