@@ -2,12 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Container, Row, Col, DropdownItem, Card } from 'reactstrap';
 
-import { AUTHORITIES } from '../../config/constants';
+import { AUTHORITIES } from 'app/config/constants';
 import Menu from './components/menu';
 import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 import { DashboardHome, SecurityToken, Orders, Reports, BankInfo, Users, Settings } from './pages';
 import { Switch } from 'react-router-dom';
 import PrivateRoute from 'app/shared/auth/private-route';
+import PageNotFound from 'app/shared/error/page-not-found';
 
 const Dashboard = props => {
   const { account, location, match } = props;
@@ -43,6 +44,7 @@ const Dashboard = props => {
             />
             <PrivateRoute exact path={`${match.url}/users`} component={Users} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]} />
             <ErrorBoundaryRoute exact path={`${match.url}/settings`} component={Settings} />
+            <ErrorBoundaryRoute component={PageNotFound} />
           </Switch>
         </Col>
       </Row>
