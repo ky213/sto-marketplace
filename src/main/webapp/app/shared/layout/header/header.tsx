@@ -25,7 +25,7 @@ const Header = (props: IHeaderProps) => {
   const renderDevRibbon = () =>
     props.isInProduction === false ? (
       <div className="ribbon dev">
-        <a href="">Development</a>
+        <a to="">Development</a>
       </div>
     ) : null;
 
