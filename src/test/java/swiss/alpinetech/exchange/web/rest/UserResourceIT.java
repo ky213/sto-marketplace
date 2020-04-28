@@ -495,7 +495,7 @@ public class UserResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$").isArray())
-            .andExpect(jsonPath("$").value(hasItems(AuthoritiesConstants.USER, AuthoritiesConstants.ADMIN)));
+            .andExpect(jsonPath("$").value(hasItems(AuthoritiesConstants.USER, AuthoritiesConstants.ADMIN, AuthoritiesConstants.BANK)));
     }
 
     @Test
@@ -587,15 +587,27 @@ public class UserResourceIT {
         Authority authorityB = new Authority();
         assertThat(authorityA).isEqualTo(authorityB);
 
+        Authority authorityC = new Authority();
+        assertThat(authorityA).isEqualTo(authorityC);
+        assertThat(authorityB).isEqualTo(authorityC);
+
         authorityB.setName(AuthoritiesConstants.ADMIN);
         assertThat(authorityA).isNotEqualTo(authorityB);
+        assertThat(authorityC).isNotEqualTo(authorityB);
 
         authorityA.setName(AuthoritiesConstants.USER);
         assertThat(authorityA).isNotEqualTo(authorityB);
+        assertThat(authorityA).isNotEqualTo(authorityC);
+
+        authorityC.setName(AuthoritiesConstants.BANK);
+        assertThat(authorityC).isNotEqualTo(authorityA);
+        assertThat(authorityC).isNotEqualTo(authorityB);
 
         authorityB.setName(AuthoritiesConstants.USER);
         assertThat(authorityA).isEqualTo(authorityB);
+        assertThat(authorityC).isNotEqualTo(authorityB);
         assertThat(authorityA.hashCode()).isEqualTo(authorityB.hashCode());
+        assertThat(authorityC.hashCode()).isNotEqualTo(authorityB.hashCode());
     }
 
     private void assertPersistedUsers(Consumer<List<User>> userAssertion) {
