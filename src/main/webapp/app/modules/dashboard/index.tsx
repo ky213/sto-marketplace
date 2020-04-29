@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Container, Row, Col, DropdownItem, Card } from 'reactstrap';
 
@@ -12,6 +12,7 @@ import PageNotFound from 'app/shared/error/page-not-found';
 
 const Dashboard = props => {
   const { account, location, match } = props;
+
   return (
     <Container fluid className="h-100 bg-beige ">
       <Row className="h-100 bg-beige pt-3" style={{}}>
@@ -29,7 +30,7 @@ const Dashboard = props => {
             <Menu account={account} location={location} />
           </Card>
         </Col>
-        <Col xs="10" className=" m-auto overflow-auto" style={{ height: '710px' }}>
+        <Col xs="10" className=" mx-auto overflow-auto" style={{ height: '710px' }}>
           <Switch>
             //todo: User profile page
             <ErrorBoundaryRoute path={`${match.url}/home`} component={DashboardHome} />
@@ -42,7 +43,7 @@ const Dashboard = props => {
               component={BankInfo}
               hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
             />
-            <PrivateRoute path={`${match.url}/users`} component={Users} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]} />
+            <PrivateRoute path={`${match.url}/user-setting`} component={Users} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]} />
             <ErrorBoundaryRoute exact path={`${match.url}/settings`} component={Settings} />
             <ErrorBoundaryRoute component={PageNotFound} />
           </Switch>

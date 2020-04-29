@@ -47,7 +47,7 @@ const Menu = props => {
       )}
       {(isAdmin || isBank) && (
         <NavItem>
-          <NavLink tag={Link} to="/dashboard/users" className="text-primary">
+          <NavLink tag={Link} to="/dashboard/user-setting" className="text-primary">
             <FontAwesomeIcon icon="users" className="mr-2" />
             Users
           </NavLink>
