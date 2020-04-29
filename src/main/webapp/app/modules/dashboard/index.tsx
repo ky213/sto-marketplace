@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Container, Row, Col, DropdownItem, Card } from 'reactstrap';
 
@@ -12,10 +12,11 @@ import PageNotFound from 'app/shared/error/page-not-found';
 
 const Dashboard = props => {
   const { account, location, match } = props;
+
   return (
-    <Container fluid className="h-100">
-      <Row className="h-100 bg-beige" style={{}}>
-        <Col xs="2" className="h-100 mr-1 pl-0">
+    <Container fluid className="h-100 bg-beige ">
+      <Row className="h-100 bg-beige pt-3" style={{}}>
+        <Col xs="2" className="h-100 pl-0">
           <Card className="h-75 border-0">
             <Row className="text-center" style={{ height: '80px' }}>
               <Col classeName="d-flex align-items-center">
@@ -29,7 +30,7 @@ const Dashboard = props => {
             <Menu account={account} location={location} />
           </Card>
         </Col>
-        <Col xs="9" className="m-auto h-75">
+        <Col xs="10" className=" mx-auto overflow-auto" style={{ height: '710px' }}>
           <Switch>
             //todo: User profile page
             <ErrorBoundaryRoute path={`${match.url}/home`} component={DashboardHome} />
@@ -42,7 +43,7 @@ const Dashboard = props => {
               component={BankInfo}
               hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
             />
-            <PrivateRoute exact path={`${match.url}/users`} component={Users} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]} />
+            <PrivateRoute path={`${match.url}/user-setting`} component={Users} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]} />
             <ErrorBoundaryRoute exact path={`${match.url}/settings`} component={Settings} />
             <ErrorBoundaryRoute component={PageNotFound} />
           </Switch>
