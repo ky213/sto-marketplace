@@ -168,6 +168,7 @@ public class UserService {
                 .collect(Collectors.toSet());
             user.setAuthorities(authorities);
         }
+        user.setSetting(userDTO.getSetting());
         userRepository.save(user);
         userSearchRepository.save(user);
         this.clearUserCaches(user);
