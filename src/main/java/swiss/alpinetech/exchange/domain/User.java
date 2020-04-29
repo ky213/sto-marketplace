@@ -96,6 +96,12 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @BatchSize(size = 20)
     private Set<Authority> authorities = new HashSet<>();
 
+    @OneToOne(
+        fetch = FetchType.LAZY,
+        cascade = CascadeType.ALL,
+        mappedBy = "user")
+    private UserSetting setting;
+
     public Long getId() {
         return id;
     }
@@ -200,6 +206,10 @@ public class User extends AbstractAuditingEntity implements Serializable {
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
     }
+
+    public UserSetting getSetting() { return setting; }
+
+    public void setSetting(UserSetting setting) { this.setting = setting; }
 
     @Override
     public boolean equals(Object o) {
