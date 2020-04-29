@@ -1,11 +1,6 @@
-id;date_of_birth;nationality;phone_number;position;address;code;city;country;iban;eth_address;risk_profil;balance
-1;2020-04-12T08:43:19;FRANCE;instruction set;Tuna back-end technologies;utilize;Stand-al;Pfannerstillborough;IRAN;ME63284652033979800158;Metical Maldives MoviesXXXXXXXXXXXXXXXXX;5;27596
-2;2020-04-12T03:22:52;ITALY;Small wireless ;Global;Inlet;deposit ;Hankview;USA;MD36460965427M30X0Y51060;MoviesXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;1;31771
-3;2020-04-12T18:38:27;SWITZERLAND;Usability firew;Face to face;Security French Polynesia;Credit C;Lake Art;FRANCE;ES2700757200810020200348;mission-critical Minnesota compressXXXXX;4;29490
-4;2020-04-12T10:55:37;CHINA;Investor Group;Divide Sleek Rubber Chair;synthesizing Bacon Reverse-engineered;Unbrande;West Noreneshire;NORTH_KOREA;PK649E519825400798732005;Kansas CFA Franc BEAC interactiveXXXXXXX;1;43199
-5;2020-04-12T05:31:12;IRAN;Human B2C;synergistic service-desk;Ohio;magnetic;South Troy;CHINA;JO33CBDO1047740098954905892007;Argentine Peso infomediariesXXXXXXXXXXXX;4;71639
-6;2020-04-12T08:09:42;IRAN;blue Fish;synthesize;Credit Card Account Product;grey;East Virginiemouth;USA;IS213012612008001439230032;Home Loan Account port Quality-focusedXX;4;15596
-7;2020-04-12T07:58:45;NORTH_KOREA;networks genera;Adaptive;24/7;array;East Isabell;GERMANY;DE85001082741630026004;Lead Functionality USBXXXXXXXXXXXXXXXXXX;0;27267
-8;2020-04-12T16:03:16;GERMANY;Montana digital;transmitter Practical Frozen Soap;Mobility;Director;Huelhaven;USA;JO74SHEA8612178219004296000843;backing up MaineXXXXXXXXXXXXXXXXXXXXXXXX;0;68964
-9;2020-04-12T18:51:27;ITALY;Home Loan Accou;Generic full-range monitoring;Assimilated;haptic;Mariantown;CHINA;PS2830M3001310376010401008006;TunaXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;1;3885
-10;2020-04-12T14:48:10;SENEGAL;deposit local;Mission back-end;Fundamental online;Refined ;Lake Elton;SENEGAL;IL347031345932086040048;Pizza Compatible greenXXXXXXXXXXXXXXXXXX;2;62641
+id;date_of_birth;nationality;phone_number;position;address;code;city;country;iban;eth_address;risk_profil;balance;user_id
+1;2020-04-12T08:43:19;FRANCE;instruction set;Tuna back-end technologies;utilize;Stand-al;Pfannerstillborough;IRAN;ME63284652033979800158;Metical Maldives MoviesXXXXXXXXXXXXXXXXX;5;27596;1
+2;2020-04-12T03:22:52;ITALY;Small wireless ;Global;Inlet;deposit ;Hankview;USA;MD36460965427M30X0Y51060;MoviesXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX;1;31771;2
+3;2020-04-12T18:38:27;SWITZERLAND;Usability firew;Face to face;Security French Polynesia;Credit C;Lake Art;FRANCE;ES2700757200810020200348;mission-critical Minnesota compressXXXXX;4;29490;3
+4;2020-04-12T10:55:37;CHINA;Investor Group;Divide Sleek Rubber Chair;synthesizing Bacon Reverse-engineered;Unbrande;West Noreneshire;NORTH_KOREA;PK649E519825400798732005;Kansas CFA Franc BEAC interactiveXXXXXXX;1;43199;4
+

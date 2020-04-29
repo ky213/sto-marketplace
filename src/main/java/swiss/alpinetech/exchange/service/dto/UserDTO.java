@@ -4,6 +4,7 @@ import swiss.alpinetech.exchange.config.Constants;
 
 import swiss.alpinetech.exchange.domain.Authority;
 import swiss.alpinetech.exchange.domain.User;
+import swiss.alpinetech.exchange.domain.UserSetting;
 
 import javax.validation.constraints.*;
 import java.time.Instant;
@@ -49,6 +50,8 @@ public class UserDTO {
     private Instant lastModifiedDate;
 
     private Set<String> authorities;
+
+    private UserSetting setting;
 
     public UserDTO() {
         // Empty constructor needed for Jackson.
@@ -175,6 +178,10 @@ public class UserDTO {
     public void setAuthorities(Set<String> authorities) {
         this.authorities = authorities;
     }
+
+    public UserSetting getSetting() { return this.setting; }
+
+    public void setSetting(UserSetting setting) { this.setting = setting; }
 
     @Override
     public String toString() {
