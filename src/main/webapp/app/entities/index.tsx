@@ -33,7 +33,7 @@ const Routes = ({ account, match }) => (
           <Menu account={account} location={location} />
         </Card>
       </Col>
-      <Col xs="10" className=" mx-auto overflow-auto" style={{ height: '710px' }}>
+      <Col xs="10" className=" bg-white p-3 mx-auto overflow-auto" style={{ height: '710px' }}>
         <Switch>
           {/* prettier-ignore */}
           <ErrorBoundaryRoute path={`${match.url}home-bank`} component={HomeBank} />
