@@ -42,12 +42,12 @@ const Header = (props: IHeaderProps) => {
         <Brand />
         <Collapse isOpen={menuOpen} navbar>
           <Nav id="header-tabs" className="ml-auto" navbar>
-            <Home />
+            {props.isAuthenticated && <Home />}
             {props.isAuthenticated && <EntitiesMenu />}
             {props.isAuthenticated && props.isAdmin && (
               <AdminMenu showSwagger={props.isSwaggerEnabled} showDatabase={!props.isInProduction} />
             )}
-            <AccountMenu isAuthenticated={props.isAuthenticated} />
+            {props.isAuthenticated && <AccountMenu isAuthenticated={props.isAuthenticated} />}
           </Nav>
         </Collapse>
       </Navbar>

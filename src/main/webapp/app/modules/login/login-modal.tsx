@@ -50,25 +50,25 @@ class LoginModal extends React.Component<ILoginModalProps> {
                 required
                 errorMessage="Password cannot be empty!"
               />
-              <AvGroup check inline>
+              {/* <AvGroup check inline>
                 <Label className="form-check-label">
                   <AvInput type="checkbox" name="rememberMe" /> Remember me
                 </Label>
-              </AvGroup>
+              </AvGroup> */}
             </Col>
           </Row>
           <div className="mt-1">&nbsp;</div>
-          <Alert color="info">
-            <Link to="/account/reset/request">Did you forget your password?</Link>
-          </Alert>
-          <Alert color="info">
+          <Link className="text-primary" to="/account/reset/request">
+            Did you forget your password?
+          </Link>
+          {/* <Alert color="info">
             <span>You don&apos;t have an account yet?</span> <Link to="/account/register">Register a new account</Link>
-          </Alert>
+          </Alert> */}
         </ModalBody>
         <ModalFooter>
-          <Button color="secondary" onClick={handleClose} tabIndex="1">
+          {/* <Button color="secondary" onClick={handleClose} tabIndex="1">
             Cancel
-          </Button>{' '}
+          </Button>{' '} */}
           <Button color="primary" type="submit">
             Sign in
           </Button>
