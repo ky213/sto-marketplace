@@ -57,10 +57,10 @@ const Routes = () => (
       <ErrorBoundaryRoute path="/account/reset/request" component={PasswordResetInit} />
       <ErrorBoundaryRoute path="/account/reset/finish/:key?" component={PasswordResetFinish} />
       <PrivateRoute path="/admin" component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
-      <PrivateRoute path="/dashboard" component={Dashboard} hasAnyAuthorities={[AUTHORITIES.USER]} />
-      <PrivateRoute path="/account" component={Account} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.USER]} />
+      <PrivateRoute path="/dashboard" component={Dashboard} hasAnyAuthorities={[AUTHORITIES.USER, AUTHORITIES.BANK]} />
+      <PrivateRoute path="/account" component={Account} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.USER, AUTHORITIES.BANK]} />
       <ErrorBoundaryRoute path="/" exact component={() => <Redirect to="/dashboard/home" />} />
-      <PrivateRoute path="/" component={props => <CustomRidrect {...props} />} hasAnyAuthorities={[AUTHORITIES.USER]} />
+      <PrivateRoute path="/" component={props => <CustomRidrect {...props} />} hasAnyAuthorities={[AUTHORITIES.USER, AUTHORITIES.BANK]} />
       <ErrorBoundaryRoute component={PageNotFound} />
     </Switch>
   </div>
