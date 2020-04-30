@@ -73,6 +73,7 @@ public class UserDTO {
         this.authorities = user.getAuthorities().stream()
             .map(Authority::getName)
             .collect(Collectors.toSet());
+        this.setting = user.getSetting();
     }
 
     public Long getId() {
