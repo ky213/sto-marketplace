@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Redirect } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 import Loadable from 'react-loadable';
 
 import Login from 'app/modules/login/login';
@@ -25,28 +25,6 @@ const Admin = Loadable({
   loading: () => <div>loading ...</div>
 });
 
-const Dashboard = Loadable({
-  loader: () => import(/* webpackChunkName: "dashboard" */ 'app/modules/dashboard'),
-  loading: () => <div>loading ...</div>
-});
-
-const CustomRidrect = props => {
-  const oldRoutes = ['/user-setting' /* more routes will be added */];
-  const oldRoute = oldRoutes.find(route => props.location.pathname.includes(route));
-
-  return oldRoute ? (
-    <Redirect
-      to={{
-        pathname: `/dashboard${props.location.pathname}`,
-        search: props.location.search,
-        state: { from: props.location.pathname }
-      }}
-    />
-  ) : (
-    <Entities {...props} />
-  );
-};
-
 const Routes = () => (
   <div className="view-routes">
     <Switch>
@@ -57,10 +35,9 @@ const Routes = () => (
       <ErrorBoundaryRoute path="/account/reset/request" component={PasswordResetInit} />
       <ErrorBoundaryRoute path="/account/reset/finish/:key?" component={PasswordResetFinish} />
       <PrivateRoute path="/admin" component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
-      <PrivateRoute path="/dashboard" component={Dashboard} hasAnyAuthorities={[AUTHORITIES.USER, AUTHORITIES.BANK]} />
       <PrivateRoute path="/account" component={Account} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.USER, AUTHORITIES.BANK]} />
-      <ErrorBoundaryRoute path="/" exact component={() => <Redirect to="/dashboard/home" />} />
-      <PrivateRoute path="/" component={props => <CustomRidrect {...props} />} hasAnyAuthorities={[AUTHORITIES.USER, AUTHORITIES.BANK]} />
+      <ErrorBoundaryRoute path="/" exact component={Home} />
+      <PrivateRoute path="/" component={Entities} hasAnyAuthorities={[AUTHORITIES.USER, AUTHORITIES.BANK]} />
       <ErrorBoundaryRoute component={PageNotFound} />
     </Switch>
   </div>
