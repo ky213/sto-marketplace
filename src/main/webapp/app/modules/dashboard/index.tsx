@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Container, Row, Col, DropdownItem, Card } from 'reactstrap';
 
 import { AUTHORITIES } from 'app/config/constants';
-import Menu from './components/menu';
+import Menu from '../../shared/layout/menus/dashborad';
 import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 import { DashboardHome, SecurityToken, Orders, Reports, BankInfo, Users, Settings } from './pages';
 import { Switch } from 'react-router-dom';
