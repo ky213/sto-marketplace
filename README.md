@@ -266,6 +266,24 @@ Si vous avez besoin de relancer la phase sonar , n'oubliez pas de spécifier  `i
 ```
 
 
+## Utilisation de MAILDEV 
+
+Lors du developpement sur votre poste de travail, vous avez besoin de tester et controler l'envoie des emails.
+Vous pouvez utiliser l'outil [MAILDEV](https://github.com/maildev/maildev)
+
+
+Pour lancer MAILDEV 
+
+    yarn maildev:start
+
+
+Pour stopper MAILDEV 
+
+    yarn maildev:stop
+
+
+Tous les emails qui sont envoyez par l'application seront interceptées et visible dans MailDev en local : [http://localhost:1080/#/](http://localhost:1080/#/)
+
 
 ## Utilisation de Docker 
 
@@ -280,6 +298,17 @@ Par exemple , pour démarrer mysql dans un container Docker:
 Pour arreter le container Mysql :
 
     docker-compose -f src/main/docker/mysql.yml down
+
+Une autre facon de le faire est d'utiliser yarn 
+
+Pour lancer MYSQL 
+
+    yarn mysql:start
+
+
+Pour stopper MYSQL 
+
+    yarn mysql:stop
 
 
 Vous pouvez aussi dockerizer toute l'application et les services dépendants.

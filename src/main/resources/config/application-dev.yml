@@ -70,9 +70,10 @@ spring:
     contexts: dev, faker
   mail:
     host: localhost
-    port: 1025
+    port: 8025
     username:
     password:
+    protocol: smtp
 
   messages:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
