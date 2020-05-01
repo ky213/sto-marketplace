@@ -7,6 +7,7 @@ import HomeBank from './home-bank';
 import HomeBankDetail from './home-bank-detail';
 import HomeBankUpdate from './home-bank-update';
 import HomeBankDeleteDialog from './home-bank-delete-dialog';
+import Home from './home';
 
 const Routes = ({ match }) => (
   <>
@@ -15,7 +16,7 @@ const Routes = ({ match }) => (
       <ErrorBoundaryRoute exact path={`${match.url}/new`} component={HomeBankUpdate} />
       <ErrorBoundaryRoute exact path={`${match.url}/:id/edit`} component={HomeBankUpdate} />
       <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={HomeBankDetail} />
-      <ErrorBoundaryRoute path={match.url} component={HomeBank} />
+      <ErrorBoundaryRoute path={match.url} component={Home} />
     </Switch>
   </>
 );

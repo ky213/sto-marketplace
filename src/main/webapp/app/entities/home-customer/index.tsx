@@ -7,7 +7,7 @@ import HomeCustomer from './home-customer';
 import HomeCustomerDetail from './home-customer-detail';
 import HomeCustomerUpdate from './home-customer-update';
 import HomeCustomerDeleteDialog from './home-customer-delete-dialog';
-
+import Home from './home';
 const Routes = ({ match }) => (
   <>
     <Switch>
@@ -15,7 +15,7 @@ const Routes = ({ match }) => (
       <ErrorBoundaryRoute exact path={`${match.url}/new`} component={HomeCustomerUpdate} />
       <ErrorBoundaryRoute exact path={`${match.url}/:id/edit`} component={HomeCustomerUpdate} />
       <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={HomeCustomerDetail} />
-      <ErrorBoundaryRoute path={match.url} component={HomeCustomer} />
+      <ErrorBoundaryRoute path={match.url} component={Home} />
     </Switch>
   </>
 );
