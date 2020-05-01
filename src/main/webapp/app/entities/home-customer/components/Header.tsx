@@ -31,7 +31,7 @@ const mockData = [
 
 const Header = () => {
   return (
-    <Row className="row mx-lg-n5">
+    <Row className="row pr-1">
       {mockData.map((props, index) => (
         <Col className="px-1" key={index}>
           <HeaderCard {...props} />

@@ -39,6 +39,9 @@ import { faArrowUp } from '@fortawesome/free-solid-svg-icons/faArrowUp';
 import { faArrowDown } from '@fortawesome/free-solid-svg-icons/faArrowDown';
 import { faMoneyBillWave } from '@fortawesome/free-solid-svg-icons/faMoneyBillWave';
 import { faWallet } from '@fortawesome/free-solid-svg-icons/faWallet';
+import { faUserTag } from '@fortawesome/free-solid-svg-icons/faUserTag';
+import { faBuilding } from '@fortawesome/free-solid-svg-icons/faBuilding';
+import { faCubes } from '@fortawesome/free-solid-svg-icons/faCubes';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -84,6 +87,9 @@ export const loadIcons = () => {
     faArrowUp,
     faArrowDown,
     faMoneyBillWave,
-    faWallet
+    faWallet,
+    faUserTag,
+    faBuilding,
+    faCubes
   );
 };
