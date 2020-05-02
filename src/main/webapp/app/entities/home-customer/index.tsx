@@ -8,6 +8,7 @@ import HomeCustomerDetail from './home-customer-detail';
 import HomeCustomerUpdate from './home-customer-update';
 import HomeCustomerDeleteDialog from './home-customer-delete-dialog';
 import Home from './home';
+
 const Routes = ({ match }) => (
   <>
     <Switch>
