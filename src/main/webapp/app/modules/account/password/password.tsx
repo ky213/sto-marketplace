@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { AvForm, AvField } from 'availity-reactstrap-validation';
 import { Row, Col, Button } from 'reactstrap';
+import { Card } from 'reactstrap';
 
 import { IRootState } from 'app/shared/reducers';
 import { getSession } from 'app/shared/reducers/authentication';
@@ -27,6 +28,7 @@ export const PasswordPage = (props: IUserPasswordProps) => {
   const updatePassword = event => setPassword(event.target.value);
 
   return (
+    <Card className="jh-card">
     <div>
       <Row className="justify-content-center">
         <Col md="8">
@@ -85,6 +87,7 @@ export const PasswordPage = (props: IUserPasswordProps) => {
         </Col>
       </Row>
     </div>
+    </Card>
   );
 };
 

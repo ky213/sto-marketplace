@@ -46,7 +46,7 @@ describe('Header', () => {
   });
 
   // All tests will go here
-  it('Renders a Header component in dev profile with LoadingBar, Navbar, Nav.', () => {
+  it('Renders a Header component in dev profile with LoadingBar, Navbar, Nav Ribbon Dev.', () => {
     const component = wrapper();
     // the created snapshot must be committed to source control
     expect(component).toMatchSnapshot();
@@ -96,7 +96,6 @@ describe('Header', () => {
     expect(nav.find(AdminMenu).length).toEqual(0);
     expect(nav.find(EntitiesMenu).length).toEqual(0);
     const account = nav.find(AccountMenu);
-    expect(account.length).toEqual(1);
-    expect(account.first().props().isAuthenticated).toEqual(false);
+    expect(account.length).toEqual(0);
   });
 });

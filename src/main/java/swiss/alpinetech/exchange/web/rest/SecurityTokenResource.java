@@ -1,6 +1,8 @@
 package swiss.alpinetech.exchange.web.rest;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import swiss.alpinetech.exchange.domain.SecurityToken;
+import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.SecurityTokenService;
 import swiss.alpinetech.exchange.web.rest.errors.BadRequestAlertException;
 
@@ -55,6 +57,7 @@ public class SecurityTokenResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/security-tokens")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<SecurityToken> createSecurityToken(@Valid @RequestBody SecurityToken securityToken) throws URISyntaxException {
         log.debug("REST request to save SecurityToken : {}", securityToken);
         if (securityToken.getId() != null) {
@@ -76,6 +79,7 @@ public class SecurityTokenResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/security-tokens")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<SecurityToken> updateSecurityToken(@Valid @RequestBody SecurityToken securityToken) throws URISyntaxException {
         log.debug("REST request to update SecurityToken : {}", securityToken);
         if (securityToken.getId() == null) {
@@ -94,6 +98,7 @@ public class SecurityTokenResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of securityTokens in body.
      */
     @GetMapping("/security-tokens")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<List<SecurityToken>> getAllSecurityTokens(Pageable pageable) {
         log.debug("REST request to get a page of SecurityTokens");
         Page<SecurityToken> page = securityTokenService.findAll(pageable);
@@ -108,6 +113,7 @@ public class SecurityTokenResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the securityToken, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/security-tokens/{id}")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<SecurityToken> getSecurityToken(@PathVariable Long id) {
         log.debug("REST request to get SecurityToken : {}", id);
         Optional<SecurityToken> securityToken = securityTokenService.findOne(id);
