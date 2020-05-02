@@ -9,8 +9,7 @@ import './menu.scss';
 const Menu = ({ account, location }) => {
   const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
   const isBank = account.authorities.includes(AUTHORITIES.BANK);
-  const isUser = account.authorities.includes(AUTHORITIES.USER);
-  const homeLink = isUser ? '/home-customer' : '/home-bank';
+  const homeLink = isAdmin || isBank ? '/home-bank' : '/home-customer';
 
   return (
     <Nav vertical>
