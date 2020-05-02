@@ -42,6 +42,8 @@ import { faWallet } from '@fortawesome/free-solid-svg-icons/faWallet';
 import { faUserTag } from '@fortawesome/free-solid-svg-icons/faUserTag';
 import { faBuilding } from '@fortawesome/free-solid-svg-icons/faBuilding';
 import { faCubes } from '@fortawesome/free-solid-svg-icons/faCubes';
+import { faRedo } from '@fortawesome/free-solid-svg-icons/faRedo';
+import { faCaretRight } from '@fortawesome/free-solid-svg-icons/faCaretRight';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -90,6 +92,8 @@ export const loadIcons = () => {
     faWallet,
     faUserTag,
     faBuilding,
-    faCubes
+    faCubes,
+    faRedo,
+    faCaretRight
   );
 };
