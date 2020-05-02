@@ -6,15 +6,15 @@ const BarChart = () => {
       {
         label: 'This year',
         backgroundColor: '#1a237e',
-        data: [18, 16, 5, 8, 3, 14, 14, 16, 17, 19, 18, 20]
+        data: [18, 16, 5, 8, 3, 14, 14]
       },
       {
         label: 'Last year',
         backgroundColor: 'lightgray',
-        data: [12, 11, 4, 6, 2, 9, 9, 10, 11, 12, 13, 13]
+        data: [12, 11, 4, 6, 2, 9, 9]
       }
     ],
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+    labels: ['1 Aug', ' 2Aug', '3Aug', '4 Aug', '5 Aug', '6 Aug', '7 Aug']
   };
 
   const options = {
@@ -81,19 +81,7 @@ const BarChart = () => {
       backgroundColor: 'white',
       titleFontColor: 'blue',
       bodyFontColor: 'gray',
-      footerFontColor: 'gray',
-      callbacks: {
-        title() {},
-        label(tooltipItem) {
-          let label = `This year: ${tooltipItem.yLabel}`;
-
-          if (tooltipItem.yLabel > 0) {
-            label += 'K';
-          }
-
-          return label;
-        }
-      }
+      footerFontColor: 'gray'
     }
   };
 

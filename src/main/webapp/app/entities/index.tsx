@@ -14,6 +14,8 @@ import Order from './order';
 import Transaction from './transaction';
 import WhiteListing from './white-listing';
 import { connect } from 'react-redux';
+import PrivateRoute from 'app/shared/auth/private-route';
+import { AUTHORITIES } from 'app/config/constants';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 const Routes = ({ account, match }) => (
@@ -33,14 +35,22 @@ const Routes = ({ account, match }) => (
           <Menu account={account} location={location} />
         </Card>
       </Col>
-      <Col xs="10" className="mx-auto overflow-auto" style={{ height: '710px' }}>
+      <Col xs="10" className="mx-auto overflow-auto h-100">
         <Switch>
           {/* prettier-ignore */}
-          <ErrorBoundaryRoute path={`${match.url}home-bank`} component={HomeBank} />
-          <ErrorBoundaryRoute path={`${match.url}home-customer`} component={HomeCustomer} />
+          <PrivateRoute path={`${match.url}home-bank`} component={HomeBank} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}/>
+          <PrivateRoute
+            path={`${match.url}home-customer`}
+            component={HomeCustomer}
+            hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.USER]}
+          />
           <ErrorBoundaryRoute path={`${match.url}security-token`} component={SecurityToken} />
-          <ErrorBoundaryRoute path={`${match.url}user-setting`} component={UserSetting} />
-          <ErrorBoundaryRoute path={`${match.url}bank-info`} component={BankInfo} />
+          <PrivateRoute
+            path={`${match.url}user-setting`}
+            component={UserSetting}
+            hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
+          />
+          <PrivateRoute path={`${match.url}bank-info`} component={BankInfo} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]} />
           <ErrorBoundaryRoute path={`${match.url}order`} component={Order} />
           <ErrorBoundaryRoute path={`${match.url}transaction`} component={Transaction} />
           <ErrorBoundaryRoute path={`${match.url}white-listing`} component={WhiteListing} />
