@@ -4,9 +4,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const Tables = () => {
   return (
-    <Row className="mt-3">
+    <Row className="mt-3 pr-2 justify-content-between">
       <Card className="p-0 col-4">
-        <CardHeader className="py-2">Latest Token Added</CardHeader>
+        <CardHeader className="py-3">Latest Token Added</CardHeader>
         <CardBody className="p-0">
           <Table>
             <tbody>
@@ -109,6 +109,70 @@ const Tables = () => {
                     <FontAwesomeIcon icon="eye" />
                   </Button>
                 </td>
+              </tr>
+            </tbody>
+          </Table>
+        </CardBody>
+        <CardFooter className="d-flex p-0">
+          <Button className="ml-auto" color="none ">
+            <span className=" mr-2" style={{ fontSize: '14px' }}>
+              view all
+            </span>
+            <FontAwesomeIcon icon="caret-right" />
+          </Button>
+        </CardFooter>
+      </Card>
+      <Card className="p-0  ml-3 col ">
+        <CardHeader className="py-2 d-flex align-items-center">
+          <span>List of Assets Held</span>
+          <button className="btn btn-outline-primary ml-auto  ">Buy Token</button>
+        </CardHeader>
+        <CardBody className="p-0">
+          <Table>
+            <thead>
+              <tr className="border-0">
+                <th>Symbol</th>
+                <th>Amount</th>
+                <th>Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>TK1</td>
+                <td>153</td>
+                <td>5.50 CHF</td>
+                <td>841.50 CHF</td>
+              </tr>
+              <tr>
+                <td>TK2</td>
+                <td>1025</td>
+                <td>105 CHF</td>
+                <td>841.50 CHF</td>
+              </tr>
+              <tr>
+                <td>ALK</td>
+                <td>25</td>
+                <td>122 CHF</td>
+                <td>5643.50 CHF</td>
+              </tr>
+              <tr>
+                <td>XGE</td>
+                <td>200</td>
+                <td>175 CHF</td>
+                <td>7654.50 CHF</td>
+              </tr>
+              <tr>
+                <td>TK3</td>
+                <td>12</td>
+                <td>355.80 CHF</td>
+                <td>4269.96 CHF</td>
+              </tr>
+              <tr>
+                <td>TK4</td>
+                <td>7</td>
+                <td>1250 CHF</td>
+                <td>8750.50 CHF</td>
               </tr>
             </tbody>
           </Table>
