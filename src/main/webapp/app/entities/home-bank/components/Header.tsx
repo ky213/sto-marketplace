@@ -41,7 +41,7 @@ const Header = () => {
                 <CardTitle tag="p" className="text-muted mb-1">
                   Total Users
                 </CardTitle>
-                <h6 className="font-weight-bold mb-0 text-primary">CHF {"250'782.90"}</h6>
+                <h6 className="font-weight-bold mb-0 text-primary">786</h6>
               </Col>
               <Col className="col-3 p-0">
                 <div className="icon ml-auto mr-1 bg-success  rounded-circle shadow">

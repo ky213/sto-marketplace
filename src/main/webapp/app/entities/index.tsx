@@ -22,8 +22,8 @@ const Routes = ({ account, match }) => (
   <Container fluid className="h-100 bg-beige ">
     <Row className="h-100 bg-beige pt-3" style={{}}>
       <Col xs="2" className="h-100 pl-0">
-        <Card className="h-75 border-0">
-          <Row className="text-center" style={{ height: '80px' }}>
+        <Card className="h-100 border-0 px-0">
+          <Row className="text-center px-1" style={{ height: '80px' }}>
             <Col classeName="d-flex align-items-center">
               <b className=" mt-2 d-block">
                 {account.firstName} {account.lastName}

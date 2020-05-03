@@ -1,6 +1,6 @@
 import React from 'react';
-import { NavLink as Link } from 'react-router-dom';
-import { Nav, NavItem, NavLink } from 'reactstrap';
+import { NavLink } from 'react-router-dom';
+import { Nav, NavItem } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { AUTHORITIES } from '../../../../config/constants';
@@ -14,31 +14,31 @@ const Menu = ({ account, location }) => {
   return (
     <Nav vertical>
       <NavItem>
-        <NavLink tag={Link} to={homeLink} className="text-primary">
+        <NavLink to={homeLink} className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
           <FontAwesomeIcon icon="tachometer-alt" className="mr-2" /> Home
         </NavLink>
       </NavItem>
       <NavItem>
-        <NavLink tag={Link} to="/security-token" className="text-primary">
+        <NavLink to="/security-token" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
           <FontAwesomeIcon icon="file-invoice-dollar" className="mr-2" />
           Securiry token
         </NavLink>
       </NavItem>
       <NavItem>
-        <NavLink tag={Link} ink to="/order" className="text-primary">
+        <NavLink to="/order" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
           <FontAwesomeIcon icon="box" className="mr-2" />
           Orders
         </NavLink>
       </NavItem>
       <NavItem>
-        <NavLink tag={Link} to="/reporting" className="text-primary">
+        <NavLink to="/reporting" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
           <FontAwesomeIcon icon="file-signature" className="mr-2" />
           Reporting
         </NavLink>
       </NavItem>
       {(isAdmin || isBank) && (
         <NavItem>
-          <NavLink tag={Link} to="/bank-info" className="text-primary">
+          <NavLink to="/bank-info" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
             <FontAwesomeIcon icon="university" className="mr-2" />
             Bank info
           </NavLink>
@@ -46,14 +46,14 @@ const Menu = ({ account, location }) => {
       )}
       {(isAdmin || isBank) && (
         <NavItem>
-          <NavLink tag={Link} to="/user-setting" className="text-primary">
+          <NavLink to="/user-setting" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
             <FontAwesomeIcon icon="users" className="mr-2" />
             Users
           </NavLink>
         </NavItem>
       )}
       <NavItem>
-        <NavLink tag={Link} to="/settings" className="text-primary">
+        <NavLink to="/settings" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
           <FontAwesomeIcon icon="cogs" className="mr-2" /> Settings
         </NavLink>
       </NavItem>
