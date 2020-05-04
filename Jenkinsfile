@@ -49,10 +49,9 @@ node {
                 sh "./mvnw -ntp verify -Pprod -DskipTests"
                 archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             }
+
             stage('quality analysis') {
-                withSonarQubeEnv('sonar') {
                     sh "./mvnw -ntp initialize sonar:sonar"
-                }
             }
 
 }
