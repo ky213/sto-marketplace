@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { getUser, getRoles, updateUser, createUser, reset } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
+import { displayDefaultDateTime, convertDateTimeFromServer } from 'app/shared/util/date-utils';
 
 export interface IUserManagementUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ login: string }> {}
 
@@ -29,6 +30,9 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
   };
 
   const saveUser = (event, values) => {
+    /* eslint no-console: off */
+    console.log(values);
+
     if (isNew) {
       props.createUser(values);
     } else {
@@ -44,7 +48,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
     <div>
       <Row className="justify-content-center">
         <Col md="8">
-          <h1>Create or edit a User</h1>
+          <h4>Create or edit a User</h4>
         </Col>
       </Row>
       <Row className="justify-content-center">
@@ -60,7 +64,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                 </AvGroup>
               ) : null}
               <AvGroup>
-                <Label for="login">Login</Label>
+                <Label for="login">Username</Label>
                 <AvField
                   type="text"
                   className="form-control"
@@ -86,61 +90,192 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                   value={user.login}
                 />
               </AvGroup>
+              <div className="form-row">
+                <AvGroup className="col-md-6">
+                  <Label for="firstName">First Name</Label>
+                  <AvField
+                    type="text"
+                    className="form-control"
+                    name="firstName"
+                    validate={{
+                      maxLength: {
+                        value: 50,
+                        errorMessage: 'This field cannot be longer than 50 characters.'
+                      }
+                    }}
+                    value={user.firstName}
+                  />
+                </AvGroup>
+                <AvGroup className="col-md-6">
+                  <Label for="lastName">Last Name</Label>
+                  <AvField
+                    type="text"
+                    className="form-control"
+                    name="lastName"
+                    validate={{
+                      maxLength: {
+                        value: 50,
+                        errorMessage: 'This field cannot be longer than 50 characters.'
+                      }
+                    }}
+                    value={user.lastName}
+                  />
+                  <AvFeedback>This field cannot be longer than 50 characters.</AvFeedback>
+                </AvGroup>
+              </div>
+              <div className="form-row">
+                <AvGroup className="col-md-6">
+                  <AvField
+                    name="email"
+                    label="Email"
+                    placeholder={'Your email'}
+                    type="email"
+                    validate={{
+                      required: {
+                        value: true,
+                        errorMessage: 'Your email is required.'
+                      },
+                      email: {
+                        errorMessage: 'Your email is invalid.'
+                      },
+                      minLength: {
+                        value: 5,
+                        errorMessage: 'Your email is required to be at least 5 characters.'
+                      },
+                      maxLength: {
+                        value: 254,
+                        errorMessage: 'Your email cannot be longer than 50 characters.'
+                      }
+                    }}
+                    value={user.email}
+                  />
+                </AvGroup>
+                <AvGroup className="col-md-6">
+                  <Label id="phoneNumberLabel" for="user-setting-phoneNumber">
+                    Phone Number
+                  </Label>
+                  <AvField
+                    id="user-setting-phoneNumber"
+                    type="text"
+                    name="setting.phoneNumber"
+                    value={user.setting?.phoneNumber}
+                    validate={{
+                      minLength: { value: 6, errorMessage: 'This field is required to be at least 6 characters.' },
+                      maxLength: { value: 15, errorMessage: 'This field cannot be longer than 15 characters.' }
+                    }}
+                  />
+                </AvGroup>
+              </div>
+              <div className="form-row">
+                <AvGroup className="col-md-6">
+                  <Label id="dateOfBirthLabel" for="user-setting-dateOfBirth">
+                    Date Of Birth
+                  </Label>
+                  <AvInput
+                    id="user-setting-dateOfBirth"
+                    type="datetime-local"
+                    className="form-control"
+                    name="setting.dateOfBirth"
+                    placeholder={'YYYY-MM-DD HH:mm'}
+                    value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(user.setting?.dateOfBirth)}
+                    validate={{
+                      required: { value: true, errorMessage: 'This field is required.' }
+                    }}
+                  />
+                </AvGroup>
+                <AvGroup className="col-md-6">
+                  <Label id="nationalityLabel" for="user-setting-nationality">
+                    Nationality
+                  </Label>
+                  <AvInput
+                    id="user-setting-nationality"
+                    type="select"
+                    className="form-control"
+                    name="setting.nationality"
+                    value={(!isNew && user.setting?.nationality) || 'FRANCE'}
+                  >
+                    <option value="FRANCE">FRANCE</option>
+                    <option value="USA">USA</option>
+                    <option value="SWITZERLAND">SWITZERLAND</option>
+                    <option value="GERMANY">GERMANY</option>
+                    <option value="ITALY">ITALY</option>
+                    <option value="IRAN">IRAN</option>
+                    <option value="CHINA">CHINA</option>
+                    <option value="NORTH_KOREA">NORTH_KOREA</option>
+                    <option value="CANADA">CANADA</option>
+                    <option value="SENEGAL">SENEGAL</option>
+                  </AvInput>
+                </AvGroup>
+              </div>
+              <div className="form-row">
+                <AvGroup className="col-md-6">
+                  <Label id="cityLabel" for="user-setting-city">
+                    City
+                  </Label>
+                  <AvField
+                    id="user-setting-city"
+                    type="text"
+                    name="setting.city"
+                    value={user.setting?.city}
+                    validate={{
+                      minLength: { value: 2, errorMessage: 'This field is required to be at least 2 characters.' },
+                      maxLength: { value: 50, errorMessage: 'This field cannot be longer than 50 characters.' }
+                    }}
+                  />
+                </AvGroup>
+                <AvGroup className="col-md-6">
+                  <Label id="countryLabel" for="user-setting-country">
+                    Country
+                  </Label>
+                  <AvInput
+                    id="user-setting-country"
+                    type="select"
+                    className="form-control"
+                    name="setting.country"
+                    value={(!isNew && user.setting?.country) || 'FRANCE'}
+                  >
+                    <option value="FRANCE">FRANCE</option>
+                    <option value="USA">USA</option>
+                    <option value="SWITZERLAND">SWITZERLAND</option>
+                    <option value="GERMANY">GERMANY</option>
+                    <option value="ITALY">ITALY</option>
+                    <option value="IRAN">IRAN</option>
+                    <option value="CHINA">CHINA</option>
+                    <option value="NORTH_KOREA">NORTH_KOREA</option>
+                    <option value="CANADA">CANADA</option>
+                    <option value="SENEGAL">SENEGAL</option>
+                  </AvInput>
+                </AvGroup>
+              </div>
               <AvGroup>
-                <Label for="firstName">First Name</Label>
+                <Label id="ibanLabel" for="user-setting-iban">
+                  Bank Account
+                </Label>
                 <AvField
+                  id="user-setting-iban"
                   type="text"
-                  className="form-control"
-                  name="firstName"
+                  name="setting.iban"
+                  value={user.setting?.iban}
                   validate={{
-                    maxLength: {
-                      value: 50,
-                      errorMessage: 'This field cannot be longer than 50 characters.'
-                    }
+                    required: { value: true, errorMessage: 'This field is required.' },
+                    minLength: { value: 14, errorMessage: 'This field is required to be at least 14 characters.' },
+                    maxLength: { value: 35, errorMessage: 'This field cannot be longer than 35 characters.' }
                   }}
-                  value={user.firstName}
                 />
               </AvGroup>
               <AvGroup>
-                <Label for="lastName">Last Name</Label>
+                <Label id="ethAddressLabel" for="user-setting-ethAddress">
+                  Eth Address
+                </Label>
                 <AvField
+                  id="user-setting-ethAddress"
                   type="text"
-                  className="form-control"
-                  name="lastName"
+                  name="setting.ethAddress"
+                  value={user.setting?.ethAddress}
                   validate={{
-                    maxLength: {
-                      value: 50,
-                      errorMessage: 'This field cannot be longer than 50 characters.'
-                    }
+                    minLength: { value: 40, errorMessage: 'This field is required to be at least 40 characters.' },
+                    maxLength: { value: 42, errorMessage: 'This field cannot be longer than 42 characters.' }
                   }}
-                  value={user.lastName}
-                />
-                <AvFeedback>This field cannot be longer than 50 characters.</AvFeedback>
-              </AvGroup>
-              <AvGroup>
-                <AvField
-                  name="email"
-                  label="Email"
-                  placeholder={'Your email'}
-                  type="email"
-                  validate={{
-                    required: {
-                      value: true,
-                      errorMessage: 'Your email is required.'
-                    },
-                    email: {
-                      errorMessage: 'Your email is invalid.'
-                    },
-                    minLength: {
-                      value: 5,
-                      errorMessage: 'Your email is required to be at least 5 characters.'
-                    },
-                    maxLength: {
-                      value: 254,
-                      errorMessage: 'Your email cannot be longer than 50 characters.'
-                    }
-                  }}
-                  value={user.email}
                 />
               </AvGroup>
               <AvGroup check>

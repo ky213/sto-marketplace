@@ -21,6 +21,10 @@ export const UserManagementDetail = (props: IUserManagementDetailProps) => {
       <h4 className="col py-0 mb-0"> Profile</h4>
       <span className="col mb-3 py-0 text-muted"> profile information</span>
       <form className="col pb-5">
+        <div className="form-goup mb-3">
+          <label>Username</label>
+          <input type="text" className="form-control" value={user.login} />
+        </div>
         <div className="form-row">
           <div className="form-goup col-md-6">
             <label>first name</label>
@@ -44,7 +48,7 @@ export const UserManagementDetail = (props: IUserManagementDetailProps) => {
         <div className="form-row">
           <div className="form-goup col-md-6">
             <label>Date of Birth</label>
-            <input type="text" className="form-control" value={user.setting?.dateOfBirth.toLocaleString().split('T')[0]} />
+            <input type="text" className="form-control" value={user.setting?.dateOfBirth.toLocaleString().replace('T', ' ')} />
           </div>
           <div className="form-group col-md-6">
             <label>Nationality</label>
