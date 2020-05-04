@@ -189,7 +189,7 @@ export const UserSetting = (props: IUserSettingProps) => {
                   <td>{userSetting.ethAddress}</td>
                   <td>{userSetting.riskProfil}</td>
                   <td>{userSetting.balance}</td>
-                  <td>{userSetting.user ? userSetting.user.id : ''}</td>
+                  <td>{userSetting.user?.id}</td>
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${userSetting.id}`} color="info" size="sm">
