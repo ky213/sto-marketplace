@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { getUser, getRoles, updateUser, createUser, reset } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
-import { displayDefaultDateTime, convertDateTimeFromServer } from 'app/shared/util/date-utils';
+import { displayDefaultDateTime, convertDateTimeFromServer, convertDateTimeToServer } from 'app/shared/util/date-utils';
 
 export interface IUserManagementUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ login: string }> {}
 
@@ -30,8 +30,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
   };
 
   const saveUser = (event, values) => {
-    /* eslint no-console: off */
-    console.log(values);
+    values.setting.dateOfBirth = convertDateTimeToServer(values.setting.dateOfBirth);
 
     if (isNew) {
       props.createUser(values);
@@ -160,6 +159,10 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                     name="setting.phoneNumber"
                     value={user.setting?.phoneNumber}
                     validate={{
+                      required: {
+                        value: true,
+                        errorMessage: 'This field is required.'
+                      },
                       minLength: { value: 6, errorMessage: 'This field is required to be at least 6 characters.' },
                       maxLength: { value: 15, errorMessage: 'This field cannot be longer than 15 characters.' }
                     }}
@@ -218,6 +221,10 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                     name="setting.city"
                     value={user.setting?.city}
                     validate={{
+                      required: {
+                        value: true,
+                        errorMessage: 'This field is required.'
+                      },
                       minLength: { value: 2, errorMessage: 'This field is required to be at least 2 characters.' },
                       maxLength: { value: 50, errorMessage: 'This field cannot be longer than 50 characters.' }
                     }}
@@ -273,6 +280,10 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                   name="setting.ethAddress"
                   value={user.setting?.ethAddress}
                   validate={{
+                    required: {
+                      value: true,
+                      errorMessage: 'This field is required.'
+                    },
                     minLength: { value: 40, errorMessage: 'This field is required to be at least 40 characters.' },
                     maxLength: { value: 42, errorMessage: 'This field cannot be longer than 42 characters.' }
                   }}

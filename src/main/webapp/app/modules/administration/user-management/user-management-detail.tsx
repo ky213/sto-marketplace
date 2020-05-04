@@ -6,6 +6,7 @@ import { APP_DATE_FORMAT } from 'app/config/constants';
 
 import { getUser } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
+import { convertDateTimeFromServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 
 export interface IUserManagementDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ login: string }> {}
 
@@ -48,7 +49,7 @@ export const UserManagementDetail = (props: IUserManagementDetailProps) => {
         <div className="form-row">
           <div className="form-goup col-md-6">
             <label>Date of Birth</label>
-            <input type="text" className="form-control" value={user.setting?.dateOfBirth.toLocaleString().replace('T', ' ')} />
+            <input type="text" className="form-control" value={convertDateTimeFromServer(user.setting?.dateOfBirth)} />
           </div>
           <div className="form-group col-md-6">
             <label>Nationality</label>

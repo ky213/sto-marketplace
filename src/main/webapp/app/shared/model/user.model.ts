@@ -31,5 +31,5 @@ export const defaultValue: Readonly<IUser> = {
   lastModifiedBy: '',
   lastModifiedDate: null,
   password: '',
-  settings: UserSettingDefault
+  setting: UserSettingDefault
 };
