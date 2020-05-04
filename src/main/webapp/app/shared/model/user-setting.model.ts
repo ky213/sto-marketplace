@@ -16,7 +16,6 @@ export interface IUserSetting {
   ethAddress?: string;
   riskProfil?: number;
   balance?: number;
-  user?: IUser;
 }
 
 export const defaultValue: Readonly<IUserSetting> = {};

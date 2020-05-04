@@ -1,14 +1,12 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Badge } from 'reactstrap';
-import { TextFormat } from 'react-jhipster';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import { RouteComponentProps } from 'react-router-dom';
+import { Row } from 'reactstrap';
 import { APP_DATE_FORMAT } from 'app/config/constants';
 
 import { getUser } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
+import { convertDateTimeFromServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 
 export interface IUserManagementDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ login: string }> {}
 
@@ -20,53 +18,68 @@ export const UserManagementDetail = (props: IUserManagementDetailProps) => {
   const { user } = props;
 
   return (
-    <div>
-      <h2>
-        User [<b>{user.login}</b>]
-      </h2>
-      <Row size="md">
-        <dl className="jh-entity-details">
-          <dt>Login</dt>
-          <dd>
-            <span>{user.login}</span>&nbsp;
-            {user.activated ? <Badge color="success">Activated</Badge> : <Badge color="danger">Deactivated</Badge>}
-          </dd>
-          <dt>First Name</dt>
-          <dd>{user.firstName}</dd>
-          <dt>Last Name</dt>
-          <dd>{user.lastName}</dd>
-          <dt>Email</dt>
-          <dd>{user.email}</dd>
-          <dt>Created By</dt>
-          <dd>{user.createdBy}</dd>
-          <dt>Created Date</dt>
-          <dd>
-            <TextFormat value={user.createdDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
-          </dd>
-          <dt>Last Modified By</dt>
-          <dd>{user.lastModifiedBy}</dd>
-          <dt>Last Modified Date</dt>
-          <dd>
-            <TextFormat value={user.lastModifiedDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
-          </dd>
-          <dt>Profiles</dt>
-          <dd>
-            <ul className="list-unstyled">
-              {user.authorities
-                ? user.authorities.map((authority, i) => (
-                    <li key={`user-auth-${i}`}>
-                      <Badge color="info">{authority}</Badge>
-                    </li>
-                  ))
-                : null}
-            </ul>
-          </dd>
-        </dl>
-      </Row>
-      <Button tag={Link} to="/admin/user-management" replace color="info">
-        <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
-      </Button>
-    </div>
+    <Row className=" flex-column align-items-center w-75 mx-auto">
+      <h4 className="col py-0 mb-0"> Profile</h4>
+      <span className="col mb-3 py-0 text-muted"> profile information</span>
+      <form className="col pb-5">
+        <div className="form-goup mb-3">
+          <label>Username</label>
+          <input type="text" className="form-control" value={user.login} />
+        </div>
+        <div className="form-row">
+          <div className="form-goup col-md-6">
+            <label>first name</label>
+            <input type="text" className="form-control" value={user.firstName} />
+          </div>
+          <div className="form-group col-md-6">
+            <label>Last name</label>
+            <input type="text" className="form-control" value={user.lastName} />
+          </div>
+        </div>
+        <div className="form-row">
+          <div className="form-goup col-md-6">
+            <label>Email</label>
+            <input type="text" className="form-control" value={user.email} />
+          </div>
+          <div className="form-group col-md-6">
+            <label>Phone</label>
+            <input type="text" className="form-control" value={user.setting?.phoneNumber} />
+          </div>
+        </div>
+        <div className="form-row">
+          <div className="form-goup col-md-6">
+            <label>Date of Birth</label>
+            <input type="text" className="form-control" value={convertDateTimeFromServer(user.setting?.dateOfBirth)} />
+          </div>
+          <div className="form-group col-md-6">
+            <label>Nationality</label>
+            <input type="text" className="form-control" value={user.setting?.nationality} />
+          </div>
+        </div>
+        <div className="form-row">
+          <div className="form-goup col-md-6">
+            <label>State</label>
+            <input type="text" className="form-control" value={user.setting?.city} />
+          </div>
+          <div className="form-group col-md-6">
+            <label>Country</label>
+            <input type="text" className="form-control" value={user.setting?.country} />
+          </div>
+        </div>
+        <div className="form-row">
+          <div className="form-goup col">
+            <label>Bank Account</label>
+            <input type="text" className="form-control" value={user.setting?.iban} />
+          </div>
+        </div>
+        <div className="form-row mt-3">
+          <div className="form-goup col">
+            <label>Ethereum Address </label>
+            <input type="text" className="form-control" value={user.setting?.ethAddress} />
+          </div>
+        </div>
+      </form>
+    </Row>
   );
 };
 

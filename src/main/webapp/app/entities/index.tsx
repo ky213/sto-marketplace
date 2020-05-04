@@ -16,6 +16,7 @@ import WhiteListing from './white-listing';
 import { connect } from 'react-redux';
 import PrivateRoute from 'app/shared/auth/private-route';
 import { AUTHORITIES } from 'app/config/constants';
+import Admin from 'app/modules/administration';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 const Routes = ({ account, match }) => (
@@ -53,7 +54,13 @@ const Routes = ({ account, match }) => (
           <PrivateRoute path={`${match.url}bank-info`} component={BankInfo} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]} />
           <ErrorBoundaryRoute path={`${match.url}order`} component={Order} />
           <ErrorBoundaryRoute path={`${match.url}transaction`} component={Transaction} />
-          <ErrorBoundaryRoute path={`${match.url}white-listing`} component={WhiteListing} />
+          <PrivateRoute
+            path={`${match.url}white-listing`}
+            component={WhiteListing}
+            hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
+          />
+          <PrivateRoute path={`${match.url}admin`} component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]} />
+
           {/* jhipster-needle-add-route-path - JHipster will add routes here */}
         </Switch>
       </Col>
