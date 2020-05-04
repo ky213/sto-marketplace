@@ -1,3 +1,5 @@
+import { IUserSetting, defaultValue as UserSettingDefault } from './user-setting.model';
+
 export interface IUser {
   id?: any;
   login?: string;
@@ -12,6 +14,7 @@ export interface IUser {
   lastModifiedBy?: string;
   lastModifiedDate?: Date;
   password?: string;
+  settings?: IUserSetting;
 }
 
 export const defaultValue: Readonly<IUser> = {
@@ -27,5 +30,6 @@ export const defaultValue: Readonly<IUser> = {
   createdDate: null,
   lastModifiedBy: '',
   lastModifiedDate: null,
-  password: ''
+  password: '',
+  settings: UserSettingDefault
 };
