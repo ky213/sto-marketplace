@@ -27,7 +27,7 @@ export const UserManagement = (props: IUserManagementProps) => {
       sort: p
     });
 
-  const handlePagination = currentPage =>
+  const handPagination = currentPage =>
     setPagination({
       ...pagination,
       activePage: currentPage
@@ -51,31 +51,31 @@ export const UserManagement = (props: IUserManagementProps) => {
       <Table responsive striped>
         <thead>
           <tr>
-            <th className="hand" onClick={sort('id')}>
-              ID
-              <FontAwesomeIcon icon="sort" />
+            <th className="hand text-nowrap" onClick={sort('login')}>
+              Username
+              <FontAwesomeIcon icon="sort" className="ml-2" />
             </th>
-            <th className="hand" onClick={sort('login')}>
-              Login
-              <FontAwesomeIcon icon="sort" />
+            <th className="hand text-nowrap" onClick={sort('firstName')}>
+              Name
+              <FontAwesomeIcon icon="sort" className="ml-2" />
             </th>
-            <th className="hand" onClick={sort('email')}>
+            <th className="hand text-nowrap" onClick={sort('email')}>
               Email
-              <FontAwesomeIcon icon="sort" />
+              <FontAwesomeIcon icon="sort" className="ml-2" />
             </th>
-            <th />
-            <th>Profiles</th>
-            <th className="hand" onClick={sort('createdDate')}>
-              Created Date
-              <FontAwesomeIcon icon="sort" />
+            <th className="hand text-nowrap" onClick={sort('setting.city')}>
+              City
+              <FontAwesomeIcon icon="sort" className="ml-2" />
             </th>
-            <th className="hand" onClick={sort('lastModifiedBy')}>
-              Last Modified By
-              <FontAwesomeIcon icon="sort" />
+            <th className="hand text-nowrap" onClick={sort('setting.country')}>
+              Country
+              <FontAwesomeIcon icon="sort" className="ml-2" />
             </th>
-            <th id="modified-date-sort" className="hand" onClick={sort('lastModifiedDate')}>
-              Last Modified Date
-              <FontAwesomeIcon icon="sort" />
+            <th> Phone</th>
+            <th>Role</th>
+            <th className="hand text-nowrap text-nowrap" onClick={sort('createdDate')}>
+              Registration Date
+              <FontAwesomeIcon icon="sort" className="ml-2" />
             </th>
             <th />
           </tr>
@@ -84,23 +84,13 @@ export const UserManagement = (props: IUserManagementProps) => {
           {users.map((user, i) => (
             <tr id={user.login} key={`user-${i}`}>
               <td>
-                <Button tag={Link} to={`${match.url}/${user.login}`} color="link" size="sm">
-                  {user.id}
-                </Button>
+                {user.firstName} {user.lastName}
               </td>
               <td>{user.login}</td>
               <td>{user.email}</td>
-              <td>
-                {user.activated ? (
-                  <Button color="success" onClick={toggleActive(user)}>
-                    Activated
-                  </Button>
-                ) : (
-                  <Button color="danger" onClick={toggleActive(user)}>
-                    Deactivated
-                  </Button>
-                )}
-              </td>
+              <td>{user.setting?.city}</td>
+              <td>{user.setting?.country}</td>
+              <td>{user.setting?.phoneNumber}</td>
               <td>
                 {user.authorities
                   ? user.authorities.map((authority, j) => (
@@ -112,10 +102,6 @@ export const UserManagement = (props: IUserManagementProps) => {
               </td>
               <td>
                 <TextFormat value={user.createdDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
-              </td>
-              <td>{user.lastModifiedBy}</td>
-              <td>
-                <TextFormat value={user.lastModifiedDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
               </td>
               <td className="text-right">
                 <div className="btn-group flex-btn-group-container">
@@ -147,7 +133,7 @@ export const UserManagement = (props: IUserManagementProps) => {
         <Row className="justify-content-center">
           <JhiPagination
             activePage={pagination.activePage}
-            onSelect={handlePagination}
+            onSelect={handPagination}
             maxButtons={5}
             itemsPerPage={pagination.itemsPerPage}
             totalItems={props.totalItems}
