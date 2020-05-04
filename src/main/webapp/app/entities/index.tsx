@@ -54,8 +54,12 @@ const Routes = ({ account, match }) => (
           <PrivateRoute path={`${match.url}bank-info`} component={BankInfo} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]} />
           <ErrorBoundaryRoute path={`${match.url}order`} component={Order} />
           <ErrorBoundaryRoute path={`${match.url}transaction`} component={Transaction} />
-          <ErrorBoundaryRoute path={`${match.url}white-listing`} component={WhiteListing} />
-          <PrivateRoute path={`${match.url}admin`} component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
+          <PrivateRoute
+            path={`${match.url}white-listing`}
+            component={WhiteListing}
+            hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
+          />
+          <PrivateRoute path={`${match.url}admin`} component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]} />
 
           {/* jhipster-needle-add-route-path - JHipster will add routes here */}
         </Switch>

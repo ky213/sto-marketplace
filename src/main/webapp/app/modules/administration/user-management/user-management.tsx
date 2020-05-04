@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Table, Row, Badge } from 'reactstrap';
+import { Button, Table, Row, Col, InputGroup, Badge } from 'reactstrap';
 import { TextFormat, JhiPagination, JhiItemCount, getSortState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { AvForm, AvGroup, AvInput } from 'availity-reactstrap-validation';
 
 import { APP_DATE_FORMAT } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import { getUsers, updateUser } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
+import { getSearchEntities } from 'app/entities/user-setting/user-setting.reducer';
 
 export interface IUserManagementProps extends StateProps, DispatchProps, RouteComponentProps<{}> {}
 
 export const UserManagement = (props: IUserManagementProps) => {
   const [pagination, setPagination] = useState(getSortState(props.location, ITEMS_PER_PAGE));
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     props.getUsers(pagination.activePage - 1, pagination.itemsPerPage, `${pagination.sort},${pagination.order}`);
@@ -33,11 +36,17 @@ export const UserManagement = (props: IUserManagementProps) => {
       activePage: currentPage
     });
 
-  const toggleActive = user => () =>
-    props.updateUser({
-      ...user,
-      activated: !user.activated
-    });
+  const startSearching = () => {
+    if (search) {
+      setPagination({
+        ...pagination,
+        activePage: 1
+      });
+      props.getSearchEntities(search, pagination.activePage - 1, pagination.itemsPerPage, `${pagination.sort},${pagination.order}`);
+    }
+  };
+
+  const handleSearch = event => setSearch(event.target.value);
 
   const { users, account, match, totalItems } = props;
   return (
@@ -48,6 +57,20 @@ export const UserManagement = (props: IUserManagementProps) => {
           <FontAwesomeIcon icon="plus" /> Create a new user
         </Link>
       </h2>
+
+      <Row>
+        <Col sm="12">
+          <AvForm onSubmit={startSearching}>
+            <AvGroup>
+              <InputGroup className="w-50">
+                <AvInput type="text" name="search" value={search} onChange={handleSearch} placeholder="Search" />
+                <Button className="ml-2 input-group-addon">Search</Button>
+              </InputGroup>
+            </AvGroup>
+          </AvForm>
+        </Col>
+      </Row>
+
       <Table responsive striped>
         <thead>
           <tr>
@@ -150,7 +173,7 @@ const mapStateToProps = (storeState: IRootState) => ({
   account: storeState.authentication.account
 });
 
-const mapDispatchToProps = { getUsers, updateUser };
+const mapDispatchToProps = { getUsers, updateUser, getSearchEntities };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
