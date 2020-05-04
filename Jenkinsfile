@@ -5,8 +5,6 @@ node {
         checkout scm
     }
 
-    gitlabCommitStatus('build') {
-        docker.image('jhipster/jhipster:v6.8.0').inside('-u jhipster -e MAVEN_OPTS="-Duser.home=./"') {
             stage('check java') {
                 sh "java -version"
             }
@@ -51,18 +49,9 @@ node {
                 sh "./mvnw -ntp verify -Pprod -DskipTests"
                 archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             }
-            stage('quality analysis') {
-                withSonarQubeEnv('sonar') {
-                    sh "./mvnw -ntp initialize sonar:sonar"
-                }
-            }
-        }
 
-        def dockerImage
-        stage('publish docker') {
-            // A pre-requisite to this step is to setup authentication to the docker registry
-            // https://github.com/GoogleContainerTools/jib/tree/master/jib-maven-plugin#authentication-methods
-            sh "./mvnw -ntp jib:build"
-        }
-    }
+            stage('quality analysis') {
+                    sh "./mvnw -ntp initialize sonar:sonar"
+            }
+
 }

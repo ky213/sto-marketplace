@@ -151,6 +151,8 @@
     "maildev:stop": "docker-compose  -f src/main/docker/maildev.yml down",
     "mysql:start": "docker-compose  -f src/main/docker/mysql.yml up -d",
     "mysql:stop": "docker-compose  -f src/main/docker/mysql.yml down",
+    "sonar:start": "docker-compose  -f src/main/docker/sonar.yml up -d",
+    "sonar:stop": "docker-compose  -f src/main/docker/sonar.yml down",
     "webpack:dev": "npm run webpack-dev-server -- --config webpack/webpack.dev.js --inline --port=9060 --env.stats=minimal",
     "webpack:dev-verbose": "npm run webpack-dev-server -- --config webpack/webpack.dev.js --inline --port=9060 --profile --progress --env.stats=normal",
     "webpack:build:main": "npm run webpack -- --config webpack/webpack.dev.js --env.stats=minimal",
