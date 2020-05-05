@@ -4,6 +4,7 @@ import { Container, Row, Col, Card, DropdownItem } from 'reactstrap';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 import Menu from 'app/shared/layout/menus/dashborad';
+import Footer from 'app/shared/layout/footer/footer';
 
 import HomeBank from './home-bank';
 import HomeCustomer from './home-customer';
@@ -71,6 +72,7 @@ const Routes = ({ account, match }) => (
         </Switch>
       </Col>
     </Row>
+    <Footer/>
   </Container>
 );
 
