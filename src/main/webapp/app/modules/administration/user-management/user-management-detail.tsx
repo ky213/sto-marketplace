@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, Link } from 'react-router-dom';
 import { Row } from 'reactstrap';
-import { APP_DATE_FORMAT } from 'app/config/constants';
+import { Button } from 'reactstrap';
 
 import { getUser } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
 import { convertDateTimeFromServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export interface IUserManagementDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ login: string }> {}
 
@@ -72,12 +73,17 @@ export const UserManagementDetail = (props: IUserManagementDetailProps) => {
             <input type="text" className="form-control" value={user.setting?.iban} />
           </div>
         </div>
-        <div className="form-row mt-3">
+        <div className="form-row my-3">
           <div className="form-goup col">
             <label>Ethereum Address </label>
             <input type="text" className="form-control" value={user.setting?.ethAddress} />
           </div>
         </div>
+        <Button tag={Link} to="/admin/user-management" replace color="info">
+          <FontAwesomeIcon icon="arrow-left" />
+          &nbsp;
+          <span className="d-none d-md-inline">Back</span>
+        </Button>
       </form>
     </Row>
   );
