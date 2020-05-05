@@ -62,7 +62,7 @@ export const UserManagement = (props: IUserManagementProps) => {
         <Col sm="12">
           <AvForm onSubmit={startSearching}>
             <AvGroup>
-              <InputGroup className="w-50">
+              <InputGroup>
                 <AvInput type="text" name="search" value={search} onChange={handleSearch} placeholder="Search" />
                 <Button className="ml-2 input-group-addon">Search</Button>
               </InputGroup>
