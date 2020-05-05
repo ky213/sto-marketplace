@@ -80,8 +80,8 @@ public class UserSetting implements Serializable {
     private Double balance;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
     private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

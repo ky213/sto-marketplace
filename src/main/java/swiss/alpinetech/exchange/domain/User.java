@@ -96,10 +96,9 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @BatchSize(size = 20)
     private Set<Authority> authorities = new HashSet<>();
 
-    @OneToOne(
-        fetch = FetchType.LAZY,
-        cascade = CascadeType.ALL,
-        mappedBy = "user")
+    @OneToOne(mappedBy = "user",
+        cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name="setting_id", referencedColumnName = "id")
     private UserSetting setting;
 
     public Long getId() {
@@ -209,7 +208,12 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public UserSetting getSetting() { return setting; }
 
-    public void setSetting(UserSetting setting) { this.setting = setting; }
+    public void setSetting(UserSetting setting) {
+        this.setting = setting;
+        if(this.setting != null) {
+            this.setting.setUser(this);
+        }
+    }
 
     @Override
     public boolean equals(Object o) {
