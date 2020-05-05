@@ -53,7 +53,7 @@ const Menu = ({ account, location }) => {
         </NavItem>
       )}
       <NavItem>
-        <NavLink to="/settings" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
+        <NavLink to="/account/profile" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
           <FontAwesomeIcon icon="cogs" className="mr-2" /> Settings
         </NavLink>
       </NavItem>
