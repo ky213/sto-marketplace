@@ -17,6 +17,7 @@ import { connect } from 'react-redux';
 import PrivateRoute from 'app/shared/auth/private-route';
 import { AUTHORITIES } from 'app/config/constants';
 import Admin from 'app/modules/administration';
+import Account from 'app/modules/account';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 const Routes = ({ account, match }) => (
@@ -60,6 +61,11 @@ const Routes = ({ account, match }) => (
             hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
           />
           <PrivateRoute path={`${match.url}admin`} component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]} />
+          <PrivateRoute
+            path={`${match.url}account`}
+            component={Account}
+            hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.USER, AUTHORITIES.BANK]}
+          />
 
           {/* jhipster-needle-add-route-path - JHipster will add routes here */}
         </Switch>
