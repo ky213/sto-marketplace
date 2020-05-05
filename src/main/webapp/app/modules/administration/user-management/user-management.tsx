@@ -106,10 +106,10 @@ export const UserManagement = (props: IUserManagementProps) => {
         <tbody>
           {users.map((user, i) => (
             <tr id={user.login} key={`user-${i}`}>
+              <td>{user.login}</td>
               <td>
                 {user.firstName} {user.lastName}
               </td>
-              <td>{user.login}</td>
               <td>{user.email}</td>
               <td>{user.setting?.city}</td>
               <td>{user.setting?.country}</td>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, InputGroup, Col, Row, Table } from 'reactstrap';
+import { Button, InputGroup, Col, Row, Table, Card } from 'reactstrap';
 import { AvForm, AvGroup, AvInput } from 'availity-reactstrap-validation';
 import {
   openFile,
@@ -94,7 +94,7 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
 
   const { securityTokenList, match, loading, totalItems } = props;
   return (
-    <div>
+    <Card className="bg-white p-3">
       <h2 id="security-token-heading">
         Security Tokens
         <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
@@ -124,94 +124,94 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
           <Table responsive>
             <thead>
               <tr>
-                <th className="hand" onClick={sort('id')}>
+                <th className="hand text-nowrap" onClick={sort('id')}>
                   ID <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('idRed')}>
+                <th className="hand text-nowrap" onClick={sort('idRed')}>
                   Id Red <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('name')}>
+                <th className="hand text-nowrap" onClick={sort('name')}>
                   Name <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('laucheDate')}>
+                <th className="hand text-nowrap" onClick={sort('laucheDate')}>
                   Lauche Date <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('logo')}>
+                <th className="hand text-nowrap" onClick={sort('logo')}>
                   Logo <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('symbol')}>
+                <th className="hand text-nowrap" onClick={sort('symbol')}>
                   Symbol <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('juridiction')}>
+                <th className="hand text-nowrap" onClick={sort('juridiction')}>
                   Juridiction <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('issuerName')}>
+                <th className="hand text-nowrap" onClick={sort('issuerName')}>
                   Issuer Name <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('issuerCounty')}>
+                <th className="hand text-nowrap" onClick={sort('issuerCounty')}>
                   Issuer County <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('tokenizationFirmName')}>
+                <th className="hand text-nowrap" onClick={sort('tokenizationFirmName')}>
                   Tokenization Firm Name <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('tokenizationFirmCountry')}>
+                <th className="hand text-nowrap" onClick={sort('tokenizationFirmCountry')}>
                   Tokenization Firm Country <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('kycProviderName')}>
+                <th className="hand text-nowrap" onClick={sort('kycProviderName')}>
                   Kyc Provider Name <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('kycProviderCountry')}>
+                <th className="hand text-nowrap" onClick={sort('kycProviderCountry')}>
                   Kyc Provider Country <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('stoPrice')}>
+                <th className="hand text-nowrap" onClick={sort('stoPrice')}>
                   Sto Price <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('amountRaised')}>
+                <th className="hand text-nowrap" onClick={sort('amountRaised')}>
                   Amount Raised <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('category')}>
+                <th className="hand text-nowrap" onClick={sort('category')}>
                   Category <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('summary')}>
+                <th className="hand text-nowrap" onClick={sort('summary')}>
                   Summary <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('description')}>
+                <th className="hand text-nowrap" onClick={sort('description')}>
                   Description <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('restrictionCounty')}>
+                <th className="hand text-nowrap" onClick={sort('restrictionCounty')}>
                   Restriction County <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('restrictionNationality')}>
+                <th className="hand text-nowrap" onClick={sort('restrictionNationality')}>
                   Restriction Nationality <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('prospectus')}>
+                <th className="hand text-nowrap" onClick={sort('prospectus')}>
                   Prospectus <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('status')}>
+                <th className="hand text-nowrap" onClick={sort('status')}>
                   Status <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('registrationDate')}>
+                <th className="hand text-nowrap" onClick={sort('registrationDate')}>
                   Registration Date <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('updateDate')}>
+                <th className="hand text-nowrap" onClick={sort('updateDate')}>
                   Update Date <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('dueDiligenceDate')}>
+                <th className="hand text-nowrap" onClick={sort('dueDiligenceDate')}>
                   Due Diligence Date <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('lastSellingprice')}>
+                <th className="hand text-nowrap" onClick={sort('lastSellingprice')}>
                   Last Sellingprice <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('lastBuyingPrice')}>
+                <th className="hand text-nowrap" onClick={sort('lastBuyingPrice')}>
                   Last Buying Price <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('smartcontractAddress')}>
+                <th className="hand text-nowrap" onClick={sort('smartcontractAddress')}>
                   Smartcontract Address <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('kycAddress')}>
+                <th className="hand text-nowrap" onClick={sort('kycAddress')}>
                   Kyc Address <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('website')}>
+                <th className="hand text-nowrap" onClick={sort('website')}>
                   Website <FontAwesomeIcon icon="sort" />
                 </th>
                 <th />
@@ -328,7 +328,7 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
           />
         </Row>
       </div>
-    </div>
+    </Card>
   );
 };
 

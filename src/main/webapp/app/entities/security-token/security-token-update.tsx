@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col, Label } from 'reactstrap';
+import { Button, Row, Col, Label, Card } from 'reactstrap';
 import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
 import { ICrudGetAction, ICrudGetAllAction, setFileData, openFile, byteSize, ICrudPutAction } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -68,7 +68,7 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
   };
 
   return (
-    <div>
+    <Card clasName="p-3">
       <Row className="justify-content-center">
         <Col md="8">
           <h2 id="exchangeApp.securityToken.home.createOrEditLabel">Create or edit a SecurityToken</h2>
@@ -513,7 +513,7 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
           )}
         </Col>
       </Row>
-    </div>
+    </Card>
   );
 };
 
