@@ -23,7 +23,7 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
   const { logo, logoContentType } = bankInfoEntity;
 
   const handleClose = () => {
-    props.history.push('/bank-info' + props.location.search);
+    // props.history.push('/bank-info' + props.location.search);
   };
 
   useEffect(() => {
@@ -231,15 +231,10 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
                       <AvInput type="hidden" name="logo" value={logo} />
                     </AvGroup>
                   </AvGroup>
-                  <Button tag={Link} id="cancel-save" to="/bank-info" replace color="info">
-                    <FontAwesomeIcon icon="arrow-left" />
-                    &nbsp;
-                    <span className="d-none d-md-inline">Back</span>
-                  </Button>
                   &nbsp;
                   <Button color="primary" id="save-entity" type="submit" disabled={updating}>
                     <FontAwesomeIcon icon="save" />
-                    &nbsp; Save
+                    &nbsp; Save Details
                   </Button>
                 </AvForm>
               )}

@@ -38,7 +38,7 @@ const Menu = ({ account, location }) => {
       </NavItem>
       {(isAdmin || isBank) && (
         <NavItem>
-          <NavLink to="/bank-info" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
+          <NavLink to="/bank-info/1/edit" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
             <FontAwesomeIcon icon="university" className="mr-2" />
             Bank info
           </NavLink>
