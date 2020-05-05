@@ -232,6 +232,7 @@ public class UserService {
                     .map(Optional::get)
                     .forEach(managedAuthorities::add);
                 user.setSetting(userDTO.getSetting());
+                userRepository.save(user);
                 userSearchRepository.save(user);
                 this.clearUserCaches(user);
                 log.debug("Changed Information for User: {}", user);
