@@ -177,7 +177,6 @@ public class UserResource {
     @GetMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
     public ResponseEntity<UserDTO> getUser(@PathVariable String login) {
-        log.debug("REST request to get User : {}", login);
         return ResponseUtil.wrapOrNotFound(
             userService.getUserWithAuthoritiesByLogin(login)
                 .map(UserDTO::new));

@@ -33,7 +33,7 @@
             <column name="lang_key" type="varchar(10)"/>
             <column name="activation_key" type="varchar(20)"/>
             <column name="reset_key" type="varchar(20)"/>
-            <column name="setting" type="bigint">
+            <column name="setting_id" type="bigint">
                 <constraints nullable="true" />
             </column>
             <column name="created_by" type="varchar(50)">
@@ -115,7 +115,6 @@
                                  constraintName="fk_user_setting_id"
                                  referencedColumnNames="id"
                                  referencedTableName="jhi_user"/>
-
         <addForeignKeyConstraint baseColumnNames="authority_name"
                                  baseTableName="jhi_user_authority"
                                  constraintName="fk_authority_name"
@@ -137,7 +136,7 @@
                   tableName="jhi_user">
             <column name="activated" type="boolean"/>
             <column name="created_date" type="timestamp"/>
-            <column name="setting" type="numeric"/>
+            <column name="setting_id" type="numeric"/>
         </loadData>
         <dropDefaultValue tableName="jhi_user" columnName="created_date" columnDataType="datetime"/>
         <loadData
@@ -157,7 +156,7 @@
             <column name="eth_address" type="string"/>
             <column name="risk_profil" type="numeric"/>
             <column name="balance" type="numeric"/>
-            <column name="user" type="numeric"/>
+            <column name="user_id" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here, do not remove-->
         </loadData>
         <dropDefaultValue tableName="user_setting" columnName="date_of_birth" columnDataType="datetime"/>
