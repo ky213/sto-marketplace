@@ -5,45 +5,45 @@ import { Row, Col, Card, Button } from 'reactstrap';
 
 import { AUTHORITIES } from 'app/config/constants';
 
-const SelectRole = () => {
+const SelectRole = ({ changeRole, role }) => {
   return (
-    <AvRadioGroup name="authorities" required errorMessage="This field is required!">
-      <Row>
-        <Col xs="4 px-1">
-          <Card className="btn py-2">
+    <AvRadioGroup name="authorities">
+      <Row className="px-2">
+        <Col md="4" className="px-1">
+          <Card className="btn py-2" onClick={() => changeRole(AUTHORITIES.ADMIN)}>
             <Row className="px-2">
               <Col className="col-1 px-1">
-                <AvRadio value={AUTHORITIES.ADMIN} />
+                <input className="" type="radio" id="authorities-admin" value={AUTHORITIES.ADMIN} checked={role === AUTHORITIES.ADMIN} />
               </Col>
-              <Col className="col-11 px-1 ">
-                <p className="p-0 m-0 text-left">Admin</p>
-                <small className="p-0 pr-5 text-nowrap text-muted">Add a new admin with super privileges</small>
+              <Col className="col-11 px-1 text-left">
+                <p className="p-0 m-0">Admin</p>
+                <small className="text-muted text-left">Admin with super privileges </small>
               </Col>
             </Row>
           </Card>
         </Col>
-        <Col xs="4 px-1">
-          <Card className="btn py-2">
+        <Col className="px-1">
+          <Card className="btn py-2" onClick={() => changeRole(AUTHORITIES.BANK)}>
             <Row className="px-2">
               <Col className="col-1 px-1">
-                <AvRadio value={AUTHORITIES.BANK} />
+                <input className="" type="radio" id="authorities-admin" value={AUTHORITIES.BANK} checked={role === AUTHORITIES.BANK} />
               </Col>
-              <Col className="col-11 px-1 ">
-                <p className="p-0 m-0 text-left">Banker</p>
-                <small className="p-0 pr-5 text-nowrap text-muted">Add a new banker to manage cutomers</small>
+              <Col className="col-11 px-1 text-left">
+                <p className="p-0 m-0">Banker</p>
+                <small className="text-muted">A banker to manage cutomers</small>
               </Col>
             </Row>
           </Card>
         </Col>
-        <Col xs="4 px-1">
-          <Card className="btn py-2">
+        <Col className="px-1">
+          <Card className="btn py-2" onClick={() => changeRole(AUTHORITIES.USER)}>
             <Row className="px-2">
               <Col className="col-1 px-1">
-                <AvRadio value={AUTHORITIES.USER} />
+                <input className="" type="radio" id="authorities-admin" value={AUTHORITIES.USER} checked={role === AUTHORITIES.USER} />
               </Col>
-              <Col className="col-11 px-1 ">
-                <p className="p-0 m-0 text-left">User</p>
-                <small className="p-0 pr-5 text-nowrap text-muted">Add a new customer from a bank</small>
+              <Col className="col-11 px-1 text-left">
+                <p className="p-0 m-0">User</p>
+                <small className="text-muted">A new customer from a bank</small>
               </Col>
             </Row>
           </Card>
