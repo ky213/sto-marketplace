@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -72,6 +73,12 @@ public class OrderServiceImpl implements OrderService {
     public Optional<Order> findOne(Long id) {
         log.debug("Request to get Order : {}", id);
         return orderRepository.findById(id);
+    }
+
+    @Override
+    public List<Order> findUserOrders() {
+        log.debug("Request to get user Orders");
+        return orderRepository.findByUserIsCurrentUser();
     }
 
     /**
