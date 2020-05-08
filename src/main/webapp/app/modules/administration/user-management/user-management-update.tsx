@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getUser, getRoles, updateUser, createUser, reset } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
 import { displayDefaultDateTime, convertDateTimeFromServer, convertDateTimeToServer } from 'app/shared/util/date-utils';
+import SelectRole from './components/SelectRole';
 
 export interface IUserManagementUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ login: string }> {}
 
@@ -62,6 +63,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                   <AvField type="text" className="form-control" name="id" required readOnly value={user.id} />
                 </AvGroup>
               ) : null}
+              <SelectRole />
               <AvGroup>
                 <Label for="login">Username</Label>
                 <AvField
