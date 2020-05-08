@@ -5,6 +5,7 @@ import swiss.alpinetech.exchange.domain.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -37,6 +38,13 @@ public interface OrderService {
     Optional<Order> findOne(Long id);
 
     /**
+     * Get all user Orders.
+     *
+     * @return the list of entities.
+     */
+    List<Order> findUserOrders();
+
+    /**
      * Delete the "id" order.
      *
      * @param id the id of the entity.
@@ -47,7 +55,7 @@ public interface OrderService {
      * Search for the order corresponding to the query.
      *
      * @param query the query of the search.
-     * 
+     *
      * @param pageable the pagination information.
      * @return the list of entities.
      */

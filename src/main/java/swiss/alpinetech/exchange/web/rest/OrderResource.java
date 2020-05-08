@@ -1,6 +1,8 @@
 package swiss.alpinetech.exchange.web.rest;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import swiss.alpinetech.exchange.domain.Order;
+import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.OrderService;
 import swiss.alpinetech.exchange.web.rest.errors.BadRequestAlertException;
 
@@ -94,6 +96,7 @@ public class OrderResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of orders in body.
      */
     @GetMapping("/orders")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
     public ResponseEntity<List<Order>> getAllOrders(Pageable pageable) {
         log.debug("REST request to get a page of Orders");
         Page<Order> page = orderService.findAll(pageable);
@@ -108,10 +111,24 @@ public class OrderResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the order, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/orders/{id}")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
     public ResponseEntity<Order> getOrder(@PathVariable Long id) {
         log.debug("REST request to get Order : {}", id);
         Optional<Order> order = orderService.findOne(id);
         return ResponseUtil.wrapOrNotFound(order);
+    }
+
+    /**
+     * {@code GET  /user-orders} : get user orders.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the user orders, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/user-orders")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<List<Order>> getUserOrders() {
+        log.debug("REST request to get User Orders");
+        List<Order> orders = orderService.findUserOrders();
+        return ResponseEntity.ok().body(orders);
     }
 
     /**

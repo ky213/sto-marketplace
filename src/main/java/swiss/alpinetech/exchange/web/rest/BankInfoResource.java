@@ -1,6 +1,8 @@
 package swiss.alpinetech.exchange.web.rest;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import swiss.alpinetech.exchange.domain.BankInfo;
+import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.BankInfoService;
 import swiss.alpinetech.exchange.web.rest.errors.BadRequestAlertException;
 
@@ -108,6 +110,7 @@ public class BankInfoResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the bankInfo, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/bank-infos/{id}")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
     public ResponseEntity<BankInfo> getBankInfo(@PathVariable Long id) {
         log.debug("REST request to get BankInfo : {}", id);
         Optional<BankInfo> bankInfo = bankInfoService.findOne(id);
