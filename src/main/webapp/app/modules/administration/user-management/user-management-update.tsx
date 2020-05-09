@@ -4,12 +4,14 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Label, Row, Col } from 'reactstrap';
 import { AvForm, AvGroup, AvInput, AvField, AvFeedback } from 'availity-reactstrap-validation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import moment from 'moment';
 
 import { getUser, getRoles, updateUser, createUser, reset } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
 import { displayDefaultDateTime, convertDateTimeFromServer, convertDateTimeToServer } from 'app/shared/util/date-utils';
 import SelectRole from './components/SelectRole';
 import { AUTHORITIES } from 'app/config/constants';
+import DatePicker from './components/DatePicker';
 
 export interface IUserManagementUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ login: string }> {}
 
@@ -180,17 +182,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                   <Label id="dateOfBirthLabel" for="user-setting-dateOfBirth">
                     Date Of Birth
                   </Label>
-                  <AvInput
-                    id="user-setting-dateOfBirth"
-                    type="datetime-local"
-                    className="form-control"
-                    name="setting.dateOfBirth"
-                    placeholder={'YYYY-MM-DD HH:mm'}
-                    value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(user.setting?.dateOfBirth)}
-                    validate={{
-                      required: { value: true, errorMessage: 'This field is required.' }
-                    }}
-                  />
+                  <DatePicker value={isNew ? moment().format('YYYY-MM-DD') : moment(user.setting?.dateOfBirth).format('YYYY-MM-DD')} />
                 </AvGroup>
                 <AvGroup className="col-md-6">
                   <Label id="nationalityLabel" for="user-setting-nationality">
