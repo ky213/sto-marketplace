@@ -3,20 +3,21 @@ import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Label, Row, Col } from 'reactstrap';
 import { AvForm, AvGroup, AvInput, AvField, AvFeedback } from 'availity-reactstrap-validation';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { getUser, getRoles, updateUser, createUser, reset } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
 import { displayDefaultDateTime, convertDateTimeFromServer, convertDateTimeToServer } from 'app/shared/util/date-utils';
 import SelectRole from './components/SelectRole';
-import { AvRadioGroup, AvRadio } from 'availity-reactstrap-validation';
+import { AUTHORITIES } from 'app/config/constants';
 
 export interface IUserManagementUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ login: string }> {}
 
 export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
+  const { user, loading, updating, roles } = props;
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.login);
   const [selectedRole, setSelectedRole] = useState('');
+  const isInvalid = false;
 
   useEffect(() => {
     if (isNew) {
@@ -33,8 +34,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
   };
 
   const saveUser = (event, values) => {
-    /* eslint no-console:off */
-    console.log(values);
+    values.authorities = [selectedRole || user.authorities?.sort()[0] || AUTHORITIES.USER];
     values.setting.dateOfBirth = convertDateTimeToServer(values.setting.dateOfBirth);
 
     if (isNew) {
@@ -45,14 +45,11 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
     handleClose();
   };
 
-  const isInvalid = false;
-  const { user, loading, updating, roles } = props;
-
   return (
     <div>
-      <Row className="justify-content-center mb-3">
+      <Row className="justify-content-center">
         <Col md="8">
-          <h4>{isNew ? 'Create' : 'Edit'} a User</h4>
+          <h4>Create or edit a User</h4>
         </Col>
       </Row>
       <Row className="justify-content-center">
@@ -61,7 +58,16 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
             <p>Loading...</p>
           ) : (
             <AvForm onValidSubmit={saveUser}>
-              <SelectRole role={selectedRole || props.user.authorities[1]} changeRole={(role: string) => setSelectedRole(role)} />
+              {user.id ? (
+                <AvGroup>
+                  <Label for="id">ID</Label>
+                  <AvField type="text" className="form-control" name="id" required readOnly value={user.id} />
+                </AvGroup>
+              ) : null}
+              <SelectRole
+                role={selectedRole || user.authorities?.sort()[0] || AUTHORITIES.USER}
+                changeRole={role => setSelectedRole(role)}
+              />
               <AvGroup>
                 <Label for="login">Username</Label>
                 <AvField
@@ -294,6 +300,16 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                   <AvInput type="checkbox" name="activated" value={user.activated} checked={user.activated} disabled={!user.id} /> Activated
                 </Label>
               </AvGroup>
+              {/* <AvGroup>
+                <Label for="authorities">Profiles</Label>
+                <AvInput type="select" className="form-control" name="authorities" value={user.authorities} multiple>
+                  {roles.map(role => (
+                    <option value={role} key={role}>
+                      {role}
+                    </option>
+                  ))}
+                </AvInput>
+              </AvGroup> */}
               <Button tag={Link} to="/admin/user-management" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
