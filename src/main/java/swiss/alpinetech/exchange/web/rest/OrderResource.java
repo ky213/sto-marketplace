@@ -90,6 +90,27 @@ public class OrderResource {
     }
 
     /**
+     * {@code PUT  /orders} : Updates an existing order.
+     *
+     * @param orderId the order to cancel.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the canceled order,
+     * or with status {@code 400 (Bad Request)} if the order is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the order couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PutMapping("/cancel-order")
+    public ResponseEntity<Order> cancelOrder(@Valid @RequestParam Long orderId) throws URISyntaxException {
+        log.debug("REST request to cancel Order by Id : {}", orderId);
+        if (orderId == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        Order result = orderService.cancel(orderId);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, orderId.toString()))
+            .body(result);
+    }
+
+    /**
      * {@code GET  /orders} : get all the orders.
      *
      * @param pageable the pagination information.
@@ -125,9 +146,9 @@ public class OrderResource {
      */
     @GetMapping("/user-orders")
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.USER+"\")")
-    public ResponseEntity<List<Order>> getUserOrders() {
+    public ResponseEntity<List<Order>> getUserOrders(Pageable pageable) {
         log.debug("REST request to get User Orders");
-        List<Order> orders = orderService.findUserOrders();
+        List<Order> orders = orderService.findUserOrders(pageable);
         return ResponseEntity.ok().body(orders);
     }
 

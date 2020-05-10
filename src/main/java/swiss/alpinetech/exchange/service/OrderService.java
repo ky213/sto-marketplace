@@ -22,6 +22,14 @@ public interface OrderService {
     Order save(Order order);
 
     /**
+     * Cancel order.
+     *
+     * @param orderId the entity to cancel.
+     * @return the cancelled entity.
+     */
+    Order cancel(Long orderId);
+
+    /**
      * Get all the orders.
      *
      * @param pageable the pagination information.
@@ -42,7 +50,7 @@ public interface OrderService {
      *
      * @return the list of entities.
      */
-    List<Order> findUserOrders();
+    List<Order> findUserOrders(Pageable pageable);
 
     /**
      * Delete the "id" order.

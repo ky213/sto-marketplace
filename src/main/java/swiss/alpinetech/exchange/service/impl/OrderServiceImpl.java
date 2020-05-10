@@ -1,5 +1,6 @@
 package swiss.alpinetech.exchange.service.impl;
 
+import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 import swiss.alpinetech.exchange.service.OrderService;
 import swiss.alpinetech.exchange.domain.Order;
 import swiss.alpinetech.exchange.repository.OrderRepository;
@@ -50,6 +51,21 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
+     * Cancel order.
+     *
+     * @param orderId the entity to cancel.
+     * @return the cancelled entity.
+     */
+    @Override
+    public Order cancel(Long orderId) {
+        log.debug("Request to cancel Order by orderId : {}", orderId);
+        Order orderToCancel = orderRepository.findById(orderId).get();
+        orderToCancel.setStatus(STATUS.REMOVE);
+        Order result = orderRepository.save(orderToCancel);
+        return result;
+    }
+
+    /**
      * Get all the orders.
      *
      * @param pageable the pagination information.
@@ -76,9 +92,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findUserOrders() {
+    public List<Order> findUserOrders(Pageable pageable) {
         log.debug("Request to get user Orders");
-        return orderRepository.findByUserIsCurrentUser();
+        return orderRepository.findByUserIsCurrentUser(pageable);
     }
 
     /**
