@@ -1,6 +1,12 @@
 #!/usr/bin/env groovy
 
 node {
+
+    environment {
+        registry = "gcr.io/exchange-20200401/exchange"
+        registryCredential = 'kubernetes'
+        dockerImage = ''
+    }
     stage('checkout') {
         checkout scm
     }
