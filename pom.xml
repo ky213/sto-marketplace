@@ -623,7 +623,7 @@
                     <configuration>
                         <from>
                             <image>adoptopenjdk:11-jre-hotspot</image>
-                            <credHelper>gcr</credHelper>git
+                            <credHelper>gcr</credHelper>
                         </from>
                         <to>
                             <image>gcr.io/exchange-20200401/exchange:latest</image>
