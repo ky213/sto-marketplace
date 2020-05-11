@@ -625,7 +625,11 @@
                             <image>adoptopenjdk:11-jre-hotspot</image>
                         </from>
                         <to>
-                            <image>gcr.io/exchange-20200401/exchange:latest</image>
+                            <image>alpinetech/exchange:latest</image>
+                            <auth>
+                                <username>techalpine</username>
+                                <password>Al20pi20ne**</password>
+                            </auth>
                         </to>
                         <container>
                             <entrypoint>
