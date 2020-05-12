@@ -174,7 +174,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                       id="user-setting-phoneNumber"
                       type="text"
                       name="setting.phoneNumber"
-                      value={user.setting?.phoneNumber || '0000000'}
+                      value={user.setting?.phoneNumber}
                       validate={{
                         required: {
                           value: true,
@@ -218,6 +218,50 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                         <option value="CANADA">CANADA</option>
                         <option value="SENEGAL">SENEGAL</option>
                       </AvInput>
+                    </AvGroup>
+                  </>
+                )}
+              </div>
+              <div className="form-row">
+                {isUser && (
+                  <>
+                    <AvGroup className="col-md-8">
+                      <Label id="addressLabel" for="user-setting-address">
+                        Address
+                      </Label>
+                      <AvField
+                        id="user-setting-address"
+                        type="text"
+                        name="setting.address"
+                        value={user.setting?.address || 'address'}
+                        validate={{
+                          required: {
+                            value: true,
+                            errorMessage: 'This field is required.'
+                          },
+                          minLength: { value: 2, errorMessage: 'This field is required to be at least 2 characters.' },
+                          maxLength: { value: 50, errorMessage: 'This field cannot be longer than 50 characters.' }
+                        }}
+                      />
+                    </AvGroup>
+                    <AvGroup className="col-md-4">
+                      <Label id="codeLabel" for="user-setting-code">
+                        Postal Code
+                      </Label>
+                      <AvField
+                        id="user-setting-code"
+                        type="text"
+                        name="setting.code"
+                        value={user.setting?.code}
+                        validate={{
+                          required: {
+                            value: true,
+                            errorMessage: 'This field is required.'
+                          },
+                          minLength: { value: 2, errorMessage: 'This field is required to be at least 2 characters.' },
+                          maxLength: { value: 50, errorMessage: 'This field cannot be longer than 50 characters.' }
+                        }}
+                      />
                     </AvGroup>
                   </>
                 )}
@@ -301,7 +345,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                       id="user-setting-iban"
                       type="text"
                       name="setting.iban"
-                      value={user.setting?.iban || 'xxxxxxxxxxxxxx'}
+                      value={user.setting?.iban}
                       validate={{
                         required: { value: true, errorMessage: 'This field is required.' },
                         minLength: { value: 14, errorMessage: 'This field is required to be at least 14 characters.' },
@@ -317,7 +361,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                       id="user-setting-ethAddress"
                       type="text"
                       name="setting.ethAddress"
-                      value={user.setting?.ethAddress || 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'}
+                      value={user.setting?.ethAddress}
                       validate={{
                         required: {
                           value: true,

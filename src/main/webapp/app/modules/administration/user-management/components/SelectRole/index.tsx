@@ -5,8 +5,9 @@ import { Row, Col, Card } from 'reactstrap';
 
 import { AUTHORITIES } from 'app/config/constants';
 import './style.scss';
+import { IRootState } from 'app/shared/reducers';
 
-const SelectRole = ({ roles, reportRoles }) => {
+const SelectRole = ({ account, roles, reportRoles }) => {
   const [newRoles, setNewRoles] = useState(new Set([...roles]));
 
   const setSelectedRole = (role: string) => {
@@ -20,19 +21,21 @@ const SelectRole = ({ roles, reportRoles }) => {
   return (
     <AvCheckboxGroup name="authorities">
       <Row className="px-2">
-        <Col md="4" className="px-1">
-          <Card className="btn py-2 table-hover" onClick={() => setSelectedRole(AUTHORITIES.ADMIN)}>
-            <Row className="px-2">
-              <Col className="col-1 px-1">
-                <AvCheckbox checked={newRoles.has(AUTHORITIES.ADMIN)} />
-              </Col>
-              <Col className="col-11 px-1 text-left">
-                <p className="p-0 m-0">Admin</p>
-                <small className="text-muted text-left">Admin with super privileges </small>
-              </Col>
-            </Row>
-          </Card>
-        </Col>
+        {account.authorities.includes(AUTHORITIES.ADMIN) && (
+          <Col md="4" className="px-1">
+            <Card className="btn py-2 table-hover" onClick={() => setSelectedRole(AUTHORITIES.ADMIN)}>
+              <Row className="px-2">
+                <Col className="col-1 px-1">
+                  <AvCheckbox checked={newRoles.has(AUTHORITIES.ADMIN)} />
+                </Col>
+                <Col className="col-11 px-1 text-left">
+                  <p className="p-0 m-0">Admin</p>
+                  <small className="text-muted text-left">Admin with super privileges </small>
+                </Col>
+              </Row>
+            </Card>
+          </Col>
+        )}
         <Col className="px-1">
           <Card className="btn py-2" onClick={() => setSelectedRole(AUTHORITIES.BANK)}>
             <Row className="px-2">
@@ -64,8 +67,6 @@ const SelectRole = ({ roles, reportRoles }) => {
   );
 };
 
-const mapStateToProps = state => ({});
-
-const mapDispatchToProps = {};
+const mapStateToProps = (storeState: IRootState) => ({ account: storeState.authentication.account });
 
 export default connect(mapStateToProps)(SelectRole);
