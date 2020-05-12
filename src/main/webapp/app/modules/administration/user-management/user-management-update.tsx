@@ -328,6 +328,16 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                       }}
                     />
                   </AvGroup>
+                  <AvGroup>
+                    <AvField id="user-setting-riskProfil" type="select" name="setting.riskProfil" label="Risk Profile">
+                      <option>0</option>
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+                    </AvField>
+                  </AvGroup>
                 </>
               )}
               <AvGroup check>
