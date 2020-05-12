@@ -321,6 +321,16 @@ Vous pouvez démarrer ensuite le container avec toutes les dépendances :
 
     docker-compose -f src/main/docker/app.yml up -d
 
+
+Vous pouvez aussi utiliser la commande yar pour lancer l'application 
+
+    yarn exchange:start
+
+Pour stopper MYSQL 
+
+    yarn exchange:stop
+
+
 ### Quelques liens utiles 
 
 - [node.js](https://nodejs.org/)
