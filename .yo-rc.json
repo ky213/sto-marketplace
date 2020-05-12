@@ -35,16 +35,6 @@
     "dtoSuffix": "DTO",
     "otherModules": [],
     "enableTranslation": false,
-    "blueprints": [],
-    "appsFolders": ["exchange"],
-    "directoryPath": "../",
-    "dockerRepositoryName": "gcr.io/Exchange",
-    "dockerPushCommand": "docker push",
-    "kubernetesNamespace": "default",
-    "kubernetesServiceType": "LoadBalancer",
-    "kubernetesUseDynamicStorage": false,
-    "ingressDomain": "",
-    "monitoring": "no",
-    "istio": false
+    "blueprints": []
   }
 }
