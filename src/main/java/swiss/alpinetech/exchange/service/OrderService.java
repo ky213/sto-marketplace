@@ -1,10 +1,13 @@
 package swiss.alpinetech.exchange.service;
 
+import org.springframework.core.io.InputStreamResource;
 import swiss.alpinetech.exchange.domain.Order;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +54,25 @@ public interface OrderService {
      * @return the list of entities.
      */
     List<Order> findUserOrders(Pageable pageable);
+
+    /**
+     * export orders.
+     *
+     * @param beginDate .
+     * @param endDate .
+     * @return excel file of all orders between two dates.
+     */
+    InputStreamResource exportOrders(ZonedDateTime beginDate, ZonedDateTime endDate) throws IOException;
+
+    /**
+     * export orders.
+     *
+     * @param beginDate .
+     * @param endDate .
+     * @param userId .
+     * @return excel file of user orders between two dates.
+     */
+    InputStreamResource exportUserOrders(Long userId, ZonedDateTime beginDate, ZonedDateTime endDate) throws IOException;
 
     /**
      * Delete the "id" order.
