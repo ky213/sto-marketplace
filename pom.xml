@@ -635,11 +635,7 @@
                             <image>adoptopenjdk:11-jre-hotspot</image>
                         </from>
                         <to>
-                            <image>alpinetech/exchange:latest</image>
-                            <auth>
-                                <username>techalpine</username>
-                                <password>Al20pi20ne**</password>
-                            </auth>
+                            <image>exchange:latest</image>
                         </to>
                         <container>
                             <entrypoint>
