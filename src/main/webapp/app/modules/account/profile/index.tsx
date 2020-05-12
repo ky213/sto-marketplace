@@ -1,11 +1,15 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Card, CardHeader, CardBody, CardFooter, Progress, NavLink } from 'reactstrap';
+import { Row, Col, Card, CardHeader, CardBody, Progress } from 'reactstrap';
 import { IRootState } from 'app/shared/reducers';
 import { IUserSettingsProps } from '../settings/settings';
 import moment from 'moment';
+import { AUTHORITIES } from 'app/config/constants';
 
 const Profile = ({ account }: IUserSettingsProps) => {
+  const isBanker = account.authorities.includes(AUTHORITIES.BANK);
+  const isUser = account.authorities.includes(AUTHORITIES.USER);
+
   return (
     <Row className="mx-auto">
       <Col md="4" className="p-0">
@@ -18,15 +22,18 @@ const Profile = ({ account }: IUserSettingsProps) => {
               {account.setting?.city}, {account.setting?.country} <br />
               {moment().format('LLL')}
             </p>
-
-            <p className="text-muted mt-5 mb-1 pb-0">Risk level: {account.setting?.riskProfil || 0}</p>
-            <Progress className="p-0 mt-2 mb-2" color="primary" value={account.setting?.riskProfil || 0} style={{ height: '7px' }} />
+            {isUser && (
+              <>
+                <p className="text-muted mt-5 mb-1 pb-0">Risk level: {account.setting?.riskProfil}</p>
+                <Progress
+                  className="p-0 mt-2 mb-2"
+                  color="primary"
+                  value={account.setting?.riskProfil * 2 * 10}
+                  style={{ height: '7px' }}
+                />
+              </>
+            )}
           </CardBody>
-          <CardFooter>
-            <NavLink to="#" className="p-1">
-              Upgrade Risk
-            </NavLink>
-          </CardFooter>
         </Card>
       </Col>
       <Col className=" ml-3 p-0">
@@ -51,42 +58,76 @@ const Profile = ({ account }: IUserSettingsProps) => {
                 <small className="text-muted ">Email Address</small>
                 <p>{account.email}</p>
               </Col>
-              <Col>
-                <small className="text-muted">Phone Number</small>
-                <p>{account.setting?.phoneNumber}</p>
-              </Col>
+              {(isUser || isBanker) && (
+                <Col>
+                  <small className="text-muted">Phone Number</small>
+                  <p>{account.setting?.phoneNumber}</p>
+                </Col>
+              )}
             </Row>
             <Row>
-              <Col>
-                <small className="text-muted ">Date of Birth </small>
-                <p>{moment(account.setting?.dateOfBirth).format('LLL')}</p>
-              </Col>
-              <Col>
-                <small className="text-muted">Nationality</small>
-                <p>{account.setting?.nationality}</p>
-              </Col>
+              {isUser && (
+                <>
+                  <Col>
+                    <small className="text-muted ">Date of Birth </small>
+                    <p>{moment(account.setting?.dateOfBirth).format('LLL')}</p>
+                  </Col>
+                  <Col>
+                    <small className="text-muted">Nationality</small>
+                    <p>{account.setting?.nationality}</p>
+                  </Col>
+                </>
+              )}
             </Row>
             <Row>
-              <Col>
-                <small className="text-muted ">City</small>
-                <p>{account.setting?.city}</p>
-              </Col>
-              <Col>
-                <small className="text-muted">Country</small>
-                <p>{account.setting?.country}</p>
-              </Col>
+              {(isBanker || isUser) && (
+                <>
+                  <Col>
+                    <small className="text-muted ">City</small>
+                    <p>{account.setting?.city}</p>
+                  </Col>
+                  <Col>
+                    <small className="text-muted">Country</small>
+                    <p>{account.setting?.country}</p>
+                  </Col>
+                </>
+              )}
             </Row>
             <Row>
-              <Col>
-                <small className="text-muted ">Bank Account</small>
-                <p>{account.setting?.iban}</p>
-              </Col>
+              {isUser && (
+                <>
+                  <Col>
+                    <small className="text-muted ">Address</small>
+                    <p>{account.setting?.address}</p>
+                  </Col>
+                  <Col>
+                    <small className="text-muted">Postal Code</small>
+                    <p>{account.setting?.code}</p>
+                  </Col>
+                </>
+              )}
             </Row>
             <Row>
-              <Col>
-                <small className="text-muted ">Ethereum Address</small>
-                <p>{account.setting?.ethAddress}</p>
-              </Col>
+              {isUser && (
+                <>
+                  <Col>
+                    <small className="text-muted ">Bank Account</small>
+                    <p>{account.setting?.iban}</p>
+                  </Col>
+                  <Col>
+                    <small className="text-muted ">Ethereum Address</small>
+                    <p>{account.setting?.ethAddress}</p>
+                  </Col>
+                </>
+              )}
+            </Row>
+            <Row>
+              {isBanker && (
+                <Col>
+                  <small className="text-muted">Position</small>
+                  <p>{account.setting?.position}</p>
+                </Col>
+              )}
             </Row>
           </CardBody>
         </Card>
