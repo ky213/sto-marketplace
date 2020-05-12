@@ -27,7 +27,7 @@ const Routes = ({ account, match }) => (
       <Col xs="2" className="h-100 pl-0">
         <Card className="h-100 border-0 px-0">
           <Row className="text-center px-1" style={{ height: '80px' }}>
-            <Col classeName="d-flex align-items-center">
+            <Col className="d-flex flex-column align-items-center">
               <b className=" mt-2 d-block">
                 {account.firstName} {account.lastName}
               </b>
@@ -72,7 +72,7 @@ const Routes = ({ account, match }) => (
         </Switch>
       </Col>
     </Row>
-    <Footer/>
+    <Footer />
   </Container>
 );
 
