@@ -29,8 +29,6 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
   }, [props]);
 
   useEffect(() => {
-    // setNewroles(user.authorities || []);
-
     if (isNew) {
       props.reset();
     } else {
@@ -76,7 +74,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
               {user.id ? (
                 <AvGroup>
                   <Label for="id">ID</Label>
-                  <AvField type="text" className="form-control" name="id" required readonly value={user.id} />
+                  <AvField type="text" className="form-control" name="id" required readOnly value={user.id} />
                 </AvGroup>
               ) : null}
               <SelectRole roles={user.authorities || []} reportRoles={(nr: string[]) => setNewroles(nr)} />
