@@ -20,12 +20,17 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.login);
   const [newRoles, setNewroles] = useState([]);
   const isInvalid = false;
+  const isAdmin = newRoles.includes(AUTHORITIES.ADMIN);
+  const isBank = newRoles.includes(AUTHORITIES.BANK);
+  const isUser = newRoles.includes(AUTHORITIES.USER);
 
   useEffect(() => {
     setNewroles(user.authorities || []);
   }, [props]);
 
   useEffect(() => {
+    // setNewroles(user.authorities || []);
+
     if (isNew) {
       props.reset();
     } else {
@@ -40,8 +45,13 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
   };
 
   const saveUser = (event, values) => {
+    if (!values.setting) values.setting = {};
+
     values.authorities = newRoles;
-    values.setting.dateOfBirth = convertDateTimeToServer(values.setting.dateOfBirth);
+
+    values.setting.dateOfBirth = convertDateTimeToServer(values.setting.dateOfBirth || moment().toDate());
+
+    if (!isUser) values.setting.iban = 'xxxxxxxxxxxxxx';
 
     if (isNew) {
       props.createUser(values);
@@ -66,7 +76,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
               {user.id ? (
                 <AvGroup>
                   <Label for="id">ID</Label>
-                  <AvField type="text" className="form-control" name="id" required readOnly value={user.id} />
+                  <AvField type="text" className="form-control" name="id" required readonly value={user.id} />
                 </AvGroup>
               ) : null}
               <SelectRole roles={user.authorities || []} reportRoles={(nr: string[]) => setNewroles(nr)} />
@@ -131,7 +141,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                 </AvGroup>
               </div>
               <div className="form-row">
-                <AvGroup className="col-md-6">
+                <AvGroup className="col">
                   <AvField
                     name="email"
                     label="Email"
@@ -157,67 +167,121 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                     value={user.email}
                   />
                 </AvGroup>
-                <AvGroup className="col-md-6">
-                  <Label id="phoneNumberLabel" for="user-setting-phoneNumber">
-                    Phone Number
-                  </Label>
-                  <AvField
-                    id="user-setting-phoneNumber"
-                    type="text"
-                    name="setting.phoneNumber"
-                    value={user.setting?.phoneNumber}
-                    validate={{
-                      required: {
-                        value: true,
-                        errorMessage: 'This field is required.'
-                      },
-                      minLength: { value: 6, errorMessage: 'This field is required to be at least 6 characters.' },
-                      maxLength: { value: 15, errorMessage: 'This field cannot be longer than 15 characters.' }
-                    }}
-                  />
-                </AvGroup>
+                {(isBank || isUser) && (
+                  <AvGroup className="col-md-6">
+                    <Label id="phoneNumberLabel" for="user-setting-phoneNumber">
+                      Phone Number
+                    </Label>
+                    <AvField
+                      id="user-setting-phoneNumber"
+                      type="text"
+                      name="setting.phoneNumber"
+                      value={user.setting?.phoneNumber || '0000000'}
+                      validate={{
+                        required: {
+                          value: true,
+                          errorMessage: 'This field is required.'
+                        },
+                        minLength: { value: 6, errorMessage: 'This field is required to be at least 6 characters.' },
+                        maxLength: { value: 15, errorMessage: 'This field cannot be longer than 15 characters.' }
+                      }}
+                    />
+                  </AvGroup>
+                )}
               </div>
               <div className="form-row">
-                <AvGroup className="col-md-6">
-                  <Label id="dateOfBirthLabel" for="user-setting-dateOfBirth">
-                    Date Of Birth
-                  </Label>
-                  <DatePicker value={isNew ? moment().format('YYYY-MM-DD') : moment(user.setting?.dateOfBirth).format('YYYY-MM-DD')} />
-                </AvGroup>
-                <AvGroup className="col-md-6">
-                  <Label id="nationalityLabel" for="user-setting-nationality">
-                    Nationality
-                  </Label>
-                  <AvInput
-                    id="user-setting-nationality"
-                    type="select"
-                    className="form-control"
-                    name="setting.nationality"
-                    value={(!isNew && user.setting?.nationality) || 'FRANCE'}
-                  >
-                    <option value="FRANCE">FRANCE</option>
-                    <option value="USA">USA</option>
-                    <option value="SWITZERLAND">SWITZERLAND</option>
-                    <option value="GERMANY">GERMANY</option>
-                    <option value="ITALY">ITALY</option>
-                    <option value="IRAN">IRAN</option>
-                    <option value="CHINA">CHINA</option>
-                    <option value="NORTH_KOREA">NORTH_KOREA</option>
-                    <option value="CANADA">CANADA</option>
-                    <option value="SENEGAL">SENEGAL</option>
-                  </AvInput>
-                </AvGroup>
+                {isUser && (
+                  <>
+                    <AvGroup className="col-md-6">
+                      <Label id="dateOfBirthLabel" for="user-setting-dateOfBirth">
+                        Date Of Birth
+                      </Label>
+                      <DatePicker value={isNew ? moment().format('YYYY-MM-DD') : moment(user.setting?.dateOfBirth).format('YYYY-MM-DD')} />
+                    </AvGroup>
+                    <AvGroup className="col-md-6">
+                      <Label id="nationalityLabel" for="user-setting-nationality">
+                        Nationality
+                      </Label>
+                      <AvInput
+                        id="user-setting-nationality"
+                        type="select"
+                        className="form-control"
+                        name="setting.nationality"
+                        value={(!isNew && user.setting?.nationality) || 'FRANCE'}
+                      >
+                        <option value="FRANCE">FRANCE</option>
+                        <option value="USA">USA</option>
+                        <option value="SWITZERLAND">SWITZERLAND</option>
+                        <option value="GERMANY">GERMANY</option>
+                        <option value="ITALY">ITALY</option>
+                        <option value="IRAN">IRAN</option>
+                        <option value="CHINA">CHINA</option>
+                        <option value="NORTH_KOREA">NORTH_KOREA</option>
+                        <option value="CANADA">CANADA</option>
+                        <option value="SENEGAL">SENEGAL</option>
+                      </AvInput>
+                    </AvGroup>
+                  </>
+                )}
               </div>
               <div className="form-row">
-                <AvGroup className="col-md-6">
-                  <Label id="cityLabel" for="user-setting-city">
-                    City
+                {(isBank || isUser) && (
+                  <>
+                    <AvGroup className="col-md-6">
+                      <Label id="cityLabel" for="user-setting-city">
+                        City
+                      </Label>
+                      <AvField
+                        id="user-setting-city"
+                        type="text"
+                        name="setting.city"
+                        value={user.setting?.city || 'City'}
+                        validate={{
+                          required: {
+                            value: true,
+                            errorMessage: 'This field is required.'
+                          },
+                          minLength: { value: 2, errorMessage: 'This field is required to be at least 2 characters.' },
+                          maxLength: { value: 50, errorMessage: 'This field cannot be longer than 50 characters.' }
+                        }}
+                      />
+                    </AvGroup>
+                    <AvGroup className="col-md-6">
+                      <Label id="countryLabel" for="user-setting-country">
+                        Country
+                      </Label>
+                      <AvInput
+                        id="user-setting-country"
+                        type="select"
+                        className="form-control"
+                        name="setting.country"
+                        value={(!isNew && user.setting?.country) || 'FRANCE'}
+                      >
+                        <option value="FRANCE">FRANCE</option>
+                        <option value="USA">USA</option>
+                        <option value="SWITZERLAND">SWITZERLAND</option>
+                        <option value="GERMANY">GERMANY</option>
+                        <option value="ITALY">ITALY</option>
+                        <option value="IRAN">IRAN</option>
+                        <option value="CHINA">CHINA</option>
+                        <option value="NORTH_KOREA">NORTH_KOREA</option>
+                        <option value="CANADA">CANADA</option>
+                        <option value="SENEGAL">SENEGAL</option>
+                      </AvInput>
+                    </AvGroup>
+                  </>
+                )}
+              </div>
+              {isBank && (
+                <AvGroup>
+                  <Label id="cityLabel" for="user-setting-position">
+                    Position
                   </Label>
                   <AvField
-                    id="user-setting-city"
+                    id="user-setting-position"
                     type="text"
-                    name="setting.city"
-                    value={user.setting?.city}
+                    name="setting.position"
+                    value={user.setting?.position}
                     validate={{
                       required: {
                         value: true,
@@ -228,65 +292,46 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                     }}
                   />
                 </AvGroup>
-                <AvGroup className="col-md-6">
-                  <Label id="countryLabel" for="user-setting-country">
-                    Country
-                  </Label>
-                  <AvInput
-                    id="user-setting-country"
-                    type="select"
-                    className="form-control"
-                    name="setting.country"
-                    value={(!isNew && user.setting?.country) || 'FRANCE'}
-                  >
-                    <option value="FRANCE">FRANCE</option>
-                    <option value="USA">USA</option>
-                    <option value="SWITZERLAND">SWITZERLAND</option>
-                    <option value="GERMANY">GERMANY</option>
-                    <option value="ITALY">ITALY</option>
-                    <option value="IRAN">IRAN</option>
-                    <option value="CHINA">CHINA</option>
-                    <option value="NORTH_KOREA">NORTH_KOREA</option>
-                    <option value="CANADA">CANADA</option>
-                    <option value="SENEGAL">SENEGAL</option>
-                  </AvInput>
-                </AvGroup>
-              </div>
-              <AvGroup>
-                <Label id="ibanLabel" for="user-setting-iban">
-                  Bank Account
-                </Label>
-                <AvField
-                  id="user-setting-iban"
-                  type="text"
-                  name="setting.iban"
-                  value={user.setting?.iban}
-                  validate={{
-                    required: { value: true, errorMessage: 'This field is required.' },
-                    minLength: { value: 14, errorMessage: 'This field is required to be at least 14 characters.' },
-                    maxLength: { value: 35, errorMessage: 'This field cannot be longer than 35 characters.' }
-                  }}
-                />
-              </AvGroup>
-              <AvGroup>
-                <Label id="ethAddressLabel" for="user-setting-ethAddress">
-                  Eth Address
-                </Label>
-                <AvField
-                  id="user-setting-ethAddress"
-                  type="text"
-                  name="setting.ethAddress"
-                  value={user.setting?.ethAddress}
-                  validate={{
-                    required: {
-                      value: true,
-                      errorMessage: 'This field is required.'
-                    },
-                    minLength: { value: 40, errorMessage: 'This field is required to be at least 40 characters.' },
-                    maxLength: { value: 42, errorMessage: 'This field cannot be longer than 42 characters.' }
-                  }}
-                />
-              </AvGroup>
+              )}
+              {isUser && (
+                <>
+                  <AvGroup>
+                    <Label id="ibanLabel" for="user-setting-iban">
+                      Bank Account
+                    </Label>
+                    <AvField
+                      id="user-setting-iban"
+                      type="text"
+                      name="setting.iban"
+                      value={user.setting?.iban || 'xxxxxxxxxxxxxx'}
+                      validate={{
+                        required: { value: true, errorMessage: 'This field is required.' },
+                        minLength: { value: 14, errorMessage: 'This field is required to be at least 14 characters.' },
+                        maxLength: { value: 35, errorMessage: 'This field cannot be longer than 35 characters.' }
+                      }}
+                    />
+                  </AvGroup>
+                  <AvGroup>
+                    <Label id="ethAddressLabel" for="user-setting-ethAddress">
+                      Eth Address
+                    </Label>
+                    <AvField
+                      id="user-setting-ethAddress"
+                      type="text"
+                      name="setting.ethAddress"
+                      value={user.setting?.ethAddress || 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'}
+                      validate={{
+                        required: {
+                          value: true,
+                          errorMessage: 'This field is required.'
+                        },
+                        minLength: { value: 40, errorMessage: 'This field is required to be at least 40 characters.' },
+                        maxLength: { value: 42, errorMessage: 'This field cannot be longer than 42 characters.' }
+                      }}
+                    />
+                  </AvGroup>
+                </>
+              )}
               <AvGroup check>
                 <Label>
                   <AvInput type="checkbox" name="activated" value={user.activated} checked={user.activated} disabled={!user.id} /> Activated
