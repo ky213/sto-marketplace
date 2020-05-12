@@ -2,8 +2,8 @@ version: '2'
 services:
   exchange-elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.8.6
-    # volumes:
-    #     - ~/volumes/jhipster/exchange/elasticsearch/:/usr/share/elasticsearch/data/
+    volumes:
+         - ./volumes/elasticsearch/:/usr/share/elasticsearch/data/
     ports:
       - 9200:9200
       - 9300:9300
