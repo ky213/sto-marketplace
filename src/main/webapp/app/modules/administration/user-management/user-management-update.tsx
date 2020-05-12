@@ -18,8 +18,12 @@ export interface IUserManagementUpdateProps extends StateProps, DispatchProps, R
 export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
   const { user, loading, updating, roles } = props;
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.login);
-  const [selectedRole, setSelectedRole] = useState('');
+  const [newRoles, setNewroles] = useState([]);
   const isInvalid = false;
+
+  useEffect(() => {
+    setNewroles(user.authorities || []);
+  }, [props]);
 
   useEffect(() => {
     if (isNew) {
@@ -36,7 +40,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
   };
 
   const saveUser = (event, values) => {
-    values.authorities = [selectedRole || user.authorities?.sort()[0] || AUTHORITIES.USER];
+    values.authorities = newRoles;
     values.setting.dateOfBirth = convertDateTimeToServer(values.setting.dateOfBirth);
 
     if (isNew) {
@@ -46,7 +50,6 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
     }
     handleClose();
   };
-
   return (
     <div>
       <Row className="justify-content-center">
@@ -66,10 +69,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                   <AvField type="text" className="form-control" name="id" required readOnly value={user.id} />
                 </AvGroup>
               ) : null}
-              <SelectRole
-                role={selectedRole || user.authorities?.sort()[0] || AUTHORITIES.USER}
-                changeRole={role => setSelectedRole(role)}
-              />
+              <SelectRole roles={user.authorities || []} reportRoles={(nr: string[]) => setNewroles(nr)} />
               <AvGroup>
                 <Label for="login">Username</Label>
                 <AvField

@@ -1,19 +1,30 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { AvRadioGroup, AvRadio } from 'availity-reactstrap-validation';
-import { Row, Col, Card, Button } from 'reactstrap';
+import { AvCheckboxGroup, AvCheckbox } from 'availity-reactstrap-validation';
+import { Row, Col, Card } from 'reactstrap';
 
 import { AUTHORITIES } from 'app/config/constants';
+import './style.scss';
 
-const SelectRole = ({ changeRole, role }) => {
+const SelectRole = ({ roles, reportRoles }) => {
+  const [newRoles, setNewRoles] = useState(new Set([...roles]));
+
+  const setSelectedRole = (role: string) => {
+    if (newRoles.has(role)) newRoles.delete(role);
+    else newRoles.add(role);
+
+    setNewRoles(new Set(newRoles));
+    reportRoles([...newRoles]);
+  };
+
   return (
-    <AvRadioGroup name="authorities">
+    <AvCheckboxGroup name="authorities">
       <Row className="px-2">
         <Col md="4" className="px-1">
-          <Card className="btn py-2" onClick={() => changeRole(AUTHORITIES.ADMIN)}>
+          <Card className="btn py-2 table-hover" onClick={() => setSelectedRole(AUTHORITIES.ADMIN)}>
             <Row className="px-2">
               <Col className="col-1 px-1">
-                <input className="" type="radio" id="authorities-admin" value={AUTHORITIES.ADMIN} checked={role === AUTHORITIES.ADMIN} />
+                <AvCheckbox checked={newRoles.has(AUTHORITIES.ADMIN)} />
               </Col>
               <Col className="col-11 px-1 text-left">
                 <p className="p-0 m-0">Admin</p>
@@ -23,10 +34,10 @@ const SelectRole = ({ changeRole, role }) => {
           </Card>
         </Col>
         <Col className="px-1">
-          <Card className="btn py-2" onClick={() => changeRole(AUTHORITIES.BANK)}>
+          <Card className="btn py-2" onClick={() => setSelectedRole(AUTHORITIES.BANK)}>
             <Row className="px-2">
               <Col className="col-1 px-1">
-                <input className="" type="radio" id="authorities-admin" value={AUTHORITIES.BANK} checked={role === AUTHORITIES.BANK} />
+                <AvCheckbox checked={newRoles.has(AUTHORITIES.BANK)} />
               </Col>
               <Col className="col-11 px-1 text-left">
                 <p className="p-0 m-0">Banker</p>
@@ -36,10 +47,10 @@ const SelectRole = ({ changeRole, role }) => {
           </Card>
         </Col>
         <Col className="px-1">
-          <Card className="btn py-2" onClick={() => changeRole(AUTHORITIES.USER)}>
+          <Card className="btn py-2" onClick={() => setSelectedRole(AUTHORITIES.USER)}>
             <Row className="px-2">
               <Col className="col-1 px-1">
-                <input className="" type="radio" id="authorities-admin" value={AUTHORITIES.USER} checked={role === AUTHORITIES.USER} />
+                <AvCheckbox checked={newRoles.has(AUTHORITIES.USER)} />
               </Col>
               <Col className="col-11 px-1 text-left">
                 <p className="p-0 m-0">User</p>
@@ -49,7 +60,7 @@ const SelectRole = ({ changeRole, role }) => {
           </Card>
         </Col>
       </Row>
-    </AvRadioGroup>
+    </AvCheckboxGroup>
   );
 };
 
