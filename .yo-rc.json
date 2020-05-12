@@ -38,7 +38,7 @@
     "blueprints": [],
     "appsFolders": ["exchange"],
     "directoryPath": "../",
-    "dockerRepositoryName": "gcr.io/Exchange",
+    "dockerRepositoryName": "alpinetech",
     "dockerPushCommand": "docker push",
     "kubernetesNamespace": "default",
     "kubernetesServiceType": "LoadBalancer",

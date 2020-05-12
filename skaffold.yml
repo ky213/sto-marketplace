@@ -2,7 +2,7 @@ apiVersion: skaffold/v1
 kind: Config
 build:
   artifacts:
-    - image: gcr.io/Exchange/exchange
+    - image: alpinetech/exchange
       context: ../exchange
       jib: {}
   tagPolicy:

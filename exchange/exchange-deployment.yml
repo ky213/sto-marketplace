@@ -46,7 +46,7 @@ spec:
               done
       containers:
         - name: exchange-app
-          image: gcr.io/Exchange/exchange
+          image: alpinetech/exchange
           env:
             - name: SPRING_PROFILES_ACTIVE
               value: prod
