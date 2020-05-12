@@ -98,6 +98,7 @@ public class Order implements Serializable {
     private Boolean active;
 
     @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id", updatable = false)
     @JsonIgnoreProperties("orders")
     private User user;
 

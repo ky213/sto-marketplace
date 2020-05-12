@@ -4,6 +4,7 @@ import swiss.alpinetech.exchange.ExchangeApp;
 import swiss.alpinetech.exchange.domain.Order;
 import swiss.alpinetech.exchange.repository.OrderRepository;
 import swiss.alpinetech.exchange.repository.search.OrderSearchRepository;
+import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.OrderService;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +47,7 @@ import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 @SpringBootTest(classes = ExchangeApp.class)
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
-@WithMockUser
+@WithMockUser(authorities = {AuthoritiesConstants.ADMIN, AuthoritiesConstants.USER, AuthoritiesConstants.BANK})
 public class OrderResourceIT {
 
     private static final String DEFAULT_ID_ORDER = "AAAAAAAAAA";
@@ -401,7 +402,7 @@ public class OrderResourceIT {
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
             .andExpect(jsonPath("$.[*].active").value(hasItem(DEFAULT_ACTIVE.booleanValue())));
     }
-    
+
     @Test
     @Transactional
     public void getOrder() throws Exception {

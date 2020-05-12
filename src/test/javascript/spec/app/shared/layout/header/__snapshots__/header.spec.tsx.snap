@@ -8,7 +8,7 @@ exports[`Header Renders a Header component in dev profile with LoadingBar, Navba
     className="ribbon dev"
   >
     <a
-      href=""
+      href="/"
     >
       Development
     </a>
