@@ -6,7 +6,7 @@ import { TextFormat, JhiPagination, JhiItemCount, getSortState } from 'react-jhi
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AvForm, AvGroup, AvInput } from 'availity-reactstrap-validation';
 
-import { APP_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import { getUsers, updateUser } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
@@ -48,7 +48,10 @@ export const UserManagement = (props: IUserManagementProps) => {
 
   const handleSearch = event => setSearch(event.target.value);
 
-  const { users, account, match, totalItems } = props;
+  const { account, match, totalItems } = props;
+  const isBanker = account.authorities.includes(AUTHORITIES.BANK);
+  const users = props.users.filter(user => (isBanker ? !user.authorities.includes(AUTHORITIES.ADMIN) : user));
+
   return (
     <div>
       <h2 id="user-management-page-heading">
