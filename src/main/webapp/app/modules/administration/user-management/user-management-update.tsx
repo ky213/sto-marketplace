@@ -8,7 +8,7 @@ import moment from 'moment';
 
 import { getUser, getRoles, updateUser, createUser, reset } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
-import { displayDefaultDateTime, convertDateTimeFromServer, convertDateTimeToServer } from 'app/shared/util/date-utils';
+import { convertDateTimeToServer } from 'app/shared/util/date-utils';
 import SelectRole from './components/SelectRole';
 import { AUTHORITIES } from 'app/config/constants';
 import DatePicker from './components/DatePicker';
@@ -16,11 +16,10 @@ import DatePicker from './components/DatePicker';
 export interface IUserManagementUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ login: string }> {}
 
 export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
-  const { user, loading, updating, roles } = props;
+  const { user, loading, updating } = props;
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.login);
   const [newRoles, setNewroles] = useState([]);
   const isInvalid = false;
-  const isAdmin = newRoles.includes(AUTHORITIES.ADMIN);
   const isBank = newRoles.includes(AUTHORITIES.BANK);
   const isUser = newRoles.includes(AUTHORITIES.USER);
 
@@ -233,7 +232,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                         id="user-setting-address"
                         type="text"
                         name="setting.address"
-                        value={user.setting?.address || 'address'}
+                        value={user.setting?.address}
                         validate={{
                           required: {
                             value: true,
@@ -277,7 +276,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                         id="user-setting-city"
                         type="text"
                         name="setting.city"
-                        value={user.setting?.city || 'City'}
+                        value={user.setting?.city}
                         validate={{
                           required: {
                             value: true,
@@ -389,16 +388,6 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                   <AvInput type="checkbox" name="activated" value={user.activated} checked={user.activated} disabled={!user.id} /> Activated
                 </Label>
               </AvGroup>
-              {/* <AvGroup>
-                <Label for="authorities">Profiles</Label>
-                <AvInput type="select" className="form-control" name="authorities" value={user.authorities} multiple>
-                  {roles.map(role => (
-                    <option value={role} key={role}>
-                      {role}
-                    </option>
-                  ))}
-                </AvInput>
-              </AvGroup> */}
               <Button tag={Link} to="/admin/user-management" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
