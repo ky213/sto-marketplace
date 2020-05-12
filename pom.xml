@@ -352,6 +352,16 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-messaging</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.15</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.15</version>
+        </dependency>
         <!-- jhipster-needle-maven-add-dependency -->
     </dependencies>
 
@@ -625,11 +635,7 @@
                             <image>adoptopenjdk:11-jre-hotspot</image>
                         </from>
                         <to>
-                            <image>alpinetech/exchange:latest</image>
-                            <auth>
-                                <username>techalpine</username>
-                                <password>Al20pi20ne**</password>
-                            </auth>
+                            <image>exchange:latest</image>
                         </to>
                         <container>
                             <entrypoint>

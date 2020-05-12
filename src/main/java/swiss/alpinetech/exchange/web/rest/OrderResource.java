@@ -1,5 +1,6 @@
 package swiss.alpinetech.exchange.web.rest;
 
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import swiss.alpinetech.exchange.domain.Order;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
@@ -21,11 +22,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -123,6 +125,51 @@ public class OrderResource {
         Page<Order> page = orderService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+
+    /**
+     * {@code GET  /orders} : get all the orders.
+     *
+     * @param beginDateParam the begin date of orders.
+     * @param endDateParam the end date of orders.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the excel file list of orders in body.
+     */
+    @GetMapping("/orders/export")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
+    public ResponseEntity<InputStreamResource> exportOrders(@RequestParam String beginDateParam, @RequestParam String endDateParam) throws IOException {
+        log.debug("REST request to export list of Orders between beginDate {} and endDate {}", beginDateParam, endDateParam);
+        ZonedDateTime beginDate = ZonedDateTime.parse(beginDateParam);
+        ZonedDateTime endDate = ZonedDateTime.parse(endDateParam);
+        InputStreamResource ordersExcelFile = orderService.exportOrders(beginDate, endDate);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=orders.xlsx");
+        return ResponseEntity
+            .ok()
+            .headers(headers)
+            .body(ordersExcelFile);
+    }
+
+    /**
+     * {@code GET  /orders} : get all the orders.
+     *
+     * @param beginDateParam the begin date of orders.
+     * @param endDateParam the end date of orders.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the excel file list of orders in body.
+     */
+    @GetMapping("/user-orders/export")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<InputStreamResource> exportUserOrders(@RequestParam Long userId, @RequestParam String beginDateParam, @RequestParam String endDateParam) throws IOException {
+        log.debug("REST request to export list of user {} Orders between beginDate {} and endDate {}", userId, beginDateParam, endDateParam);
+        ZonedDateTime beginDate = ZonedDateTime.parse(beginDateParam);
+        ZonedDateTime endDate = ZonedDateTime.parse(endDateParam);
+        InputStreamResource ordersExcelFile = orderService.exportUserOrders(userId, beginDate, endDate);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=orders.xlsx");
+        return ResponseEntity
+            .ok()
+            .headers(headers)
+            .body(ordersExcelFile);
     }
 
     /**

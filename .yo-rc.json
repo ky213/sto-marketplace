@@ -35,6 +35,7 @@
     "dtoSuffix": "DTO",
     "otherModules": [],
     "enableTranslation": false,
+<<<<<<< HEAD
     "blueprints": [],
     "appsFolders": ["exchange"],
     "directoryPath": "../",
@@ -46,5 +47,8 @@
     "ingressDomain": "",
     "monitoring": "no",
     "istio": false
+=======
+    "blueprints": []
+>>>>>>> 1e433aada9e662ec1981bbf74d06b7ad7ce39851
   }
 }
