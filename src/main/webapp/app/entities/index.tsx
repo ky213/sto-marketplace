@@ -47,7 +47,7 @@ const Routes = ({ account, match }) => (
             component={HomeCustomer}
             hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.USER]}
           />
-          <ErrorBoundaryRoute path={`${match.url}security-token`} component={SecurityToken} />
+          <PrivateRoute path={`${match.url}security-token`} component={SecurityToken} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
           <PrivateRoute
             path={`${match.url}user-setting`}
             component={UserSetting}

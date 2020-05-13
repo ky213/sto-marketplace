@@ -16,8 +16,8 @@ const defaultMiddlewares = [
   notificationMiddleware,
   promiseMiddleware,
   loadingBarMiddleware(),
-  websocketMiddleware,
-  loggerMiddleware
+  websocketMiddleware
+  // loggerMiddleware
 ];
 const composedMiddlewares = middlewares =>
   process.env.NODE_ENV === 'development'

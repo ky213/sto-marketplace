@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, Label, Card } from 'reactstrap';
-import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
+import { AvForm, AvGroup, AvInput, AvField, AvRadioGroup, AvRadio } from 'availity-reactstrap-validation';
 import { ICrudGetAction, ICrudGetAllAction, setFileData, openFile, byteSize, ICrudPutAction } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
@@ -11,6 +11,7 @@ import { getEntity, updateEntity, createEntity, setBlob, reset } from './securit
 import { ISecurityToken } from 'app/shared/model/security-token.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
+import './style.scss';
 
 export interface ISecurityTokenUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -90,18 +91,21 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                 <Label id="categoryLabel" for="security-token-category">
                   Category
                 </Label>
-                <AvInput
-                  id="security-token-category"
-                  type="select"
-                  className="form-control"
+                <AvRadioGroup
                   name="category"
+                  required
+                  errorMessage="This field is required!"
                   value={(!isNew && securityTokenEntity.category) || 'EQUITY'}
                 >
-                  <option value="EQUITY">EQUITY</option>
-                  <option value="FUNDS">FUNDS</option>
-                  <option value="REAL_ESTATE">REAL_ESTATE</option>
-                  <option value="DERIVATIVE">DERIVATIVE</option>
-                </AvInput>
+                  <Row className="mb-2 px-3">
+                    <AvRadio label="EQUITY" value="EQUITY" />
+                    <AvRadio label="FUNDS" value="FUNDS" />
+                  </Row>
+                  <Row className="px-3">
+                    <AvRadio label="REAL ESTATE" value="REAL_ESTATE" />
+                    <AvRadio label="DERIVATIVE" value="DERIVATIVE" />
+                  </Row>
+                </AvRadioGroup>
               </AvGroup>
               <Row>
                 <AvGroup className="col-md-6">
@@ -466,13 +470,45 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
               <Row>
                 <AvGroup className="col-md-6">
                   <AvGroup>
+                    <Label id="logoLabel" for="logo">
+                      Logo
+                    </Label>
+                    <br />
+                    {logo ? (
+                      <div>
+                        <a onClick={openFile(logoContentType, logo)}>
+                          <img src={`data:${logoContentType};base64,${logo}`} style={{ maxHeight: '100px' }} />
+                        </a>
+                        <br />
+                        <Row>
+                          <Col>
+                            <span>
+                              {logoContentType}, {byteSize(logo)}
+                            </span>
+                          </Col>
+                          <Col>
+                            <Button color="danger" onClick={clearBlob('logo')}>
+                              <FontAwesomeIcon icon="times-circle" />
+                            </Button>
+                          </Col>
+                        </Row>
+                      </div>
+                    ) : null}
+                    <input id="file_logo" type="file" onChange={onBlobChange(true, 'logo')} accept="image/*" />
+                    <AvInput type="hidden" name="logo" value={logo} />
+                  </AvGroup>
+                </AvGroup>
+                <AvGroup className="col-md-6">
+                  <AvGroup>
                     <Label id="prospectusLabel" for="prospectus">
                       Prospectus
                     </Label>
                     <br />
                     {prospectus ? (
                       <div>
-                        <a onClick={openFile(prospectusContentType, prospectus)}>Open</a>
+                        <a onClick={openFile(prospectusContentType, prospectus)}>
+                          <img src={`data:${prospectusContentType};base64,${prospectus}`} style={{ maxHeight: '100px' }} />
+                        </a>
                         <br />
                         <Row>
                           <Col>
