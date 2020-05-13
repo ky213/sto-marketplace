@@ -53,7 +53,7 @@ const Routes = ({ account, match }) => (
             component={UserSetting}
             hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
           />
-          <PrivateRoute path={`${match.url}bank-info`} component={BankInfo} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]} />
+          <ErrorBoundaryRoute path={`${match.url}bank-info`} component={BankInfo} />
           <ErrorBoundaryRoute path={`${match.url}order`} component={Order} />
           <ErrorBoundaryRoute path={`${match.url}transaction`} component={Transaction} />
           <PrivateRoute

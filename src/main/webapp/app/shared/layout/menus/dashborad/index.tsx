@@ -9,11 +9,11 @@ import { IRootState } from 'app/shared/reducers';
 import { connect } from 'react-redux';
 import './menu.scss';
 
-const Menu = ({ account, totalBankItems: totalBanklItems, getBanks, location }) => {
+const Menu = ({ account, totalBankItems, getBanks }) => {
   const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
   const isBank = account.authorities.includes(AUTHORITIES.BANK);
   const homeLink = isAdmin || isBank ? '/home-bank' : '/home-customer';
-  const bankInfoLink = totalBanklItems.length ? '/bank-info/1/edit' : '/bank-info/new';
+  const bankInfoLink = totalBankItems ? `/bank-info/1/${isAdmin || isBank ? 'edit' : ''}` : `/bank-info/${isAdmin || isBank ? 'new' : '1'}`;
 
   useEffect(() => {
     getBanks();
@@ -44,14 +44,14 @@ const Menu = ({ account, totalBankItems: totalBanklItems, getBanks, location }) 
           Reporting
         </NavLink>
       </NavItem>
-      {(isAdmin || isBank) && (
-        <NavItem>
-          <NavLink to={bankInfoLink} className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
-            <FontAwesomeIcon icon="university" className="mr-2" />
-            Bank info
-          </NavLink>
-        </NavItem>
-      )}
+
+      <NavItem>
+        <NavLink to={bankInfoLink} className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
+          <FontAwesomeIcon icon="university" className="mr-2" />
+          Bank info
+        </NavLink>
+      </NavItem>
+
       {(isAdmin || isBank) && (
         <NavItem>
           <NavLink to="/admin/user-management" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
@@ -70,7 +70,7 @@ const Menu = ({ account, totalBankItems: totalBanklItems, getBanks, location }) 
 };
 
 const mapStateToProps = ({ bankInfo }: IRootState) => ({
-  totalBankItems: bankInfo.entities
+  totalBankItems: bankInfo.totalItems
 });
 
 const mapDispatchToProps = {
