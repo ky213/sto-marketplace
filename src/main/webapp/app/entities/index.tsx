@@ -21,7 +21,7 @@ import Admin from 'app/modules/administration';
 import Account from 'app/modules/account';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
-const Routes = ({ account, match }) => (
+const Routes = ({ account, match, location }) => (
   <Container fluid className="h-100 bg-beige ">
     <Row className="h-100 bg-beige pt-3" style={{}}>
       <Col xs="2" className="h-100 pl-0">
@@ -35,7 +35,7 @@ const Routes = ({ account, match }) => (
             </Col>
           </Row>
           <DropdownItem divider className="w-100" />
-          <Menu account={account} location={location} />
+          <Menu account={account} />
         </Card>
       </Col>
       <Col xs="10" className="mx-auto overflow-auto h-100">
