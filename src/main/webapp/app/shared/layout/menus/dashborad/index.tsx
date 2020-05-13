@@ -1,15 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Nav, NavItem } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { AUTHORITIES } from '../../../../config/constants';
+import { getEntities } from 'app/entities/bank-info/bank-info.reducer';
+import { AUTHORITIES } from 'app/config/constants';
+import { IRootState } from 'app/shared/reducers';
+import { connect } from 'react-redux';
 import './menu.scss';
 
-const Menu = ({ account, location }) => {
+const Menu = ({ account, totalBankItems: totalBanklItems, getBanks, location }) => {
   const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
   const isBank = account.authorities.includes(AUTHORITIES.BANK);
   const homeLink = isAdmin || isBank ? '/home-bank' : '/home-customer';
+  const bankInfoLink = totalBanklItems.length ? '/bank-info/1/edit' : '/bank-info/new';
+
+  useEffect(() => {
+    getBanks();
+  }, []);
 
   return (
     <Nav vertical>
@@ -38,7 +46,7 @@ const Menu = ({ account, location }) => {
       </NavItem>
       {(isAdmin || isBank) && (
         <NavItem>
-          <NavLink to="/bank-info/1/edit" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
+          <NavLink to={bankInfoLink} className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
             <FontAwesomeIcon icon="university" className="mr-2" />
             Bank info
           </NavLink>
@@ -61,4 +69,12 @@ const Menu = ({ account, location }) => {
   );
 };
 
-export default Menu;
+const mapStateToProps = ({ bankInfo }: IRootState) => ({
+  totalBankItems: bankInfo.entities
+});
+
+const mapDispatchToProps = {
+  getBanks: getEntities
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Menu);
