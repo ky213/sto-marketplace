@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col, Card } from 'reactstrap';
+import { Button, Row, Col, Card, CardHeader, CardBody } from 'reactstrap';
 import { ICrudGetAction, openFile, byteSize, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -9,6 +9,7 @@ import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './security-token.reducer';
 import { ISecurityToken } from 'app/shared/model/security-token.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import moment from 'moment';
 
 export interface ISecurityTokenDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -19,171 +20,208 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
 
   const { securityTokenEntity } = props;
   return (
-    <Card className="p-3">
-      <Row>
-        <Col md="8">
-          <h2>
-            SecurityToken [<b>{securityTokenEntity.id}</b>]
-          </h2>
-          <dl className="jh-entity-details">
-            <dt>
-              <span id="idRed">Id Red</span>
-            </dt>
-            <dd>{securityTokenEntity.idRed}</dd>
-            <dt>
-              <span id="name">Name</span>
-            </dt>
-            <dd>{securityTokenEntity.name}</dd>
-            <dt>
-              <span id="laucheDate">Lauche Date</span>
-            </dt>
-            <dd>
-              <TextFormat value={securityTokenEntity.laucheDate} type="date" format={APP_DATE_FORMAT} />
-            </dd>
-            <dt>
-              <span id="logo">Logo</span>
-            </dt>
-            <dd>
-              {securityTokenEntity.logo ? (
-                <div>
-                  <a onClick={openFile(securityTokenEntity.logoContentType, securityTokenEntity.logo)}>
-                    <img
-                      src={`data:${securityTokenEntity.logoContentType};base64,${securityTokenEntity.logo}`}
-                      style={{ maxHeight: '30px' }}
-                    />
-                  </a>
-                  <span>
-                    {securityTokenEntity.logoContentType}, {byteSize(securityTokenEntity.logo)}
-                  </span>
-                </div>
-              ) : null}
-            </dd>
-            <dt>
-              <span id="symbol">Symbol</span>
-            </dt>
-            <dd>{securityTokenEntity.symbol}</dd>
-            <dt>
-              <span id="juridiction">Juridiction</span>
-            </dt>
-            <dd>{securityTokenEntity.juridiction}</dd>
-            <dt>
-              <span id="issuerName">Issuer Name</span>
-            </dt>
-            <dd>{securityTokenEntity.issuerName}</dd>
-            <dt>
-              <span id="issuerCounty">Issuer County</span>
-            </dt>
-            <dd>{securityTokenEntity.issuerCounty}</dd>
-            <dt>
-              <span id="tokenizationFirmName">Tokenization Firm Name</span>
-            </dt>
-            <dd>{securityTokenEntity.tokenizationFirmName}</dd>
-            <dt>
-              <span id="tokenizationFirmCountry">Tokenization Firm Country</span>
-            </dt>
-            <dd>{securityTokenEntity.tokenizationFirmCountry}</dd>
-            <dt>
-              <span id="kycProviderName">Kyc Provider Name</span>
-            </dt>
-            <dd>{securityTokenEntity.kycProviderName}</dd>
-            <dt>
-              <span id="kycProviderCountry">Kyc Provider Country</span>
-            </dt>
-            <dd>{securityTokenEntity.kycProviderCountry}</dd>
-            <dt>
-              <span id="stoPrice">Sto Price</span>
-            </dt>
-            <dd>{securityTokenEntity.stoPrice}</dd>
-            <dt>
-              <span id="amountRaised">Amount Raised</span>
-            </dt>
-            <dd>{securityTokenEntity.amountRaised}</dd>
-            <dt>
-              <span id="category">Category</span>
-            </dt>
-            <dd>{securityTokenEntity.category}</dd>
-            <dt>
-              <span id="summary">Summary</span>
-            </dt>
-            <dd>{securityTokenEntity.summary}</dd>
-            <dt>
-              <span id="description">Description</span>
-            </dt>
-            <dd>{securityTokenEntity.description}</dd>
-            <dt>
-              <span id="restrictionCounty">Restriction County</span>
-            </dt>
-            <dd>{securityTokenEntity.restrictionCounty}</dd>
-            <dt>
-              <span id="restrictionNationality">Restriction Nationality</span>
-            </dt>
-            <dd>{securityTokenEntity.restrictionNationality}</dd>
-            <dt>
-              <span id="prospectus">Prospectus</span>
-            </dt>
-            <dd>
-              {securityTokenEntity.prospectus ? (
-                <div>
-                  <a onClick={openFile(securityTokenEntity.prospectusContentType, securityTokenEntity.prospectus)}>Open&nbsp;</a>
-                  <span>
-                    {securityTokenEntity.prospectusContentType}, {byteSize(securityTokenEntity.prospectus)}
-                  </span>
-                </div>
-              ) : null}
-            </dd>
-            <dt>
-              <span id="status">Status</span>
-            </dt>
-            <dd>{securityTokenEntity.status}</dd>
-            <dt>
-              <span id="registrationDate">Registration Date</span>
-            </dt>
-            <dd>
-              <TextFormat value={securityTokenEntity.registrationDate} type="date" format={APP_DATE_FORMAT} />
-            </dd>
-            <dt>
-              <span id="updateDate">Update Date</span>
-            </dt>
-            <dd>
-              <TextFormat value={securityTokenEntity.updateDate} type="date" format={APP_DATE_FORMAT} />
-            </dd>
-            <dt>
-              <span id="dueDiligenceDate">Due Diligence Date</span>
-            </dt>
-            <dd>
-              <TextFormat value={securityTokenEntity.dueDiligenceDate} type="date" format={APP_DATE_FORMAT} />
-            </dd>
-            <dt>
-              <span id="lastSellingprice">Last Sellingprice</span>
-            </dt>
-            <dd>{securityTokenEntity.lastSellingprice}</dd>
-            <dt>
-              <span id="lastBuyingPrice">Last Buying Price</span>
-            </dt>
-            <dd>{securityTokenEntity.lastBuyingPrice}</dd>
-            <dt>
-              <span id="smartcontractAddress">Smartcontract Address</span>
-            </dt>
-            <dd>{securityTokenEntity.smartcontractAddress}</dd>
-            <dt>
-              <span id="kycAddress">Kyc Address</span>
-            </dt>
-            <dd>{securityTokenEntity.kycAddress}</dd>
-            <dt>
-              <span id="website">Website</span>
-            </dt>
-            <dd>{securityTokenEntity.website}</dd>
-          </dl>
-          <Button tag={Link} to="/security-token" replace color="info">
-            <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
-          </Button>
-          &nbsp;
-          <Button tag={Link} to={`/security-token/${securityTokenEntity.id}/edit`} replace color="primary">
-            <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
-          </Button>
-        </Col>
-      </Row>
-    </Card>
+    <Row className="mx-auto">
+      <Col md="4" className=" p-0">
+        <Card className="p-0">
+          <CardBody className="p-3">
+            <h6>{securityTokenEntity.name}</h6>
+            <Row>
+              <Col xs="6">
+                <small className="text-muted">
+                  {securityTokenEntity.restrictionCounty} <br />
+                  {moment().format('LLL')}
+                </small>
+              </Col>
+              <Col>
+                <img
+                  className="bg-secondary d-block ml-auto"
+                  src={`data:image/png;base64,${securityTokenEntity.logo}`}
+                  alt="security_token_logo"
+                  style={{ maxHeight: '100px', maxWidth: '100px' }}
+                />
+              </Col>
+            </Row>
+          </CardBody>
+        </Card>
+      </Col>
+      <Col className="p-0 ml-2">
+        <Card className="p-0">
+          <CardHeader>
+            <h6 className="p-0 m-0"> ID: {securityTokenEntity.id}</h6>
+            <small className="text-muted p-0 m-0">Information about securtiy token</small>
+          </CardHeader>
+          <CardBody>
+            <Row>
+              <Col>
+                <small className="text-muted ">Id Red</small>
+                <p>{securityTokenEntity.idRed}</p>
+              </Col>
+              <Col>
+                <small className="text-muted ">Status</small>
+                <p>{securityTokenEntity.status}</p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Name</small>
+                <p>{securityTokenEntity.name}</p>
+              </Col>
+
+              <Col>
+                <small className="text-muted ">Symbol</small>
+                <p>{securityTokenEntity.symbol}</p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Jurisdiction</small>
+                <p>{securityTokenEntity.juridiction}</p>
+              </Col>
+              <Col>
+                <small className="text-muted ">Issuer Name</small>
+                <p>{securityTokenEntity.issuerName}</p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Issuer County</small>
+                <p>{securityTokenEntity.issuerCounty}</p>
+              </Col>
+              <Col>
+                <small className="text-muted ">Tokenization Firm Name</small>
+                <p>{securityTokenEntity.tokenizationFirmName}</p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Smartcontract Address</small>
+                <p>{securityTokenEntity.smartcontractAddress}</p>
+              </Col>
+              <Col>
+                <small className="text-muted ">KYC Address</small>
+                <p>{securityTokenEntity.kycAddress}</p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Tokenization Firm Country</small>
+                <p>{securityTokenEntity.tokenizationFirmCountry}</p>
+              </Col>
+              <Col>
+                <small className="text-muted ">KYC Provider Name</small>
+                <p>{securityTokenEntity.kycProviderName}</p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">KYC Provider Country</small>
+                <p>{securityTokenEntity.kycProviderCountry}</p>
+              </Col>
+              <Col>
+                <small className="text-muted ">Sto Price</small>
+                <p>{securityTokenEntity.stoPrice}</p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Amount Raised</small>
+                <p>{securityTokenEntity.amountRaised}</p>
+              </Col>
+              <Col>
+                <small className="text-muted ">Category</small>
+                <p>{securityTokenEntity.category}</p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Restriction County</small>
+                <p>{securityTokenEntity.restrictionCounty}</p>
+              </Col>
+              <Col>
+                <small className="text-muted ">Restriction Nationality</small>
+                <p>{securityTokenEntity.restrictionNationality}</p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Registration Date</small>
+                <p>
+                  <TextFormat value={securityTokenEntity.registrationDate} type="date" format={APP_DATE_FORMAT} />
+                </p>
+              </Col>
+              <Col>
+                <small className="text-muted ">Lauche Date</small>
+                <p>
+                  <TextFormat value={securityTokenEntity.laucheDate} type="date" format={APP_DATE_FORMAT} />
+                </p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Update Date</small>
+                <p>{securityTokenEntity.updateDate}</p>
+              </Col>
+              <Col>
+                <small className="text-muted ">Due Diligence Date</small>
+                <p>
+                  <TextFormat value={securityTokenEntity.dueDiligenceDate} type="date" format={APP_DATE_FORMAT} />
+                </p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Last Sellingprice</small>
+                <p>{securityTokenEntity.lastSellingprice}</p>
+              </Col>
+              <Col>
+                <small className="text-muted ">Last Buying Price</small>
+                <p>{securityTokenEntity.lastBuyingPrice}</p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Website</small>
+                <p>{securityTokenEntity.website}</p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Summary</small>
+                <p>{securityTokenEntity.summary}</p>
+              </Col>
+              <Col>
+                <small className="text-muted ">Description</small>
+                <p>{securityTokenEntity.description}</p>
+              </Col>
+            </Row>
+            <Row className="mb-3">
+              <Col>
+                <small className="text-muted ">Prospectus</small>
+                {securityTokenEntity.prospectus ? (
+                  <div>
+                    <a onClick={openFile(securityTokenEntity.prospectusContentType, securityTokenEntity.prospectus)}>
+                      <img
+                        className="bg-secondary d-block "
+                        src={`data:image/png;base64,${securityTokenEntity.prospectus}`}
+                        alt="security_token_prospectus"
+                        style={{ maxHeight: '200px', maxWidth: '200px' }}
+                      />
+                    </a>
+                  </div>
+                ) : null}
+              </Col>
+            </Row>
+            <Button tag={Link} to="/security-token" replace color="info">
+              <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
+            </Button>
+            &nbsp;
+            <Button tag={Link} to={`/security-token/${securityTokenEntity.id}/edit`} replace color="primary">
+              <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
+            </Button>
+          </CardBody>
+        </Card>
+      </Col>
+    </Row>
   );
 };
 
