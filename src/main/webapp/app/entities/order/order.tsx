@@ -12,6 +12,7 @@ import { getSearchEntities, getEntities, reset } from './order.reducer';
 import { IOrder } from 'app/shared/model/order.model';
 import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
+import OrderExportDialog from './components/OrderExport';
 
 export interface IOrderProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
@@ -19,6 +20,7 @@ export const Order = (props: IOrderProps) => {
   const [search, setSearch] = useState('');
   const [paginationState, setPaginationState] = useState(getSortState(props.location, ITEMS_PER_PAGE));
   const [sorting, setSorting] = useState(false);
+  const [exportOrders, setExportOrders] = useState(false);
 
   const getAllEntities = () => {
     if (search) {
@@ -107,17 +109,14 @@ export const Order = (props: IOrderProps) => {
   const { orderList, match, loading } = props;
   return (
     <Card className="bg-white p-3 mb-2">
+      <OrderExportDialog open={exportOrders} setExportdialog={(status: boolean) => setExportOrders(status)} />
       <div>
         <h2 id="order-heading">
           Orders
-          <Link
-            to={`/api/user-orders/export?beginDateParam=2020-05-12T01:00:00.147Z&endDateParam=2020-06-12T23:00:00.147Z&userId=1`}
-            target="_self"
-            className="btn btn-primary float-right ml-2"
-          >
+          <Button color="primary" className="float-right ml-2" onClick={() => setExportOrders(true)}>
             <FontAwesomeIcon icon="download" />
             &nbsp; Export orders
-          </Link>
+          </Button>
           <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
             <FontAwesomeIcon icon="plus" />
             &nbsp; Create new Order
