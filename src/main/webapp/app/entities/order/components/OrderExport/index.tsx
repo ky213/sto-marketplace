@@ -1,10 +1,13 @@
-import React, { createRef, useEffect } from 'react';
+import React, { createRef, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Row, Col, Input, Label } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Pikaday from 'pikaday';
 
 import { IRootState } from 'app/shared/reducers';
 import { exportOrder } from '../../order.reducer';
+import moment from 'moment';
+import { AUTHORITIES } from 'app/config/constants';
 
 export interface IOrderExportProps extends StateProps, DispatchProps {
   open: boolean;
@@ -12,14 +15,19 @@ export interface IOrderExportProps extends StateProps, DispatchProps {
 }
 
 export const OrderExportDialog = (props: IOrderExportProps) => {
+  const [fromDate, setFromDate] = useState(new Date());
+  const [toDate, setToDate] = useState(new Date());
   const linkRef: any = createRef();
+  const isAdmin = props.account.authorities.includes(AUTHORITIES.ADMIN);
+  const isBank = props.account.authorities.includes(AUTHORITIES.BANK);
+  const userId = isAdmin || isBank ? null : props.account.id;
 
   const exportOrders = () => {
-    props.exportOrder(new Date('2019-01-01'), new Date(), 1);
+    props.exportOrder(fromDate, toDate, userId);
   };
 
   useEffect(() => {
-    if (props.ordersSheet) {
+    if (props.ordersSheet && props.open) {
       const href = URL.createObjectURL(props.ordersSheet);
       const fileLink = linkRef.current;
       fileLink.download = 'orders.xlsx';
@@ -30,13 +38,55 @@ export const OrderExportDialog = (props: IOrderExportProps) => {
     }
   }, [props.ordersSheet]);
 
+  useEffect(() => {
+    const settings = {
+      yearRange: 100,
+      format: 'YYYY-MM-DD',
+      keyboardInput: false
+    };
+
+    if (props.open) {
+      const fromDateField = document.getElementById('fromDate');
+      const toDateField = document.getElementById('toDate');
+
+      const fromDatePicker = new Pikaday({
+        field: fromDateField,
+        onSelect(date) {
+          fromDateField.nodeValue = date.toString();
+          setFromDate(date);
+        },
+        ...settings
+      });
+
+      const toDatePicker = new Pikaday({
+        field: toDateField,
+        onSelect(date) {
+          toDateField.nodeValue = date.toString();
+          setToDate(date);
+        },
+        ...settings
+      });
+
+      fromDateField.parentNode.insertBefore(fromDatePicker.el, fromDateField.nextSibling);
+      toDateField.parentNode.insertBefore(toDatePicker.el, toDateField.nextSibling);
+    }
+  }, [props.open]);
+
   return (
     <Modal isOpen={props.open}>
       <ModalHeader>Select dates, please</ModalHeader>
-      <ModalBody id="">Date selection...</ModalBody>
-      <a ref={linkRef} hidden>
-        orders
-      </a>
+      <ModalBody id="">
+        <Row>
+          <Col>
+            <Label for="fromDate">From</Label>
+            <Input id="fromDate" type="text" className="form-control position-relative" value={moment(fromDate).format('LL')} />
+          </Col>
+          <Col>
+            <Label for="toDate">To</Label>
+            <Input id="toDate" type="text" className="form-control position-relative" value={moment(toDate).format('LL')} />
+          </Col>
+        </Row>
+      </ModalBody>
       <ModalFooter>
         <Button color="secondary" onClick={() => props.setExportdialog(false)}>
           <FontAwesomeIcon icon="ban" />
@@ -47,11 +97,13 @@ export const OrderExportDialog = (props: IOrderExportProps) => {
           &nbsp; Export
         </Button>
       </ModalFooter>
+      <a ref={linkRef} hidden></a>
     </Modal>
   );
 };
 
-const mapStateToProps = ({ order }: IRootState) => ({
+const mapStateToProps = ({ order, authentication }: IRootState) => ({
+  account: authentication.account,
   ordersSheet: order.ordersSheet,
   loading: order.loading
 });
