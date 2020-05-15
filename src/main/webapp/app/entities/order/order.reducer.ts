@@ -21,6 +21,7 @@ export const ACTION_TYPES = {
   CREATE_ORDER: 'order/CREATE_ORDER',
   UPDATE_ORDER: 'order/UPDATE_ORDER',
   DELETE_ORDER: 'order/DELETE_ORDER',
+  EXPORT_ORDER: 'order/EXPORT_ORDER',
   RESET: 'order/RESET'
 };
 
@@ -32,7 +33,8 @@ const initialState = {
   links: { next: 0 },
   updating: false,
   totalItems: 0,
-  updateSuccess: false
+  updateSuccess: false,
+  ordersSheet: null
 };
 
 export type OrderState = Readonly<typeof initialState>;
@@ -44,6 +46,7 @@ export default (state: OrderState = initialState, action): OrderState => {
     case REQUEST(ACTION_TYPES.SEARCH_ORDERS):
     case REQUEST(ACTION_TYPES.FETCH_ORDER_LIST):
     case REQUEST(ACTION_TYPES.FETCH_ORDER):
+    case REQUEST(ACTION_TYPES.EXPORT_ORDER):
       return {
         ...state,
         errorMessage: null,
