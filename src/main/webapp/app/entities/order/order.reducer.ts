@@ -6,7 +6,8 @@ import {
   ICrudGetAction,
   ICrudGetAllAction,
   ICrudPutAction,
-  ICrudDeleteAction
+  ICrudDeleteAction,
+  ICrudExportAction
 } from 'react-jhipster';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
@@ -46,7 +47,7 @@ export default (state: OrderState = initialState, action): OrderState => {
     case REQUEST(ACTION_TYPES.SEARCH_ORDERS):
     case REQUEST(ACTION_TYPES.FETCH_ORDER_LIST):
     case REQUEST(ACTION_TYPES.FETCH_ORDER):
-    case REQUEST(ACTION_TYPES.EXPORT_ORDER):
+    case FAILURE(ACTION_TYPES.EXPORT_ORDER):
       return {
         ...state,
         errorMessage: null,
@@ -56,6 +57,7 @@ export default (state: OrderState = initialState, action): OrderState => {
     case REQUEST(ACTION_TYPES.CREATE_ORDER):
     case REQUEST(ACTION_TYPES.UPDATE_ORDER):
     case REQUEST(ACTION_TYPES.DELETE_ORDER):
+    case REQUEST(ACTION_TYPES.EXPORT_ORDER):
       return {
         ...state,
         errorMessage: null,
@@ -92,6 +94,12 @@ export default (state: OrderState = initialState, action): OrderState => {
         ...state,
         loading: false,
         entity: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.EXPORT_ORDER):
+      return {
+        ...state,
+        loading: false,
+        ordersSheet: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.CREATE_ORDER):
     case SUCCESS(ACTION_TYPES.UPDATE_ORDER):
@@ -166,6 +174,21 @@ export const deleteEntity: ICrudDeleteAction<IOrder> = id => async dispatch => {
     payload: axios.delete(requestUrl)
   });
   return result;
+};
+
+export const exportOrder: ICrudExportAction<any> = (fromDate, toDate, userId) => {
+  const url = userId ? 'api/user-orders/export' : `${apiUrl}/export`;
+  return {
+    type: ACTION_TYPES.EXPORT_ORDER,
+    payload: axios.get(url, {
+      responseType: 'blob',
+      params: {
+        beginDateParam: fromDate,
+        endDateParam: toDate,
+        userId
+      }
+    })
+  };
 };
 
 export const reset = () => ({
