@@ -119,7 +119,7 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
               </Col>
               <Col>
                 <small className="text-muted ">Sto Price</small>
-                <p>{securityTokenEntity.stoPrice}</p>
+                <p>{securityTokenEntity.stoPrice?.toLocaleString()} CHF</p>
               </Col>
             </Row>
             <Row>
@@ -171,11 +171,11 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
             <Row>
               <Col>
                 <small className="text-muted ">Last Sellingprice</small>
-                <p>{securityTokenEntity.lastSellingprice}</p>
+                <p>{securityTokenEntity.lastSellingprice?.toLocaleString()} CHF</p>
               </Col>
               <Col>
                 <small className="text-muted ">Last Buying Price</small>
-                <p>{securityTokenEntity.lastBuyingPrice}</p>
+                <p>{securityTokenEntity.lastBuyingPrice?.toLocaleString()} CHF</p>
               </Col>
             </Row>
             <Row>

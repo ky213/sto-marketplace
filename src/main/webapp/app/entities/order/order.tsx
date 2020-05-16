@@ -117,12 +117,8 @@ export const Order = (props: IOrderProps) => {
     NONE: 'info'
   };
 
-  const filterOrders = order => {
-    if (isAdmin || isBank) return order;
-    if (order.user?.id === props.account.id) return order;
-  };
-
   const { orderList, match, loading } = props;
+
   return (
     <Card className="bg-white p-3 mb-2">
       <OrderExportDialog open={exportOrders} setExportdialog={(status: boolean) => setExportOrders(status)} />
@@ -181,7 +177,6 @@ export const Order = (props: IOrderProps) => {
                     <th className="hand text-nowrap" onClick={sort('categoryToken')}>
                       Category <FontAwesomeIcon icon="sort" />
                     </th>
-
                     <th className="hand text-nowrap" onClick={sort('type')}>
                       Type <FontAwesomeIcon icon="sort" />
                     </th>
@@ -206,7 +201,7 @@ export const Order = (props: IOrderProps) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {orderList.filter(filterOrders).map((order, i) => (
+                  {orderList.map((order, i) => (
                     <tr key={`entity-${i}`}>
                       <td className="text-nowrap">{order.refOrder}</td>
                       <td>
@@ -225,7 +220,6 @@ export const Order = (props: IOrderProps) => {
                       <td>
                         <TextFormat type="date" value={order.createDate} format={APP_DATE_FORMAT} />
                       </td>
-
                       <td className="text-right">
                         <div className="btn-group flex-btn-group-container">
                           <Button tag={Link} to={`${match.url}/${order.id}`} color="info" size="sm">
@@ -240,7 +234,7 @@ export const Order = (props: IOrderProps) => {
                                 <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
                               </Button>
                             </>
-                          )}{' '}
+                          )}
                         </div>
                       </td>
                     </tr>
