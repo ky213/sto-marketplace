@@ -97,7 +97,7 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
 
   const { securityTokenList, match, loading, totalItems } = props;
   return (
-    <Card className="bg-white p-3">
+    <Card className="bg-white p-3 mb-2">
       <h2 id="security-token-heading">
         Security Tokens
         {isAdmin && (
