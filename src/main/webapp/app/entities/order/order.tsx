@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 import { getSearchEntities, getEntities, reset } from './order.reducer';
 import { IOrder } from 'app/shared/model/order.model';
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import OrderExportDialog from './components/OrderExport';
 
@@ -21,6 +21,8 @@ export const Order = (props: IOrderProps) => {
   const [paginationState, setPaginationState] = useState(getSortState(props.location, ITEMS_PER_PAGE));
   const [sorting, setSorting] = useState(false);
   const [exportOrders, setExportOrders] = useState(false);
+  const isAdmin = props.account.authorities.includes(AUTHORITIES.ADMIN);
+  const isBank = props.account.authorities.includes(AUTHORITIES.BANK);
 
   const getAllEntities = () => {
     if (search) {
@@ -115,6 +117,11 @@ export const Order = (props: IOrderProps) => {
     NONE: 'info'
   };
 
+  const filterOrders = order => {
+    if (isAdmin || isBank) return order;
+    if (order.user?.id === props.account.id) return order;
+  };
+
   const { orderList, match, loading } = props;
   return (
     <Card className="bg-white p-3 mb-2">
@@ -187,9 +194,11 @@ export const Order = (props: IOrderProps) => {
                     <th className="hand text-nowrap" onClick={sort('totalAmount')}>
                       Total Amount <FontAwesomeIcon icon="sort" />
                     </th>
-                    <th className="text-nowrap" onClick={sort('user.login')}>
-                      Username <FontAwesomeIcon icon="sort" />
-                    </th>
+                    {(isAdmin || isBank) && (
+                      <th className="text-nowrap" onClick={sort('user.login')}>
+                        Username <FontAwesomeIcon icon="sort" />
+                      </th>
+                    )}
                     <th className="hand text-nowrap" onClick={sort('createDate')}>
                       Date <FontAwesomeIcon icon="sort" />
                     </th>
@@ -197,7 +206,7 @@ export const Order = (props: IOrderProps) => {
                   </tr>
                 </thead>
                 <tbody>
-                  {orderList.map((order, i) => (
+                  {orderList.filter(filterOrders).map((order, i) => (
                     <tr key={`entity-${i}`}>
                       <td className="text-nowrap">{order.refOrder}</td>
                       <td>
@@ -212,7 +221,7 @@ export const Order = (props: IOrderProps) => {
                       <td>{order.volume}</td>
                       <td className="text-nowrap">{order.price.toLocaleString()} CHF</td>
                       <td className="text-nowrap">{order.totalAmount.toLocaleString()} CHF</td>
-                      <td>{order.user ? order.user.login : ''}</td>
+                      {(isAdmin || isBank) && <td>{order.user ? order.user.login : ''}</td>}
                       <td>
                         <TextFormat type="date" value={order.createDate} format={APP_DATE_FORMAT} />
                       </td>
@@ -222,12 +231,16 @@ export const Order = (props: IOrderProps) => {
                           <Button tag={Link} to={`${match.url}/${order.id}`} color="info" size="sm">
                             <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
                           </Button>
-                          <Button tag={Link} to={`${match.url}/${order.id}/edit`} color="primary" size="sm">
-                            <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
-                          </Button>
-                          <Button tag={Link} to={`${match.url}/${order.id}/delete`} color="danger" size="sm">
-                            <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
-                          </Button>
+                          {(isAdmin || isBank) && (
+                            <>
+                              <Button tag={Link} to={`${match.url}/${order.id}/edit`} color="primary" size="sm">
+                                <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
+                              </Button>
+                              <Button tag={Link} to={`${match.url}/${order.id}/delete`} color="danger" size="sm">
+                                <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
+                              </Button>
+                            </>
+                          )}{' '}
                         </div>
                       </td>
                     </tr>
@@ -244,7 +257,8 @@ export const Order = (props: IOrderProps) => {
   );
 };
 
-const mapStateToProps = ({ order }: IRootState) => ({
+const mapStateToProps = ({ order, authentication }: IRootState) => ({
+  account: authentication.account,
   orderList: order.entities,
   loading: order.loading,
   totalItems: order.totalItems,
