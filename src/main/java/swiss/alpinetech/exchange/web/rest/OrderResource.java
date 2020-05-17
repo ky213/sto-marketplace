@@ -193,10 +193,11 @@ public class OrderResource {
      */
     @GetMapping("/user-orders")
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.USER+"\")")
-    public ResponseEntity<List<Order>> getUserOrders(Pageable pageable) {
+    public ResponseEntity<List<Order>> getUserOrders(@RequestParam Long userId, Pageable pageable) {
         log.debug("REST request to get User Orders");
-        List<Order> orders = orderService.findUserOrders(pageable);
-        return ResponseEntity.ok().body(orders);
+        Page<Order> page = orderService.findUserOrders(userId, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -221,9 +222,28 @@ public class OrderResource {
      * @return the result of the search.
      */
     @GetMapping("/_search/orders")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
     public ResponseEntity<List<Order>> searchOrders(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Orders for query {}", query);
         Page<Order> page = orderService.search(query, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code SEARCH  /_search/orders?query=:query} : search for the order corresponding
+     * to the query.
+     *
+     * @param query the query of the order search.
+     * @param pageable the pagination information.
+     * @param userId the order user Id.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search/user-orders")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<List<Order>> searchUserOrders(@RequestParam String query, @RequestParam Long userId, Pageable pageable) {
+        log.debug("REST request to search for a page of user {} Orders for query {}", userId, query);
+        Page<Order> page = orderService.searchUserOrders(query, userId, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
