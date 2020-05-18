@@ -132,7 +132,7 @@ const apiSearchUrl = 'api/_search/orders';
 
 // Actions
 
-export const getSearchEntities: ICrudSearchAction<IOrder> = (query, page, size, sort, userId) => {
+export const getSearchEntities: any = (query, page, size, sort, userId) => {
   const url = userId ? '/api/_search/user-orders' : apiSearchUrl;
 
   return {
@@ -141,7 +141,7 @@ export const getSearchEntities: ICrudSearchAction<IOrder> = (query, page, size, 
   };
 };
 
-export const getEntities: ICrudGetAllAction<IOrder> = (page, size, sort, userId) => {
+export const getEntities: any = (page, size, sort, userId) => {
   const url = userId ? '/api/user-orders' : apiUrl;
   const requestUrl = `${url}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}&userId=${userId}`;
 
@@ -151,7 +151,7 @@ export const getEntities: ICrudGetAllAction<IOrder> = (page, size, sort, userId)
   };
 };
 
-export const getEntity: ICrudGetAction<IOrder> = (id, userId) => {
+export const getEntity: any = (id, userId) => {
   const url = userId ? '/api/user-orders' : apiUrl;
   const requestUrl = `${url}/${id}?userId=${userId}`;
 
@@ -186,7 +186,7 @@ export const deleteEntity: ICrudDeleteAction<IOrder> = id => async dispatch => {
   return result;
 };
 
-export const exportOrder: ICrudExportAction<any> = (fromDate, toDate, userId) => {
+export const exportOrder: any = (fromDate, toDate, userId) => {
   const url = userId ? 'api/user-orders/export' : `${apiUrl}/export`;
   return {
     type: ACTION_TYPES.EXPORT_ORDER,

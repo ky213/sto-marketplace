@@ -37,8 +37,8 @@ export const OrderCancelDialog = (props: IOrderDeleteDialogProps) => {
 
   return (
     <Modal isOpen toggle={handleClose}>
-      <ModalHeader toggle={handleClose}>Confirm delete operation</ModalHeader>
-      <ModalBody id="exchangeApp.order.delete.question">Are you sure you want to delete this Order?</ModalBody>
+      <ModalHeader toggle={handleClose}>Confirm Cancel operation</ModalHeader>
+      <ModalBody id="exchangeApp.order.delete.question">Are you sure you want to Cancel this Order?</ModalBody>
       <ModalFooter>
         <Button color="secondary" onClick={handleClose}>
           <FontAwesomeIcon icon="arrow-left" />
