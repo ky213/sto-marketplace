@@ -135,16 +135,19 @@ export const getSearchEntities: ICrudSearchAction<IOrder> = (query, page, size, 
   payload: axios.get<IOrder>(`${apiSearchUrl}?query=${query}${sort ? `&page=${page}&size=${size}&sort=${sort}` : ''}`)
 });
 
-export const getEntities: ICrudGetAllAction<IOrder> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+export const getEntities: ICrudGetAllAction<IOrder> = (userId, page, size, sort) => {
+  const url = userId ? '/api/user-orders' : apiUrl;
+  const requestUrl = `${url}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}&userId=${userId}`;
+
   return {
     type: ACTION_TYPES.FETCH_ORDER_LIST,
     payload: axios.get<IOrder>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
   };
 };
 
-export const getEntity: ICrudGetAction<IOrder> = id => {
-  const requestUrl = `${apiUrl}/${id}`;
+export const getEntity: ICrudGetAction<IOrder> = (isUser, id) => {
+  const url = isUser ? '/api/user-orders' : apiUrl;
+  const requestUrl = `${url}/${id}`;
   return {
     type: ACTION_TYPES.FETCH_ORDER,
     payload: axios.get<IOrder>(requestUrl)
