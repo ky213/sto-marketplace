@@ -23,7 +23,7 @@ export const Order = (props: IOrderProps) => {
   const [exportOrders, setExportOrders] = useState(false);
   const isAdmin = props.account.authorities.includes(AUTHORITIES.ADMIN);
   const isBank = props.account.authorities.includes(AUTHORITIES.BANK);
-  const isUser = !(isAdmin || isBank) ? props.account.id : null;
+  const userId = !(isAdmin || isBank) ? props.account.id : null;
 
   const getAllEntities = () => {
     if (search) {
@@ -31,14 +31,15 @@ export const Order = (props: IOrderProps) => {
         search,
         paginationState.activePage - 1,
         paginationState.itemsPerPage,
-        `${paginationState.sort},${paginationState.order}`
+        `${paginationState.sort},${paginationState.order}`,
+        userId
       );
     } else {
       props.getEntities(
-        isUser,
         paginationState.activePage - 1,
         paginationState.itemsPerPage,
-        `${paginationState.sort},${paginationState.order}`
+        `${paginationState.sort},${paginationState.order}`,
+        userId
       );
     }
   };
@@ -66,7 +67,8 @@ export const Order = (props: IOrderProps) => {
         search,
         paginationState.activePage - 1,
         paginationState.itemsPerPage,
-        `${paginationState.sort},${paginationState.order}`
+        `${paginationState.sort},${paginationState.order}`,
+        userId
       );
     }
   };
@@ -78,7 +80,7 @@ export const Order = (props: IOrderProps) => {
       ...paginationState,
       activePage: 1
     });
-    props.getEntities(isUser);
+    props.getEntities(userId);
   };
 
   const handleSearch = event => setSearch(event.target.value);

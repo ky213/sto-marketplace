@@ -130,12 +130,16 @@ const apiSearchUrl = 'api/_search/orders';
 
 // Actions
 
-export const getSearchEntities: ICrudSearchAction<IOrder> = (query, page, size, sort) => ({
-  type: ACTION_TYPES.SEARCH_ORDERS,
-  payload: axios.get<IOrder>(`${apiSearchUrl}?query=${query}${sort ? `&page=${page}&size=${size}&sort=${sort}` : ''}`)
-});
+export const getSearchEntities: ICrudSearchAction<IOrder> = (query, page, size, sort, userId) => {
+  const url = userId ? '/api/_search/user-orders' : apiSearchUrl;
 
-export const getEntities: ICrudGetAllAction<IOrder> = (userId, page, size, sort) => {
+  return {
+    type: ACTION_TYPES.SEARCH_ORDERS,
+    payload: axios.get<IOrder>(`${url}?query=${query}${sort ? `&page=${page}&size=${size}&sort=${sort}` : ''}&userId=${userId}`)
+  };
+};
+
+export const getEntities: ICrudGetAllAction<IOrder> = (page, size, sort, userId) => {
   const url = userId ? '/api/user-orders' : apiUrl;
   const requestUrl = `${url}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}&userId=${userId}`;
 
@@ -145,9 +149,10 @@ export const getEntities: ICrudGetAllAction<IOrder> = (userId, page, size, sort)
   };
 };
 
-export const getEntity: ICrudGetAction<IOrder> = (isUser, id) => {
-  const url = isUser ? '/api/user-orders' : apiUrl;
-  const requestUrl = `${url}/${id}`;
+export const getEntity: ICrudGetAction<IOrder> = (id, userId) => {
+  const url = userId ? '/api/user-orders' : apiUrl;
+  const requestUrl = `${url}/${id}&userId=${userId}`;
+
   return {
     type: ACTION_TYPES.FETCH_ORDER,
     payload: axios.get<IOrder>(requestUrl)

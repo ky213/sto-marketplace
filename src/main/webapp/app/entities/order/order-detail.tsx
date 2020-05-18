@@ -14,14 +14,14 @@ import moment from 'moment';
 export interface IOrderDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const OrderDetail = (props: IOrderDetailProps) => {
-  useEffect(() => {
-    props.getEntity(props.match.params.id);
-  }, []);
-
   const { orderEntity, account } = props;
+  const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
+  const isBank = account.authorities.includes(AUTHORITIES.BANK);
+  const userId = !(isAdmin || isBank) ? account.id : null;
 
-  const isAdmin = props.account.authorities.includes(AUTHORITIES.ADMIN);
-  const isBank = props.account.authorities.includes(AUTHORITIES.BANK);
+  useEffect(() => {
+    props.getEntity(props.match.params.id, userId);
+  }, []);
 
   return (
     <Row className="mb-2">

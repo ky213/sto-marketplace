@@ -8,12 +8,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IOrder } from 'app/shared/model/order.model';
 import { IRootState } from 'app/shared/reducers';
 import { getEntity, deleteEntity } from './order.reducer';
+import { AUTHORITIES } from 'app/config/constants';
 
 export interface IOrderDeleteDialogProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const OrderDeleteDialog = (props: IOrderDeleteDialogProps) => {
+  const isAdmin = props.account.authorities.includes(AUTHORITIES.ADMIN);
+  const isBank = props.account.authorities.includes(AUTHORITIES.BANK);
+  const userId = !(isAdmin || isBank) ? props.account.id : null;
+
   useEffect(() => {
-    props.getEntity(props.match.params.id);
+    props.getEntity(props.account.id, userId);
   }, []);
 
   const handleClose = () => {
@@ -30,7 +35,6 @@ export const OrderDeleteDialog = (props: IOrderDeleteDialogProps) => {
     props.deleteEntity(props.orderEntity.id);
   };
 
-  const { orderEntity } = props;
   return (
     <Modal isOpen toggle={handleClose}>
       <ModalHeader toggle={handleClose}>Confirm delete operation</ModalHeader>
@@ -49,9 +53,10 @@ export const OrderDeleteDialog = (props: IOrderDeleteDialogProps) => {
   );
 };
 
-const mapStateToProps = ({ order }: IRootState) => ({
+const mapStateToProps = ({ order, authentication }: IRootState) => ({
   orderEntity: order.entity,
-  updateSuccess: order.updateSuccess
+  updateSuccess: order.updateSuccess,
+  account: authentication.account
 });
 
 const mapDispatchToProps = { getEntity, deleteEntity };

@@ -15,15 +15,20 @@ import { getEntity, updateEntity, createEntity, reset } from './order.reducer';
 import { IOrder } from 'app/shared/model/order.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
+import { AUTHORITIES } from 'app/config/constants';
 
 export interface IOrderUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const OrderUpdate = (props: IOrderUpdateProps) => {
-  const [userId, setUserId] = useState('0');
-  const [transactionId, setTransactionId] = useState('0');
+  // const [userId, setUserId] = useState('0');
+  // const [transactionId, setTransactionId] = useState('0');
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
 
-  const { orderEntity, users, transactions, loading, updating } = props;
+  const { orderEntity, users, transactions, loading, updating, account } = props;
+
+  const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
+  const isBank = account.authorities.includes(AUTHORITIES.BANK);
+  const userId = !(isAdmin || isBank) ? account.id : null;
 
   const handleClose = () => {
     props.history.push('/order');
@@ -31,7 +36,7 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
 
   useEffect(() => {
     if (!isNew) {
-      props.getEntity(props.match.params.id);
+      props.getEntity(props.match.params.id, userId);
     }
 
     props.getUsers();
@@ -355,7 +360,8 @@ const mapStateToProps = (storeState: IRootState) => ({
   orderEntity: storeState.order.entity,
   loading: storeState.order.loading,
   updating: storeState.order.updating,
-  updateSuccess: storeState.order.updateSuccess
+  updateSuccess: storeState.order.updateSuccess,
+  account: storeState.authentication.account
 });
 
 const mapDispatchToProps = {
