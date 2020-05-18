@@ -233,16 +233,20 @@ export const Order = (props: IOrderProps) => {
                           <Button tag={Link} to={`${match.url}/${order.id}`} color="info" size="sm">
                             <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
                           </Button>
-                          {(isAdmin || isBank) && (
-                            <>
-                              <Button tag={Link} to={`${match.url}/${order.id}/edit`} color="primary" size="sm">
+                          <>
+                            {/* <Button tag={Link} to={`${match.url}/${order.id}/edit`} color="primary" size="sm">
                                 <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
-                              </Button>
-                              <Button tag={Link} to={`${match.url}/${order.id}/delete`} color="danger" size="sm">
-                                <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
-                              </Button>
-                            </>
-                          )}
+                              </Button> */}
+                            <Button
+                              tag={Link}
+                              to={`${match.url}/${order.id}/cancel`}
+                              color="danger"
+                              size="sm"
+                              disabled={order.status === 'REMOVE'}
+                            >
+                              <FontAwesomeIcon icon="ban" /> <span className="d-none d-md-inline">Cancel</span>
+                            </Button>
+                          </>
                         </div>
                       </td>
                     </tr>

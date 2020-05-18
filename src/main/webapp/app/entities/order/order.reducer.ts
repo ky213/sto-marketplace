@@ -22,6 +22,7 @@ export const ACTION_TYPES = {
   CREATE_ORDER: 'order/CREATE_ORDER',
   UPDATE_ORDER: 'order/UPDATE_ORDER',
   DELETE_ORDER: 'order/DELETE_ORDER',
+  CANCEL_ORDER: 'order/CANCEL_ORDER',
   EXPORT_ORDER: 'order/EXPORT_ORDER',
   RESET: 'order/RESET'
 };
@@ -56,8 +57,8 @@ export default (state: OrderState = initialState, action): OrderState => {
       };
     case REQUEST(ACTION_TYPES.CREATE_ORDER):
     case REQUEST(ACTION_TYPES.UPDATE_ORDER):
-    case REQUEST(ACTION_TYPES.DELETE_ORDER):
     case REQUEST(ACTION_TYPES.EXPORT_ORDER):
+    case REQUEST(ACTION_TYPES.CANCEL_ORDER):
       return {
         ...state,
         errorMessage: null,
@@ -69,7 +70,7 @@ export default (state: OrderState = initialState, action): OrderState => {
     case FAILURE(ACTION_TYPES.FETCH_ORDER):
     case FAILURE(ACTION_TYPES.CREATE_ORDER):
     case FAILURE(ACTION_TYPES.UPDATE_ORDER):
-    case FAILURE(ACTION_TYPES.DELETE_ORDER):
+    case FAILURE(ACTION_TYPES.CANCEL_ORDER):
       return {
         ...state,
         loading: false,
@@ -103,6 +104,7 @@ export default (state: OrderState = initialState, action): OrderState => {
       };
     case SUCCESS(ACTION_TYPES.CREATE_ORDER):
     case SUCCESS(ACTION_TYPES.UPDATE_ORDER):
+    case SUCCESS(ACTION_TYPES.CANCEL_ORDER):
       return {
         ...state,
         updating: false,
@@ -176,10 +178,10 @@ export const updateEntity: ICrudPutAction<IOrder> = entity => async dispatch => 
 };
 
 export const deleteEntity: ICrudDeleteAction<IOrder> = id => async dispatch => {
-  const requestUrl = `${apiUrl}/${id}`;
+  const requestUrl = `/api/cancel-order?orderId=${id}`;
   const result = await dispatch({
     type: ACTION_TYPES.DELETE_ORDER,
-    payload: axios.delete(requestUrl)
+    payload: axios.put(requestUrl)
   });
   return result;
 };
