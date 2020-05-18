@@ -6,8 +6,7 @@ import {
   ICrudGetAction,
   ICrudGetAllAction,
   ICrudPutAction,
-  ICrudDeleteAction,
-  ICrudExportAction
+  ICrudDeleteAction
 } from 'react-jhipster';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
