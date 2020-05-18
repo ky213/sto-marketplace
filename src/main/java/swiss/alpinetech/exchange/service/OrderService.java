@@ -53,7 +53,7 @@ public interface OrderService {
      *
      * @return the list of entities.
      */
-    List<Order> findUserOrders(Pageable pageable);
+    Page<Order> findUserOrders(Long userId, Pageable pageable);
 
     /**
      * export orders.
@@ -90,4 +90,7 @@ public interface OrderService {
      * @return the list of entities.
      */
     Page<Order> search(String query, Pageable pageable);
+
+
+    Page<Order> searchUserOrders(String query, Long userId, Pageable pageable);
 }

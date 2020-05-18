@@ -1,6 +1,10 @@
 package swiss.alpinetech.exchange.service.impl;
 
+import org.apache.commons.collections4.IteratorUtils;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 import swiss.alpinetech.exchange.service.OrderService;
 import swiss.alpinetech.exchange.domain.Order;
@@ -101,9 +105,9 @@ public class OrderServiceImpl implements OrderService {
      * @return the list of entities.
      */
     @Override
-    public List<Order> findUserOrders(Pageable pageable) {
+    public Page<Order> findUserOrders(Long userId, Pageable pageable) {
         log.debug("Request to get user Orders");
-        return orderRepository.findByUserIsCurrentUser(pageable);
+        return orderRepository.findAllByUserId(userId, pageable);
     }
 
     /**
@@ -160,5 +164,18 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public Page<Order> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of Orders for query {}", query);
-        return orderSearchRepository.search(queryStringQuery(query), pageable);    }
+        return orderSearchRepository.search(queryStringQuery(query), pageable);
+    }
+
+    @Override
+    public Page<Order> searchUserOrders(String query, Long userId, Pageable pageable) {
+        List<Order> orderList = IteratorUtils.toList(orderSearchRepository.search(QueryBuilders.boolQuery()
+            .must(queryStringQuery(query))
+            .must(matchQuery("user.id", userId))).iterator());
+        Page<Order> ordersPage = new PageImpl<Order>(
+            orderList,
+            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
+            orderList.size());
+        return ordersPage;
+    }
 }
