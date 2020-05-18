@@ -179,7 +179,7 @@ export const updateEntity: ICrudPutAction<IOrder> = entity => async dispatch => 
 export const deleteEntity: ICrudDeleteAction<IOrder> = id => async dispatch => {
   const requestUrl = `/api/cancel-order?orderId=${id}`;
   const result = await dispatch({
-    type: ACTION_TYPES.DELETE_ORDER,
+    type: ACTION_TYPES.CANCEL_ORDER,
     payload: axios.put(requestUrl)
   });
   return result;

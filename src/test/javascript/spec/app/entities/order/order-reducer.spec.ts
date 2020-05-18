@@ -82,7 +82,7 @@ describe('Entities reducer tests', () => {
 
     it('should set state to updating', () => {
       testMultipleTypes(
-        [REQUEST(ACTION_TYPES.CREATE_ORDER), REQUEST(ACTION_TYPES.UPDATE_ORDER), REQUEST(ACTION_TYPES.DELETE_ORDER)],
+        [REQUEST(ACTION_TYPES.CREATE_ORDER), REQUEST(ACTION_TYPES.UPDATE_ORDER), REQUEST(ACTION_TYPES.CANCEL_ORDER)],
         {},
         state => {
           expect(state).toMatchObject({
@@ -117,7 +117,7 @@ describe('Entities reducer tests', () => {
           FAILURE(ACTION_TYPES.FETCH_ORDER),
           FAILURE(ACTION_TYPES.CREATE_ORDER),
           FAILURE(ACTION_TYPES.UPDATE_ORDER),
-          FAILURE(ACTION_TYPES.DELETE_ORDER)
+          FAILURE(ACTION_TYPES.CANCEL_ORDER)
         ],
         'error message',
         state => {
@@ -194,10 +194,10 @@ describe('Entities reducer tests', () => {
       });
     });
 
-    it('should delete entity', () => {
+    it('should cancel entity', () => {
       const payload = 'fake payload';
       const toTest = reducer(undefined, {
-        type: SUCCESS(ACTION_TYPES.DELETE_ORDER),
+        type: SUCCESS(ACTION_TYPES.CANCEL_ORDER),
         payload
       });
       expect(toTest).toMatchObject({
@@ -284,13 +284,13 @@ describe('Entities reducer tests', () => {
       await store.dispatch(updateEntity({ id: 1 })).then(() => expect(store.getActions()).toEqual(expectedActions));
     });
 
-    it('dispatches ACTION_TYPES.DELETE_ORDER actions', async () => {
+    it('dispatches ACTION_TYPES.CANCEL_ORDER actions', async () => {
       const expectedActions = [
         {
-          type: REQUEST(ACTION_TYPES.DELETE_ORDER)
+          type: REQUEST(ACTION_TYPES.CANCEL_ORDER)
         },
         {
-          type: SUCCESS(ACTION_TYPES.DELETE_ORDER),
+          type: SUCCESS(ACTION_TYPES.CANCEL_ORDER),
           payload: resolvedObject
         }
       ];
