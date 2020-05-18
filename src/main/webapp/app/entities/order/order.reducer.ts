@@ -151,7 +151,7 @@ export const getEntities: ICrudGetAllAction<IOrder> = (page, size, sort, userId)
 
 export const getEntity: ICrudGetAction<IOrder> = (id, userId) => {
   const url = userId ? '/api/user-orders' : apiUrl;
-  const requestUrl = `${url}/${id}&userId=${userId}`;
+  const requestUrl = `${url}/${id}?userId=${userId}`;
 
   return {
     type: ACTION_TYPES.FETCH_ORDER,
