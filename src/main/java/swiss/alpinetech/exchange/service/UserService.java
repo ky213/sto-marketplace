@@ -1,5 +1,11 @@
 package swiss.alpinetech.exchange.service;
 
+import org.apache.commons.collections4.IteratorUtils;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import swiss.alpinetech.exchange.config.Constants;
 import swiss.alpinetech.exchange.domain.Authority;
 import swiss.alpinetech.exchange.domain.User;
@@ -26,6 +32,8 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 /**
  * Service class for managing users.
@@ -316,5 +324,33 @@ public class UserService {
         if (user.getEmail() != null) {
             Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evict(user.getEmail());
         }
+    }
+
+    public Page<User> search(String query, Pageable pageable) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN)) {
+                return userSearchRepository.search(queryStringQuery(query), pageable);
+            }
+        }
+        List<User> userList = IteratorUtils.toList(userSearchRepository.search(queryStringQuery(query)).iterator())
+            .stream()
+            .filter(user -> !this.userIsAdmin(user))
+            .collect(Collectors.toList());
+        Page<User> usersPage = new PageImpl<User>(
+            userList,
+            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
+            userList.size());
+        return usersPage;
+    }
+
+    private boolean userIsAdmin(User user) {
+        Set<Authority> userAuthorities =  this.getUserWithAuthorities(user.getId()).get().getAuthorities();
+        for (Authority userAuthority : userAuthorities) {
+            if(userAuthority.getName().equals(AuthoritiesConstants.ADMIN)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

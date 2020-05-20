@@ -203,9 +203,11 @@ public class UserResource {
      * @return the result of the search.
      */
     @GetMapping("/_search/users/{query}")
-    public List<User> search(@PathVariable String query) {
-        return StreamSupport
-            .stream(userSearchRepository.search(queryStringQuery(query)).spliterator(), false)
-            .collect(Collectors.toList());
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
+    public ResponseEntity<List<User>> search(@PathVariable String query, Pageable pageable) {
+        log.debug("REST request to search for a page of Users for query {}", query);
+        Page<User> page = userService.search(query, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 }
