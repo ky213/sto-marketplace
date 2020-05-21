@@ -7,7 +7,13 @@
         Added the constraints for entity Order.
     -->
     <changeSet id="20200412223800-2" author="jhipster">
-        
+
+        <addForeignKeyConstraint baseColumnNames="securitytoken_id"
+                                 baseTableName="jhi_order"
+                                 constraintName="fk_jhi_order_securitytoken_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="security_token"/>
+
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="jhi_order"
                                  constraintName="fk_jhi_order_user_id"
