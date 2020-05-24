@@ -214,7 +214,7 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
                   </>
                 )}
                 <th className="hand text-nowrap" onClick={sort('lastSellingprice')}>
-                  Last Sellingprice <FontAwesomeIcon icon="sort" />
+                  Last Selling Price <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand text-nowrap" onClick={sort('lastBuyingPrice')}>
                   Last Buying Price <FontAwesomeIcon icon="sort" />
@@ -313,22 +313,26 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
                     </>
                   )}
                   <td>
-                    <Alert color="danger">
-                      <div className="d-flex justify-content-between align-items-center">
-                        <h4 className="mr-2">{securityToken.lastSellingprice.toLocaleString()}</h4>
+                    <Alert color="danger" className="py-2 pl-4 w-75 m-auto">
+                      <div className="d-flex justify-content-center align-items-center ">
+                        <h5 className="mr-3">{securityToken.lastSellingprice.toLocaleString()}</h5>
                         <div className="d-flex flex-column">
-                          <b>SELL</b>
+                          <small>
+                            <b>BUY</b>
+                          </small>
                           <small>CHF</small>
                         </div>
                       </div>
                     </Alert>
                   </td>
                   <td>
-                    <Alert color="success">
-                      <div className="d-flex justify-content-between align-items-center">
-                        <h4 className="mr-2">{securityToken.lastBuyingPrice.toLocaleString()}</h4>
+                    <Alert color="success" className="py-2 px-4 w-75 m-auto">
+                      <div className="d-flex justify-content-center align-items-center">
+                        <h5 className="mr-3">{securityToken.lastBuyingPrice.toLocaleString()}</h5>
                         <span className="d-flex flex-column">
-                          <b>BUY</b>
+                          <small>
+                            <b>BUY</b>
+                          </small>
                           <small>CHF</small>
                         </span>
                       </div>
