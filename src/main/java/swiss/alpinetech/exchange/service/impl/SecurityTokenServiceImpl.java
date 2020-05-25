@@ -1,5 +1,6 @@
 package swiss.alpinetech.exchange.service.impl;
 
+import swiss.alpinetech.exchange.domain.enumeration.STSTATUS;
 import swiss.alpinetech.exchange.service.SecurityTokenService;
 import swiss.alpinetech.exchange.domain.SecurityToken;
 import swiss.alpinetech.exchange.repository.SecurityTokenRepository;
@@ -44,6 +45,21 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     public SecurityToken save(SecurityToken securityToken) {
         log.debug("Request to save SecurityToken : {}", securityToken);
         SecurityToken result = securityTokenRepository.save(securityToken);
+        securityTokenSearchRepository.save(result);
+        return result;
+    }
+
+    /**
+     * Deactivate a securityToken.
+     *
+     * @param id the entity id to update.
+     * @return the persisted entity.
+     */
+    @Override
+    public SecurityToken deactivateSecurityToken(Long id) {
+        log.debug("Request to deactivate SecurityToken : {}", id);
+        SecurityToken result = securityTokenRepository.findById(id).get();
+        result.setStatus(STSTATUS.DISABLED);
         securityTokenSearchRepository.save(result);
         return result;
     }

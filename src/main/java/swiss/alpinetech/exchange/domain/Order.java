@@ -56,10 +56,6 @@ public class Order implements Serializable {
     private ZonedDateTime closeDate;
 
     @NotNull
-    @Column(name = "security_token_name", nullable = false)
-    private String securityTokenName;
-
-    @NotNull
     @Column(name = "symbol", nullable = false)
     private String symbol;
 
@@ -96,6 +92,11 @@ public class Order implements Serializable {
 
     @Column(name = "active")
     private Boolean active;
+
+    @ManyToOne
+    @JoinColumn(name = "securitytoken_id", referencedColumnName = "id", updatable = false)
+    @JsonIgnoreProperties("orders")
+    private SecurityToken securityToken;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", updatable = false)
@@ -178,19 +179,6 @@ public class Order implements Serializable {
 
     public void setCloseDate(ZonedDateTime closeDate) {
         this.closeDate = closeDate;
-    }
-
-    public String getSecurityTokenName() {
-        return securityTokenName;
-    }
-
-    public Order securityTokenName(String securityTokenName) {
-        this.securityTokenName = securityTokenName;
-        return this;
-    }
-
-    public void setSecurityTokenName(String securityTokenName) {
-        this.securityTokenName = securityTokenName;
     }
 
     public String getSymbol() {
@@ -310,6 +298,17 @@ public class Order implements Serializable {
         this.active = active;
     }
 
+    public SecurityToken getSecurityToken() { return securityToken; }
+
+    public Order securityToken(SecurityToken securityToken) {
+        this.securityToken = securityToken;
+        return this;
+    }
+
+    public void setSecurityToken(SecurityToken securityToken) {
+        this.securityToken = securityToken;
+    }
+
     public User getUser() {
         return user;
     }
@@ -362,7 +361,6 @@ public class Order implements Serializable {
             ", createDate='" + getCreateDate() + "'" +
             ", updateDate='" + getUpdateDate() + "'" +
             ", closeDate='" + getCloseDate() + "'" +
-            ", securityTokenName='" + getSecurityTokenName() + "'" +
             ", symbol='" + getSymbol() + "'" +
             ", type='" + getType() + "'" +
             ", limitOrMarket='" + getLimitOrMarket() + "'" +

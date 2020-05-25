@@ -21,6 +21,14 @@ public interface SecurityTokenService {
     SecurityToken save(SecurityToken securityToken);
 
     /**
+     * Deactivate a securityToken.
+     *
+     * @param id the entity id to update.
+     * @return the persisted entity.
+     */
+    SecurityToken deactivateSecurityToken(Long id);
+
+    /**
      * Get all the securityTokens.
      *
      * @param pageable the pagination information.
@@ -47,7 +55,7 @@ public interface SecurityTokenService {
      * Search for the securityToken corresponding to the query.
      *
      * @param query the query of the search.
-     * 
+     *
      * @param pageable the pagination information.
      * @return the list of entities.
      */

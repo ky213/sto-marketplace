@@ -130,7 +130,6 @@ public class OrderResourceIT {
             .createDate(DEFAULT_CREATE_DATE)
             .updateDate(DEFAULT_UPDATE_DATE)
             .closeDate(DEFAULT_CLOSE_DATE)
-            .securityTokenName(DEFAULT_SECURITY_TOKEN_NAME)
             .symbol(DEFAULT_SYMBOL)
             .type(DEFAULT_TYPE)
             .limitOrMarket(DEFAULT_LIMIT_OR_MARKET)
@@ -155,7 +154,6 @@ public class OrderResourceIT {
             .createDate(UPDATED_CREATE_DATE)
             .updateDate(UPDATED_UPDATE_DATE)
             .closeDate(UPDATED_CLOSE_DATE)
-            .securityTokenName(UPDATED_SECURITY_TOKEN_NAME)
             .symbol(UPDATED_SYMBOL)
             .type(UPDATED_TYPE)
             .limitOrMarket(UPDATED_LIMIT_OR_MARKET)
@@ -193,7 +191,6 @@ public class OrderResourceIT {
         assertThat(testOrder.getCreateDate()).isEqualTo(DEFAULT_CREATE_DATE);
         assertThat(testOrder.getUpdateDate()).isEqualTo(DEFAULT_UPDATE_DATE);
         assertThat(testOrder.getCloseDate()).isEqualTo(DEFAULT_CLOSE_DATE);
-        assertThat(testOrder.getSecurityTokenName()).isEqualTo(DEFAULT_SECURITY_TOKEN_NAME);
         assertThat(testOrder.getSymbol()).isEqualTo(DEFAULT_SYMBOL);
         assertThat(testOrder.getType()).isEqualTo(DEFAULT_TYPE);
         assertThat(testOrder.getLimitOrMarket()).isEqualTo(DEFAULT_LIMIT_OR_MARKET);
@@ -273,24 +270,6 @@ public class OrderResourceIT {
         int databaseSizeBeforeTest = orderRepository.findAll().size();
         // set the field null
         order.setCreateDate(null);
-
-        // Create the Order, which fails.
-
-        restOrderMockMvc.perform(post("/api/orders")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(order)))
-            .andExpect(status().isBadRequest());
-
-        List<Order> orderList = orderRepository.findAll();
-        assertThat(orderList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
-    public void checkSecurityTokenNameIsRequired() throws Exception {
-        int databaseSizeBeforeTest = orderRepository.findAll().size();
-        // set the field null
-        order.setSecurityTokenName(null);
 
         // Create the Order, which fails.
 
@@ -391,7 +370,6 @@ public class OrderResourceIT {
             .andExpect(jsonPath("$.[*].createDate").value(hasItem(sameInstant(DEFAULT_CREATE_DATE))))
             .andExpect(jsonPath("$.[*].updateDate").value(hasItem(sameInstant(DEFAULT_UPDATE_DATE))))
             .andExpect(jsonPath("$.[*].closeDate").value(hasItem(sameInstant(DEFAULT_CLOSE_DATE))))
-            .andExpect(jsonPath("$.[*].securityTokenName").value(hasItem(DEFAULT_SECURITY_TOKEN_NAME)))
             .andExpect(jsonPath("$.[*].symbol").value(hasItem(DEFAULT_SYMBOL)))
             .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
             .andExpect(jsonPath("$.[*].limitOrMarket").value(hasItem(DEFAULT_LIMIT_OR_MARKET.toString())))
@@ -419,7 +397,6 @@ public class OrderResourceIT {
             .andExpect(jsonPath("$.createDate").value(sameInstant(DEFAULT_CREATE_DATE)))
             .andExpect(jsonPath("$.updateDate").value(sameInstant(DEFAULT_UPDATE_DATE)))
             .andExpect(jsonPath("$.closeDate").value(sameInstant(DEFAULT_CLOSE_DATE)))
-            .andExpect(jsonPath("$.securityTokenName").value(DEFAULT_SECURITY_TOKEN_NAME))
             .andExpect(jsonPath("$.symbol").value(DEFAULT_SYMBOL))
             .andExpect(jsonPath("$.type").value(DEFAULT_TYPE.toString()))
             .andExpect(jsonPath("$.limitOrMarket").value(DEFAULT_LIMIT_OR_MARKET.toString()))
@@ -459,7 +436,6 @@ public class OrderResourceIT {
             .createDate(UPDATED_CREATE_DATE)
             .updateDate(UPDATED_UPDATE_DATE)
             .closeDate(UPDATED_CLOSE_DATE)
-            .securityTokenName(UPDATED_SECURITY_TOKEN_NAME)
             .symbol(UPDATED_SYMBOL)
             .type(UPDATED_TYPE)
             .limitOrMarket(UPDATED_LIMIT_OR_MARKET)
@@ -484,7 +460,6 @@ public class OrderResourceIT {
         assertThat(testOrder.getCreateDate()).isEqualTo(UPDATED_CREATE_DATE);
         assertThat(testOrder.getUpdateDate()).isEqualTo(UPDATED_UPDATE_DATE);
         assertThat(testOrder.getCloseDate()).isEqualTo(UPDATED_CLOSE_DATE);
-        assertThat(testOrder.getSecurityTokenName()).isEqualTo(UPDATED_SECURITY_TOKEN_NAME);
         assertThat(testOrder.getSymbol()).isEqualTo(UPDATED_SYMBOL);
         assertThat(testOrder.getType()).isEqualTo(UPDATED_TYPE);
         assertThat(testOrder.getLimitOrMarket()).isEqualTo(UPDATED_LIMIT_OR_MARKET);
@@ -558,7 +533,6 @@ public class OrderResourceIT {
             .andExpect(jsonPath("$.[*].createDate").value(hasItem(sameInstant(DEFAULT_CREATE_DATE))))
             .andExpect(jsonPath("$.[*].updateDate").value(hasItem(sameInstant(DEFAULT_UPDATE_DATE))))
             .andExpect(jsonPath("$.[*].closeDate").value(hasItem(sameInstant(DEFAULT_CLOSE_DATE))))
-            .andExpect(jsonPath("$.[*].securityTokenName").value(hasItem(DEFAULT_SECURITY_TOKEN_NAME)))
             .andExpect(jsonPath("$.[*].symbol").value(hasItem(DEFAULT_SYMBOL)))
             .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())))
             .andExpect(jsonPath("$.[*].limitOrMarket").value(hasItem(DEFAULT_LIMIT_OR_MARKET.toString())))

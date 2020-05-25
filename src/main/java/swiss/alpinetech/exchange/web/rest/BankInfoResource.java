@@ -118,6 +118,19 @@ public class BankInfoResource {
     }
 
     /**
+     * {@code GET  /bank-infos/:id} : get the "id" bankInfo.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the bankInfo, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/bank-infos/first-element")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
+    public ResponseEntity<BankInfo> getFirstElementBankInfo() {
+        log.debug("REST request to get first element of BankInfo list");
+        Optional<BankInfo> bankInfo = bankInfoService.getFirstBankInfo();
+        return ResponseUtil.wrapOrNotFound(bankInfo);
+    }
+
+    /**
      * {@code DELETE  /bank-infos/:id} : delete the "id" bankInfo.
      *
      * @param id the id of the bankInfo to delete.
