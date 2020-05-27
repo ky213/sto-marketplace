@@ -46,6 +46,7 @@ import { faRedo } from '@fortawesome/free-solid-svg-icons/faRedo';
 import { faCaretRight } from '@fortawesome/free-solid-svg-icons/faCaretRight';
 import { faFileContract } from '@fortawesome/free-solid-svg-icons/faFileContract';
 import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload';
+import { faUserShield } from '@fortawesome/free-solid-svg-icons/faUserShield';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -98,6 +99,7 @@ export const loadIcons = () => {
     faRedo,
     faCaretRight,
     faFileContract,
-    faDownload
+    faDownload,
+    faUserShield
   );
 };

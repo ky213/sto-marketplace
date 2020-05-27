@@ -29,7 +29,7 @@ const Menu = ({ account, totalBankItems, getBanks }) => {
       <NavItem>
         <NavLink to="/security-token" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
           <FontAwesomeIcon icon="file-invoice-dollar" className="mr-2" />
-          Securiry token
+          Securiry Token
         </NavLink>
       </NavItem>
       <NavItem>
@@ -53,12 +53,20 @@ const Menu = ({ account, totalBankItems, getBanks }) => {
       </NavItem>
 
       {(isAdmin || isBank) && (
-        <NavItem>
-          <NavLink to="/admin/user-management" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
-            <FontAwesomeIcon icon="users" className="mr-2" />
-            Users
-          </NavLink>
-        </NavItem>
+        <>
+          <NavItem>
+            <NavLink to="/admin/user-management" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
+              <FontAwesomeIcon icon="users" className="mr-2" />
+              Users
+            </NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink to="/white-listing" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
+              <FontAwesomeIcon icon="user-shield" className="mr-2" />
+              White Listing
+            </NavLink>
+          </NavItem>
+        </>
       )}
       <NavItem>
         <NavLink to="/account/profile" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
