@@ -153,9 +153,6 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
                     <th className="hand text-nowrap" onClick={sort('laucheDate')}>
                       Lauche Date <FontAwesomeIcon icon="sort" />
                     </th>
-                    <th className="hand text-nowrap" onClick={sort('logo')}>
-                      Logo <FontAwesomeIcon icon="sort" />
-                    </th>
                     <th className="hand text-nowrap" onClick={sort('juridiction')}>
                       Juridiction <FontAwesomeIcon icon="sort" />
                     </th>
@@ -213,6 +210,10 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
                     </th>
                   </>
                 )}
+                <th className="hand text-nowrap" onClick={sort('logo')}>
+                  Logo <FontAwesomeIcon icon="sort" />
+                </th>
+
                 <th className="hand text-nowrap" onClick={sort('lastSellingprice')}>
                   Last Selling Price <FontAwesomeIcon icon="sort" />
                 </th>
@@ -221,7 +222,6 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
                 </th>
                 {isAdmin && (
                   <>
-                    {' '}
                     <th className="hand text-nowrap" onClick={sort('smartcontractAddress')}>
                       Smartcontract Address <FontAwesomeIcon icon="sort" />
                     </th>
@@ -253,28 +253,11 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
                   <td>{securityToken.symbol}</td>
                   <td>{securityToken.category}</td>
                   {isAdmin && (
-                    <>
-                      <td>
-                        <TextFormat type="date" value={securityToken.laucheDate} format={APP_DATE_FORMAT} />
-                      </td>
-                      <td>
-                        {securityToken.logo ? (
-                          <div>
-                            <a onClick={openFile(securityToken.logoContentType, securityToken.logo)}>
-                              <img
-                                src={`data:${securityToken.logoContentType};base64,${securityToken.logo}`}
-                                style={{ maxHeight: '30px' }}
-                              />
-                              &nbsp;
-                            </a>
-                            <span>
-                              {securityToken.logoContentType}, {byteSize(securityToken.logo)}
-                            </span>
-                          </div>
-                        ) : null}
-                      </td>
-                    </>
+                    <td>
+                      <TextFormat type="date" value={securityToken.laucheDate} format={APP_DATE_FORMAT} />
+                    </td>
                   )}
+
                   {isAdmin && (
                     <>
                       <td>{securityToken.juridiction}</td>
@@ -312,6 +295,19 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
                       </td>
                     </>
                   )}
+                  <td>
+                    {securityToken.logo ? (
+                      <div>
+                        <a onClick={openFile(securityToken.logoContentType, securityToken.logo)}>
+                          <img src={`data:${securityToken.logoContentType};base64,${securityToken.logo}`} style={{ maxHeight: '30px' }} />
+                          &nbsp;
+                        </a>
+                        {/* <span>
+                          {securityToken.logoContentType}, {byteSize(securityToken.logo)}
+                        </span> */}
+                      </div>
+                    ) : null}
+                  </td>
                   <td>
                     <Alert color="danger" className="py-2 pl-4 w-75 m-auto">
                       <div className="d-flex justify-content-center align-items-center ">
