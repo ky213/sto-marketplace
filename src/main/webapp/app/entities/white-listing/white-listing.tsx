@@ -17,7 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 import { getSearchEntities, getEntities } from './white-listing.reducer';
 import { IWhiteListing } from 'app/shared/model/white-listing.model';
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 
 export interface IWhiteListingProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
@@ -95,16 +95,21 @@ export const WhiteListing = (props: IWhiteListingProps) => {
       activePage: currentPage
     });
 
-  const { whiteListingList, match, loading, totalItems } = props;
+  const { whiteListingList, match, loading, totalItems, account } = props;
+  const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
+  const isBank = account.authorities.includes(AUTHORITIES.BANK);
+
   return (
     <Card className="bg-white p-3 mb-2">
-      <h2 id="white-listing-heading">
-        White Listings
-        <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
-          <FontAwesomeIcon icon="plus" />
-          &nbsp; Create new White Listing
-        </Link>
-      </h2>
+      {(isAdmin || isBank) && (
+        <h2 id="white-listing-heading">
+          White Listings
+          <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
+            <FontAwesomeIcon icon="plus" />
+            &nbsp; Create new White Listing
+          </Link>
+        </h2>
+      )}
       <Row>
         <Col sm="12">
           <AvForm onSubmit={startSearching}>
@@ -143,11 +148,11 @@ export const WhiteListing = (props: IWhiteListingProps) => {
                 <th className="hand text-nowrap" onClick={sort('stName')}>
                   St Name <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand text-nowrap" onClick={sort('customerName')}>
-                  Customer Name <FontAwesomeIcon icon="sort" />
-                </th>
-
-                <th />
+                {(isAdmin || isBank) && (
+                  <th className="hand text-nowrap" onClick={sort('customerName')}>
+                    Customer Name <FontAwesomeIcon icon="sort" />
+                  </th>
+                )}
               </tr>
             </thead>
             <tbody>
@@ -162,31 +167,34 @@ export const WhiteListing = (props: IWhiteListingProps) => {
                     <TextFormat type="date" value={whiteListing.dateSynchBlk} format={APP_DATE_FORMAT} />
                   </td>
                   <td>{whiteListing.stName}</td>
-                  <td>{whiteListing.customerName}</td>
-
-                  <td className="text-right">
-                    <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`${match.url}/${whiteListing.id}`} color="info" size="sm">
-                        <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
-                      </Button>
-                      <Button
-                        tag={Link}
-                        to={`${match.url}/${whiteListing.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                        color="primary"
-                        size="sm"
-                      >
-                        <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
-                      </Button>
-                      <Button
-                        tag={Link}
-                        to={`${match.url}/${whiteListing.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                        color="danger"
-                        size="sm"
-                      >
-                        <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
-                      </Button>
-                    </div>
-                  </td>
+                  {(isAdmin || isBank) && (
+                    <>
+                      <td>{whiteListing.customerName}</td>
+                      <td className="text-right">
+                        <div className="btn-group flex-btn-group-container">
+                          <Button tag={Link} to={`${match.url}/${whiteListing.id}`} color="info" size="sm">
+                            <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
+                          </Button>
+                          <Button
+                            tag={Link}
+                            to={`${match.url}/${whiteListing.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                            color="primary"
+                            size="sm"
+                          >
+                            <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
+                          </Button>
+                          <Button
+                            tag={Link}
+                            to={`${match.url}/${whiteListing.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
+                            color="danger"
+                            size="sm"
+                          >
+                            <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
+                          </Button>
+                        </div>
+                      </td>
+                    </>
+                  )}
                 </tr>
               ))}
             </tbody>
@@ -213,10 +221,11 @@ export const WhiteListing = (props: IWhiteListingProps) => {
   );
 };
 
-const mapStateToProps = ({ whiteListing }: IRootState) => ({
+const mapStateToProps = ({ whiteListing, authentication }: IRootState) => ({
   whiteListingList: whiteListing.entities,
   loading: whiteListing.loading,
-  totalItems: whiteListing.totalItems
+  totalItems: whiteListing.totalItems,
+  account: authentication.account
 });
 
 const mapDispatchToProps = {

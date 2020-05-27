@@ -60,14 +60,14 @@ const Menu = ({ account, totalBankItems, getBanks }) => {
               Users
             </NavLink>
           </NavItem>
-          <NavItem>
-            <NavLink to="/white-listing" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
-              <FontAwesomeIcon icon="user-shield" className="mr-2" />
-              White Listing
-            </NavLink>
-          </NavItem>
         </>
       )}
+      <NavItem>
+        <NavLink to="/white-listing" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
+          <FontAwesomeIcon icon="user-shield" className="mr-2" />
+          White Listing
+        </NavLink>
+      </NavItem>
       <NavItem>
         <NavLink to="/account/profile" className="text-primary d-block pl-3 py-1" activeClassName="active-menu">
           <FontAwesomeIcon icon="cogs" className="mr-2" /> Settings

@@ -56,11 +56,7 @@ const Routes = ({ account, match }) => (
           <ErrorBoundaryRoute path={`${match.url}bank-info`} component={BankInfo} />
           <ErrorBoundaryRoute path={`${match.url}order`} component={Order} />
           <ErrorBoundaryRoute path={`${match.url}transaction`} component={Transaction} />
-          <PrivateRoute
-            path={`${match.url}white-listing`}
-            component={WhiteListing}
-            hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
-          />
+          <ErrorBoundaryRoute path={`${match.url}white-listing`} component={WhiteListing} />
           <PrivateRoute path={`${match.url}admin`} component={Admin} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]} />
           <PrivateRoute
             path={`${match.url}account`}
