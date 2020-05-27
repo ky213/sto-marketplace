@@ -63,7 +63,12 @@ export const WhiteListing = (props: IWhiteListingProps) => {
     props.getEntities();
   };
 
-  const handleSearch = event => setSearch(event.target.value);
+  const handleSearch = event => {
+    event.persist();
+    setTimeout(() => {
+      setSearch(event.target?.value);
+    }, 700);
+  };
 
   const sortEntities = () => {
     getAllEntities();
@@ -106,9 +111,9 @@ export const WhiteListing = (props: IWhiteListingProps) => {
             <AvGroup>
               <InputGroup>
                 <AvInput type="text" name="search" value={search} onChange={handleSearch} placeholder="Search" />
-                <Button className="input-group-addon">
+                {/* <Button className="input-group-addon">
                   <FontAwesomeIcon icon="search" />
-                </Button>
+                </Button> */}
                 <Button type="reset" className="input-group-addon" onClick={clear}>
                   <FontAwesomeIcon icon="trash" />
                 </Button>
