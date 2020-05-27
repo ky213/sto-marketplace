@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Card, CardHeader, CardBody, Progress } from 'reactstrap';
+import { Row, Col, Card, CardBody, Progress } from 'reactstrap';
 import { IRootState } from 'app/shared/reducers';
 import { IUserSettingsProps } from '../settings/settings';
 import moment from 'moment';
@@ -12,37 +12,33 @@ const Profile = ({ account }: IUserSettingsProps) => {
 
   return (
     <Row className="mx-auto">
-      <Col md="4" className="p-0">
-        <Card className="p-0">
-          <CardBody className="p-3">
-            <h4>
-              {account.firstName} {account.lastName}
-            </h4>
-            <p className="text-muted">
-              {account.setting?.city}, {account.setting?.country} <br />
-              {moment().format('LLL')}
-            </p>
-            {isUser && (
-              <>
-                <p className="text-muted mt-5 mb-1 pb-0">Risk level: {account.setting?.riskProfil}</p>
-                <Progress
-                  className="p-0 mt-2 mb-2"
-                  color="primary"
-                  value={account.setting?.riskProfil * 2 * 10}
-                  style={{ height: '7px' }}
-                />
-              </>
-            )}
-          </CardBody>
-        </Card>
-      </Col>
-      <Col className=" ml-3 p-0">
+      <Col className="p-0">
         <Card className=" p-0">
-          <CardHeader>
-            <h5 className="p-0 m-0">Profile</h5>
-            <p className="text-muted p-0 m-0">your account information</p>
-          </CardHeader>
           <CardBody>
+            <Row>
+              <Col md="6">
+                <h4>
+                  {account.firstName} {account.lastName}
+                </h4>
+                <p className="text-muted">
+                  {account.setting?.city}, {account.setting?.country} <br />
+                  {moment().format('LLL')}
+                </p>
+              </Col>
+              <Col md="6">
+                {isUser && (
+                  <>
+                    <p className="text-muted mt-5 mb-1 pb-0">Risk level: {account.setting?.riskProfil}</p>
+                    <Progress
+                      className="p-0 mt-2 mb-2"
+                      color="primary"
+                      value={account.setting?.riskProfil * 2 * 10}
+                      style={{ height: '7px' }}
+                    />
+                  </>
+                )}
+              </Col>
+            </Row>
             <Row>
               <Col>
                 <small className="text-muted ">First Name</small>
