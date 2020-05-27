@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, InputGroup, Col, Row, Table } from 'reactstrap';
+import { Button, InputGroup, Col, Row, Table, Card } from 'reactstrap';
 import { AvForm, AvGroup, AvInput } from 'availity-reactstrap-validation';
 import {
   ICrudSearchAction,
@@ -92,7 +92,7 @@ export const WhiteListing = (props: IWhiteListingProps) => {
 
   const { whiteListingList, match, loading, totalItems } = props;
   return (
-    <div>
+    <Card className="bg-white p-3 mb-2">
       <h2 id="white-listing-heading">
         White Listings
         <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
@@ -122,39 +122,26 @@ export const WhiteListing = (props: IWhiteListingProps) => {
           <Table responsive>
             <thead>
               <tr>
-                <th className="hand" onClick={sort('id')}>
-                  ID <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('dateEvent')}>
+                <th className="hand text-nowrap" onClick={sort('dateEvent')}>
                   Date Event <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('status')}>
+                <th className="hand text-nowrap" onClick={sort('status')}>
                   Status <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('active')}>
+                <th className="hand text-nowrap" onClick={sort('active')}>
                   Active <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('ethAddress')}>
-                  Eth Address <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand" onClick={sort('dateSynchBlk')}>
+
+                <th className="hand text-nowrap" onClick={sort('dateSynchBlk')}>
                   Date Synch Blk <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('stName')}>
+                <th className="hand text-nowrap" onClick={sort('stName')}>
                   St Name <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('customerName')}>
+                <th className="hand text-nowrap" onClick={sort('customerName')}>
                   Customer Name <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand" onClick={sort('balance')}>
-                  Balance <FontAwesomeIcon icon="sort" />
-                </th>
-                <th>
-                  User <FontAwesomeIcon icon="sort" />
-                </th>
-                <th>
-                  Securitytoken <FontAwesomeIcon icon="sort" />
-                </th>
+
                 <th />
               </tr>
             </thead>
@@ -162,30 +149,16 @@ export const WhiteListing = (props: IWhiteListingProps) => {
               {whiteListingList.map((whiteListing, i) => (
                 <tr key={`entity-${i}`}>
                   <td>
-                    <Button tag={Link} to={`${match.url}/${whiteListing.id}`} color="link" size="sm">
-                      {whiteListing.id}
-                    </Button>
-                  </td>
-                  <td>
                     <TextFormat type="date" value={whiteListing.dateEvent} format={APP_DATE_FORMAT} />
                   </td>
                   <td>{whiteListing.status}</td>
                   <td>{whiteListing.active ? 'true' : 'false'}</td>
-                  <td>{whiteListing.ethAddress}</td>
                   <td>
                     <TextFormat type="date" value={whiteListing.dateSynchBlk} format={APP_DATE_FORMAT} />
                   </td>
                   <td>{whiteListing.stName}</td>
                   <td>{whiteListing.customerName}</td>
-                  <td>{whiteListing.balance}</td>
-                  <td>{whiteListing.user ? whiteListing.user.id : ''}</td>
-                  <td>
-                    {whiteListing.securitytoken ? (
-                      <Link to={`security-token/${whiteListing.securitytoken.id}`}>{whiteListing.securitytoken.id}</Link>
-                    ) : (
-                      ''
-                    )}
-                  </td>
+
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${whiteListing.id}`} color="info" size="sm">
@@ -231,7 +204,7 @@ export const WhiteListing = (props: IWhiteListingProps) => {
           />
         </Row>
       </div>
-    </div>
+    </Card>
   );
 };
 

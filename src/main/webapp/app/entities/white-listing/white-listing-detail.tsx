@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col } from 'reactstrap';
+import { Button, Row, Col, Card, CardHeader, CardBody } from 'reactstrap';
 import { ICrudGetAction, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -19,53 +19,68 @@ export const WhiteListingDetail = (props: IWhiteListingDetailProps) => {
 
   const { whiteListingEntity } = props;
   return (
-    <Row>
-      <Col md="8">
+    <Card className="p-0">
+      <CardHeader>
         <h2>
           WhiteListing [<b>{whiteListingEntity.id}</b>]
         </h2>
-        <dl className="jh-entity-details">
-          <dt>
-            <span id="dateEvent">Date Event</span>
-          </dt>
-          <dd>
-            <TextFormat value={whiteListingEntity.dateEvent} type="date" format={APP_DATE_FORMAT} />
-          </dd>
-          <dt>
-            <span id="status">Status</span>
-          </dt>
-          <dd>{whiteListingEntity.status}</dd>
-          <dt>
-            <span id="active">Active</span>
-          </dt>
-          <dd>{whiteListingEntity.active ? 'true' : 'false'}</dd>
-          <dt>
-            <span id="ethAddress">Eth Address</span>
-          </dt>
-          <dd>{whiteListingEntity.ethAddress}</dd>
-          <dt>
-            <span id="dateSynchBlk">Date Synch Blk</span>
-          </dt>
-          <dd>
-            <TextFormat value={whiteListingEntity.dateSynchBlk} type="date" format={APP_DATE_FORMAT} />
-          </dd>
-          <dt>
-            <span id="stName">St Name</span>
-          </dt>
-          <dd>{whiteListingEntity.stName}</dd>
-          <dt>
-            <span id="customerName">Customer Name</span>
-          </dt>
-          <dd>{whiteListingEntity.customerName}</dd>
-          <dt>
-            <span id="balance">Balance</span>
-          </dt>
-          <dd>{whiteListingEntity.balance}</dd>
-          <dt>User</dt>
-          <dd>{whiteListingEntity.user ? whiteListingEntity.user.id : ''}</dd>
-          <dt>Securitytoken</dt>
-          <dd>{whiteListingEntity.securitytoken ? whiteListingEntity.securitytoken.id : ''}</dd>
-        </dl>
+      </CardHeader>
+      <CardBody className="col-8 mx-auto">
+        <Row>
+          <Col>
+            <small className="text-muted ">St Name</small>
+            <p>{whiteListingEntity.stName}</p>
+          </Col>
+
+          <Col>
+            <small className="text-muted ">Status</small>
+            <p>{whiteListingEntity.status}</p>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <small className="text-muted ">Active</small>
+            <p>{`${whiteListingEntity.active}`}</p>
+          </Col>
+          <Col>
+            <small className="text-muted ">Eth Address</small>
+            <p>{whiteListingEntity.ethAddress}</p>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <small className="text-muted ">Date Event</small>
+            <p>
+              <TextFormat value={whiteListingEntity.dateEvent} type="date" format={APP_DATE_FORMAT} />
+            </p>
+          </Col>
+          <Col>
+            <small className="text-muted ">Date Synch Blk</small>
+            <p>
+              <TextFormat value={whiteListingEntity.dateSynchBlk} type="date" format={APP_DATE_FORMAT} />
+            </p>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <small className="text-muted ">Customer Name</small>
+            <p>{whiteListingEntity.customerName}</p>
+          </Col>
+          <Col>
+            <small className="text-muted ">Balance</small>
+            <p>{whiteListingEntity.balance}</p>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <small className="text-muted ">User</small>
+            <p>{whiteListingEntity.user}</p>
+          </Col>
+          <Col>
+            <small className="text-muted ">Securitytoken</small>
+            <p>{whiteListingEntity.securitytoken?.id}</p>
+          </Col>
+        </Row>
         <Button tag={Link} to="/white-listing" replace color="info">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
         </Button>
@@ -73,8 +88,8 @@ export const WhiteListingDetail = (props: IWhiteListingDetailProps) => {
         <Button tag={Link} to={`/white-listing/${whiteListingEntity.id}/edit`} replace color="primary">
           <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
         </Button>
-      </Col>
-    </Row>
+      </CardBody>
+    </Card>
   );
 };
 
