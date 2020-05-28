@@ -17,57 +17,35 @@ export const BankInfoDetail = ({ getBank, bankInfoEntity, loading, match }: IBan
   return (
     <div>
       <Row className="mx-auto">
-        <Col md="4" className=" p-0">
+        <Col className="p-0 mx-auto">
           <Card className="p-0">
-            <CardBody className="p-3">
-              <h6>{bankInfoEntity.bankName}</h6>
-              <Row>
-                <Col xs="6">
-                  <small className="text-muted">
-                    {bankInfoEntity.country} <br />
-                    {moment().format('LLL')}
-                  </small>
-                </Col>
-                <Col>
-                  <img
-                    className="bg-secondary d-block ml-auto"
-                    src={`data:image/png;base64,${bankInfoEntity.logo}`}
-                    alt="bank_logo"
-                    style={{ height: '80px', width: '80px' }}
-                  />
-                </Col>
-              </Row>
-            </CardBody>
-          </Card>
-        </Col>
-        <Col className="p-0 ml-2">
-          <Card className="p-0">
-            <CardHeader>
-              <h6 className="p-0 m-0">Profile</h6>
-              <small className="text-muted p-0 m-0">Information about your bank</small>
-            </CardHeader>
             <CardBody>
               {loading ? (
                 <p>Loading...</p>
               ) : (
                 <>
+                  <h6>{bankInfoEntity.bankName}</h6>
                   <Row>
+                    <Col xs="6">
+                      <small className="text-muted">
+                        {bankInfoEntity.country} <br />
+                        {moment().format('LLL')}
+                      </small>
+                    </Col>
                     <Col>
-                      <small className="text-muted ">Bank Name</small>
-                      <p>{bankInfoEntity.bankName}</p>
+                      <img
+                        className="bg-secondary d-block"
+                        src={`data:image/png;base64,${bankInfoEntity.logo}`}
+                        alt="bank_logo"
+                        style={{ height: '80px', width: '80px' }}
+                      />
                     </Col>
                   </Row>
-                  <Row>
+                  <Row className="mt-5">
                     <Col>
                       <small className="text-muted ">BIC Number</small>
                       <p>{bankInfoEntity.bicNumber}</p>
                     </Col>
-                    <Col>
-                      <small className="text-muted ">Country</small>
-                      <p>{bankInfoEntity.country}</p>
-                    </Col>
-                  </Row>
-                  <Row>
                     <Col>
                       <small className="text-muted ">Omnibus Account</small>
                       <p>{bankInfoEntity.omnibusAccount}</p>
