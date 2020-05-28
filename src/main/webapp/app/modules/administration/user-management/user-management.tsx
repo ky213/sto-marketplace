@@ -8,9 +8,8 @@ import { AvForm, AvGroup, AvInput } from 'availity-reactstrap-validation';
 
 import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
-import { getUsers, updateUser } from './user-management.reducer';
+import { getUser, getUsers, getSearchUsers, updateUser, reset } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
-import { getSearchEntities } from 'app/entities/user-setting/user-setting.reducer';
 
 export interface IUserManagementProps extends StateProps, DispatchProps, RouteComponentProps<{}> {}
 
@@ -38,17 +37,20 @@ export const UserManagement = (props: IUserManagementProps) => {
 
   const startSearching = () => {
     if (search) {
+      props.reset();
       setPagination({
         ...pagination,
         activePage: 1
       });
-      props.getSearchEntities(search, pagination.activePage - 1, pagination.itemsPerPage, `${pagination.sort},${pagination.order}`);
+      props.getSearchUsers(search);
+    } else {
+      props.getUsers(pagination.activePage - 1, pagination.itemsPerPage, `${pagination.sort},${pagination.order}`);
     }
   };
 
   const handleSearch = event => setSearch(event.target.value);
 
-  const { account, match, totalItems } = props;
+  const { account, match, totalItems, loading } = props;
   const isBanker = account.authorities.includes(AUTHORITIES.BANK);
   const users = props.users.filter(user => (isBanker ? !user.authorities.includes(AUTHORITIES.ADMIN) : user));
 
@@ -152,20 +154,24 @@ export const UserManagement = (props: IUserManagementProps) => {
           ))}
         </tbody>
       </Table>
-      <div className={users && users.length > 0 ? '' : 'd-none'}>
-        <Row className="justify-content-center">
-          <JhiItemCount page={pagination.activePage} total={totalItems} itemsPerPage={pagination.itemsPerPage} i18nEnabled />
-        </Row>
-        <Row className="justify-content-center">
-          <JhiPagination
-            activePage={pagination.activePage}
-            onSelect={handPagination}
-            maxButtons={5}
-            itemsPerPage={pagination.itemsPerPage}
-            totalItems={props.totalItems}
-          />
-        </Row>
-      </div>
+      {users && users.length > 0 ? (
+        <div>
+          <Row className="justify-content-center">
+            <JhiItemCount page={pagination.activePage} total={totalItems} itemsPerPage={pagination.itemsPerPage} i18nEnabled />
+          </Row>
+          <Row className="justify-content-center">
+            <JhiPagination
+              activePage={pagination.activePage}
+              onSelect={handPagination}
+              maxButtons={5}
+              itemsPerPage={pagination.itemsPerPage}
+              totalItems={props.totalItems}
+            />
+          </Row>
+        </div>
+      ) : (
+        !loading && <div className="alert alert-warning">No Users found</div>
+      )}
     </div>
   );
 };
@@ -173,10 +179,11 @@ export const UserManagement = (props: IUserManagementProps) => {
 const mapStateToProps = (storeState: IRootState) => ({
   users: storeState.userManagement.users,
   totalItems: storeState.userManagement.totalItems,
-  account: storeState.authentication.account
+  account: storeState.authentication.account,
+  loading: storeState.administration.loading
 });
 
-const mapDispatchToProps = { getUsers, updateUser, getSearchEntities };
+const mapDispatchToProps = { getUser, getUsers, updateUser, getSearchUsers, reset };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

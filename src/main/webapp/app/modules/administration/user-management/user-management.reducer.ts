@@ -1,10 +1,11 @@
 import axios from 'axios';
-import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction, ICrudDeleteAction } from 'react-jhipster';
+import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction, ICrudDeleteAction, ICrudSearchAction } from 'react-jhipster';
 
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 import { IUser, defaultValue } from 'app/shared/model/user.model';
 
 export const ACTION_TYPES = {
+  SEARCH_USERS: 'userManagement/SEARCH_USERS',
   FETCH_ROLES: 'userManagement/FETCH_ROLES',
   FETCH_USERS: 'userManagement/FETCH_USERS',
   FETCH_USER: 'userManagement/FETCH_USER',
@@ -34,6 +35,7 @@ export default (state: UserManagementState = initialState, action): UserManageme
       return {
         ...state
       };
+    case REQUEST(ACTION_TYPES.SEARCH_USERS):
     case REQUEST(ACTION_TYPES.FETCH_USERS):
     case REQUEST(ACTION_TYPES.FETCH_USER):
       return {
@@ -51,6 +53,7 @@ export default (state: UserManagementState = initialState, action): UserManageme
         updateSuccess: false,
         updating: true
       };
+    case FAILURE(ACTION_TYPES.SEARCH_USERS):
     case FAILURE(ACTION_TYPES.FETCH_USERS):
     case FAILURE(ACTION_TYPES.FETCH_USER):
     case FAILURE(ACTION_TYPES.FETCH_ROLES):
@@ -69,6 +72,7 @@ export default (state: UserManagementState = initialState, action): UserManageme
         ...state,
         authorities: action.payload.data
       };
+    case SUCCESS(ACTION_TYPES.SEARCH_USERS):
     case SUCCESS(ACTION_TYPES.FETCH_USERS):
       return {
         ...state,
@@ -107,7 +111,15 @@ export default (state: UserManagementState = initialState, action): UserManageme
 };
 
 const apiUrl = 'api/users';
+const apiSearchUrl = 'api/_search/users';
+
 // Actions
+
+export const getSearchUsers: ICrudSearchAction<IUser> = login => ({
+  type: ACTION_TYPES.SEARCH_USERS,
+  payload: axios.get<IUser>(`${apiSearchUrl}/${login}`)
+});
+
 export const getUsers: ICrudGetAllAction<IUser> = (page, size, sort) => {
   const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
