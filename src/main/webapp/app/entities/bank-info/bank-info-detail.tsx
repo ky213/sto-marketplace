@@ -9,9 +9,9 @@ import moment from 'moment';
 
 export interface IBankInfoDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
-export const BankInfoDetail = ({ getBank, bankInfoEntity, loading }: IBankInfoDetailProps) => {
+export const BankInfoDetail = ({ getBank, bankInfoEntity, loading, match }: IBankInfoDetailProps) => {
   useEffect(() => {
-    getBank(1);
+    getBank(match.params.id);
   }, []);
 
   return (

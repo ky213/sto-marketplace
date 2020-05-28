@@ -30,7 +30,7 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
     if (isNew) {
       props.reset();
     } else {
-      props.getEntity(props.match.params.id);
+      props.getEntity('');
     }
   }, []);
 
