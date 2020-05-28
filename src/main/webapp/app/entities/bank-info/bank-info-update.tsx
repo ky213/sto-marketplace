@@ -66,29 +66,6 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
   return (
     <div>
       <Row className="mx-auto">
-        <Col md="4" className=" p-0">
-          <Card className="p-0">
-            <CardBody className="p-3">
-              <h6>{bankInfoEntity.bankName}</h6>
-              <Row>
-                <Col xs="6">
-                  <small className="text-muted">
-                    {bankInfoEntity.country} <br />
-                    {moment().format('LLL')}
-                  </small>
-                </Col>
-                <Col>
-                  <img
-                    className="bg-secondary d-block ml-auto"
-                    src={`data:image/png;base64,${bankInfoEntity.logo}`}
-                    alt="bank_logo"
-                    style={{ height: '80px', width: '80px' }}
-                  />
-                </Col>
-              </Row>
-            </CardBody>
-          </Card>
-        </Col>
         <Col className="p-0 ml-2">
           <Card className="p-0">
             <CardHeader>
@@ -123,6 +100,7 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
                         type="text"
                         name="bicNumber"
                         validate={{
+                          required: { value: true, errorMessage: 'This field is required.' },
                           minLength: { value: 10, errorMessage: 'This field is required to be at least 10 characters.' },
                           maxLength: { value: 12, errorMessage: 'This field cannot be longer than 12 characters.' }
                         }}
@@ -161,6 +139,7 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
                       type="text"
                       name="omnibusAccount"
                       validate={{
+                        required: { value: true, errorMessage: 'This field is required.' },
                         minLength: { value: 14, errorMessage: 'This field is required to be at least 14 characters.' },
                         maxLength: { value: 35, errorMessage: 'This field cannot be longer than 35 characters.' }
                       }}

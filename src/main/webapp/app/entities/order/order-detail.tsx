@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col, Card, CardHeader, CardBody } from 'reactstrap';
+import { Button, Row, Col, Card, CardHeader, CardBody, Badge } from 'reactstrap';
 import { ICrudGetAction, TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -23,24 +23,18 @@ export const OrderDetail = (props: IOrderDetailProps) => {
     props.getEntity(props.match.params.id, userId);
   }, []);
 
+  const orderStatus = {
+    INIT: 'primary',
+    PENDING: 'warning',
+    SUCCESS: 'success',
+    REMOVE: 'danger',
+    FAIL: 'danger',
+    NONE: 'info'
+  };
+
   return (
     <Row className="mb-2">
-      <Col md="4" className=" p-0">
-        <Card className="p-0">
-          <CardBody className="p-3">
-            <h5>{orderEntity.idOrder}</h5>
-            <Row>
-              <Col>
-                <small className="text-muted">
-                  Token: {orderEntity.securityTokenName} <br />
-                  {moment().format('LLL')}
-                </small>
-              </Col>
-            </Row>
-          </CardBody>
-        </Card>
-      </Col>
-      <Col md="8">
+      <Col>
         <Card className="p-0">
           <CardHeader>
             <h5>
@@ -121,23 +115,21 @@ export const OrderDetail = (props: IOrderDetailProps) => {
               </Col>
               <Col>
                 <small className="text-muted ">Status</small>
-                <p>{orderEntity.status}</p>
+                <p>
+                  <Badge color="none" className={`btn btn-outline-${orderStatus[orderEntity.status]}`}>
+                    {orderEntity.status?.toLowerCase()}
+                  </Badge>
+                </p>
               </Col>
             </Row>
             <Row>
               <Col>
                 <small className="text-muted ">Active</small>
-                <p>{orderEntity.active ? 'true' : 'false'}</p>
+                <p>{`${orderEntity.active}`}</p>
               </Col>
               <Col>
                 <small className="text-muted ">User</small>
-                <p>{orderEntity.user ? orderEntity.user.id : ''}</p>
-              </Col>
-            </Row>
-            <Row className="mb-2">
-              <Col>
-                <small className="text-muted ">Transaction</small>
-                <p>{orderEntity.transaction ? orderEntity.transaction.id : ''}</p>
+                <p>{`${orderEntity.user?.firstName}  ${orderEntity.user?.firstName}`}</p>
               </Col>
             </Row>
             <Button tag={Link} to="/order" replace color="info">
