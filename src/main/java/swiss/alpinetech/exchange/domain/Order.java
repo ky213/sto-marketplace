@@ -45,6 +45,9 @@ public class Order implements Serializable {
     @Column(name = "ref_order", nullable = false)
     private Long refOrder;
 
+    @Column(name = "securitytoken_name", nullable = false)
+    private String securityTokenName;
+
     @NotNull
     @Column(name = "create_date", nullable = false)
     private ZonedDateTime createDate;
@@ -127,6 +130,19 @@ public class Order implements Serializable {
 
     public void setIdOrder(String idOrder) {
         this.idOrder = idOrder;
+    }
+
+    public String getSecurityTokenName() {
+        return securityTokenName;
+    }
+
+    public Order securityTokenName(String securityTokenName) {
+        this.securityTokenName = securityTokenName;
+        return this;
+    }
+
+    public void setSecurityTokenName(String securityTokenName) {
+        this.securityTokenName = securityTokenName;
     }
 
     public Long getRefOrder() {
@@ -358,6 +374,7 @@ public class Order implements Serializable {
             "id=" + getId() +
             ", idOrder='" + getIdOrder() + "'" +
             ", refOrder=" + getRefOrder() +
+            ", securityTokenName=" + getSecurityTokenName() +
             ", createDate='" + getCreateDate() + "'" +
             ", updateDate='" + getUpdateDate() + "'" +
             ", closeDate='" + getCloseDate() + "'" +
