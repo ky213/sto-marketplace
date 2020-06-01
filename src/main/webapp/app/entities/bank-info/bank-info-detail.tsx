@@ -24,9 +24,9 @@ export const BankInfoDetail = ({ getBank, bankInfoEntity, loading, match }: IBan
                 <p>Loading...</p>
               ) : (
                 <>
-                  <h6>{bankInfoEntity.bankName}</h6>
                   <Row>
                     <Col xs="6">
+                      <h6>{bankInfoEntity.bankName}</h6>
                       <small className="text-muted">
                         {bankInfoEntity.country} <br />
                         {moment().format('LLL')}

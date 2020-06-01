@@ -1,5 +1,6 @@
 package swiss.alpinetech.exchange.domain;
 
+import org.springframework.data.elasticsearch.annotations.Field;
 import swiss.alpinetech.exchange.config.Constants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
