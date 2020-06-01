@@ -1,5 +1,6 @@
 package swiss.alpinetech.exchange.service.impl;
 
+import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 import swiss.alpinetech.exchange.service.WhiteListingService;
 import swiss.alpinetech.exchange.domain.WhiteListing;
 import swiss.alpinetech.exchange.repository.WhiteListingRepository;
@@ -12,6 +13,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -43,6 +46,20 @@ public class WhiteListingServiceImpl implements WhiteListingService {
     @Override
     public WhiteListing save(WhiteListing whiteListing) {
         log.debug("Request to save WhiteListing : {}", whiteListing);
+        WhiteListing result = whiteListingRepository.save(whiteListing);
+        whiteListingSearchRepository.save(result);
+        return result;
+    }
+
+    @Override
+    public WhiteListing create(WhiteListing whiteListing) {
+        log.debug("Request to create WhiteListing : {}", whiteListing);
+        whiteListing.setStatus(STATUS.PENDING);
+        whiteListing.setDateEvent(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
+        whiteListing.setDateSynchBlk(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
+        whiteListing.setStName(whiteListing.getSecuritytoken().getName());
+        whiteListing.setEthAddress(whiteListing.getSecuritytoken().getKycAddress());
+        whiteListing.setBalance(100.00);
         WhiteListing result = whiteListingRepository.save(whiteListing);
         whiteListingSearchRepository.save(result);
         return result;

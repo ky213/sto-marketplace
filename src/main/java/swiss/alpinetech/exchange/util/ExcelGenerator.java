@@ -71,7 +71,7 @@ public class ExcelGenerator {
                 row.createCell(2).setCellValue(order.getCreateDate().toString());
                 row.createCell(3).setCellValue(order.getUpdateDate().toString());
                 row.createCell(4).setCellValue(order.getCloseDate().toString());
-                row.createCell(5).setCellValue(order.getSecurityToken() != null ? order.getSecurityToken().getName() : "" );
+                row.createCell(5).setCellValue(order.getSecurityTokenName());
                 row.createCell(6).setCellValue(order.getSymbol());
                 row.createCell(7).setCellValue(order.getType().toString());
                 row.createCell(8).setCellValue(order.getLimitOrMarket().toString());

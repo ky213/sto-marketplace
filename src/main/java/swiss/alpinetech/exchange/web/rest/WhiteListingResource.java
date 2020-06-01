@@ -1,6 +1,8 @@
 package swiss.alpinetech.exchange.web.rest;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import swiss.alpinetech.exchange.domain.WhiteListing;
+import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.WhiteListingService;
 import swiss.alpinetech.exchange.web.rest.errors.BadRequestAlertException;
 
@@ -55,12 +57,33 @@ public class WhiteListingResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/white-listings")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
     public ResponseEntity<WhiteListing> createWhiteListing(@Valid @RequestBody WhiteListing whiteListing) throws URISyntaxException {
         log.debug("REST request to save WhiteListing : {}", whiteListing);
         if (whiteListing.getId() != null) {
             throw new BadRequestAlertException("A new whiteListing cannot already have an ID", ENTITY_NAME, "idexists");
         }
         WhiteListing result = whiteListingService.save(whiteListing);
+        return ResponseEntity.created(new URI("/api/white-listings/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+    /**
+     * {@code POST  /white-listings} : Create a new whiteListing.
+     *
+     * @param whiteListing the whiteListing to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new whiteListing, or with status {@code 400 (Bad Request)} if the whiteListing has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/create-whitelistings")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
+    public ResponseEntity<WhiteListing> customCreateWhiteListing(@Valid @RequestBody WhiteListing whiteListing) throws URISyntaxException {
+        log.debug("REST request to create WhiteListing : {}", whiteListing);
+        if (whiteListing.getId() != null) {
+            throw new BadRequestAlertException("A new whiteListing cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        WhiteListing result = whiteListingService.create(whiteListing);
         return ResponseEntity.created(new URI("/api/white-listings/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -76,6 +99,7 @@ public class WhiteListingResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/white-listings")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
     public ResponseEntity<WhiteListing> updateWhiteListing(@Valid @RequestBody WhiteListing whiteListing) throws URISyntaxException {
         log.debug("REST request to update WhiteListing : {}", whiteListing);
         if (whiteListing.getId() == null) {
@@ -94,6 +118,7 @@ public class WhiteListingResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of whiteListings in body.
      */
     @GetMapping("/white-listings")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
     public ResponseEntity<List<WhiteListing>> getAllWhiteListings(Pageable pageable) {
         log.debug("REST request to get a page of WhiteListings");
         Page<WhiteListing> page = whiteListingService.findAll(pageable);
