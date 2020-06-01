@@ -70,6 +70,26 @@ public class WhiteListingResource {
     }
 
     /**
+     * {@code POST  /white-listings} : Create a new whiteListing.
+     *
+     * @param whiteListing the whiteListing to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new whiteListing, or with status {@code 400 (Bad Request)} if the whiteListing has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/create-whitelistings")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
+    public ResponseEntity<WhiteListing> customCreateWhiteListing(@Valid @RequestBody WhiteListing whiteListing) throws URISyntaxException {
+        log.debug("REST request to create WhiteListing : {}", whiteListing);
+        if (whiteListing.getId() != null) {
+            throw new BadRequestAlertException("A new whiteListing cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        WhiteListing result = whiteListingService.create(whiteListing);
+        return ResponseEntity.created(new URI("/api/white-listings/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+    /**
      * {@code PUT  /white-listings} : Updates an existing whiteListing.
      *
      * @param whiteListing the whiteListing to update.

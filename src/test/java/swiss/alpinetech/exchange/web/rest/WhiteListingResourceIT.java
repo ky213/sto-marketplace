@@ -4,6 +4,7 @@ import swiss.alpinetech.exchange.ExchangeApp;
 import swiss.alpinetech.exchange.domain.WhiteListing;
 import swiss.alpinetech.exchange.repository.WhiteListingRepository;
 import swiss.alpinetech.exchange.repository.search.WhiteListingSearchRepository;
+import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.WhiteListingService;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +44,7 @@ import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 @SpringBootTest(classes = ExchangeApp.class)
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
-@WithMockUser
+@WithMockUser(authorities = {AuthoritiesConstants.ADMIN, AuthoritiesConstants.USER, AuthoritiesConstants.BANK})
 public class WhiteListingResourceIT {
 
     private static final ZonedDateTime DEFAULT_DATE_EVENT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
@@ -277,7 +278,7 @@ public class WhiteListingResourceIT {
             .andExpect(jsonPath("$.[*].customerName").value(hasItem(DEFAULT_CUSTOMER_NAME)))
             .andExpect(jsonPath("$.[*].balance").value(hasItem(DEFAULT_BALANCE.doubleValue())));
     }
-    
+
     @Test
     @Transactional
     public void getWhiteListing() throws Exception {

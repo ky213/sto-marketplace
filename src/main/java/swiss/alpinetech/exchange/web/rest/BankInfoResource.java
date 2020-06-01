@@ -123,7 +123,7 @@ public class BankInfoResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the bankInfo, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/bank-infos/first-element")
-    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
     public ResponseEntity<BankInfo> getFirstElementBankInfo() {
         log.debug("REST request to get first element of BankInfo list");
         Optional<BankInfo> bankInfo = bankInfoService.getFirstBankInfo();
