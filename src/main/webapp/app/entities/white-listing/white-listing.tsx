@@ -143,10 +143,10 @@ export const WhiteListing = (props: IWhiteListingProps) => {
                 </th>
 
                 <th className="hand text-nowrap" onClick={sort('dateSynchBlk')}>
-                  Date Synch Blk <FontAwesomeIcon icon="sort" />
+                  Synchronization Date <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand text-nowrap" onClick={sort('stName')}>
-                  St Name <FontAwesomeIcon icon="sort" />
+                  Token Name <FontAwesomeIcon icon="sort" />
                 </th>
                 {(isAdmin || isBank) && (
                   <th className="hand text-nowrap" onClick={sort('customerName')}>
