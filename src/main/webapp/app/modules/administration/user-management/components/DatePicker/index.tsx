@@ -23,7 +23,7 @@ const DatePicker = props => {
     <>
       <AvInput
         id="user-setting-dateOfBirth"
-        type="datetime-local"
+        type="text"
         className="form-control position-relative"
         name="setting.dateOfBirth"
         value={props.value}

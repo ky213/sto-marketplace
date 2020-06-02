@@ -4,7 +4,15 @@ import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, InputGroup, Col, Row, Table, Card, Badge } from 'reactstrap';
 import { AvForm, AvGroup, AvInput } from 'availity-reactstrap-validation';
-import { ICrudSearchAction, ICrudGetAllAction, TextFormat, getSortState, IPaginationBaseState } from 'react-jhipster';
+import {
+  ICrudSearchAction,
+  ICrudGetAllAction,
+  TextFormat,
+  getSortState,
+  IPaginationBaseState,
+  JhiItemCount,
+  JhiPagination
+} from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
@@ -31,14 +39,14 @@ export const Order = (props: IOrderProps) => {
         search,
         paginationState.activePage - 1,
         paginationState.itemsPerPage,
-        `${paginationState.sort},${paginationState.order}`,
+        `${sorting ? paginationState.sort : 'updateDate'},${sorting ? paginationState.order : 'desc'}`,
         userId
       );
     } else {
       props.getEntities(
         paginationState.activePage - 1,
         paginationState.itemsPerPage,
-        `${paginationState.sort},${paginationState.order}`,
+        `${sorting ? paginationState.sort : 'updateDate'},${sorting ? paginationState.order : 'desc'}`,
         userId
       );
     }
@@ -81,16 +89,17 @@ export const Order = (props: IOrderProps) => {
         ...paginationState,
         activePage: 1
       });
-      props.getEntities(
-        paginationState.activePage - 1,
-        paginationState.itemsPerPage,
-        `${paginationState.sort},${paginationState.order}`,
-        userId
-      );
+      props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `updateDate,desc`, userId);
     }
   };
 
   const handleSearch = event => setSearch(event.target.value);
+
+  const handlePagination = currentPage =>
+    setPaginationState({
+      ...paginationState,
+      activePage: currentPage
+    });
 
   useEffect(() => {
     getAllEntities();
@@ -132,7 +141,7 @@ export const Order = (props: IOrderProps) => {
     NONE: 'info'
   };
 
-  const { orderList, match, loading } = props;
+  const { orderList, match, loading, totalItems } = props;
 
   return (
     <Card className="bg-white p-3 mb-2">
@@ -179,6 +188,9 @@ export const Order = (props: IOrderProps) => {
               <Table responsive>
                 <thead>
                   <tr>
+                    <th className="hand text-nowrap" onClick={sort('idOrder')}>
+                      Order <FontAwesomeIcon icon="sort" />
+                    </th>
                     <th className="hand text-nowrap" onClick={sort('refOrder')}>
                       Order Ref <FontAwesomeIcon icon="sort" />
                     </th>
@@ -209,7 +221,7 @@ export const Order = (props: IOrderProps) => {
                         Username <FontAwesomeIcon icon="sort" />
                       </th>
                     )}
-                    <th className="hand text-nowrap" onClick={sort('createDate')}>
+                    <th className="hand text-nowrap" onClick={sort('updateDate')}>
                       Date <FontAwesomeIcon icon="sort" />
                     </th>
                     <th />
@@ -218,6 +230,7 @@ export const Order = (props: IOrderProps) => {
                 <tbody>
                   {orderList.map((order, i) => (
                     <tr key={`entity-${i}`}>
+                      <td className="text-nowrap">{order.idOrder}</td>
                       <td className="text-nowrap">{order.refOrder}</td>
                       <td>
                         <Badge color="none" className={`ml-3 btn btn-outline-${orderStatus[order.status]}`}>
@@ -233,7 +246,7 @@ export const Order = (props: IOrderProps) => {
                       <td className="text-nowrap">{order.totalAmount.toLocaleString()} CHF</td>
                       {(isAdmin || isBank) && <td>{order.user ? order.user.login : ''}</td>}
                       <td>
-                        <TextFormat type="date" value={order.createDate} format={APP_DATE_FORMAT} />
+                        <TextFormat type="date" value={order.updateDate} format={APP_DATE_FORMAT} />
                       </td>
                       <td className="text-right">
                         <div className="btn-group flex-btn-group-container">
@@ -264,6 +277,20 @@ export const Order = (props: IOrderProps) => {
               !loading && <div className="alert alert-warning">No Orders found</div>
             )}
           </InfiniteScroll>
+          <div className={orderList && orderList.length > 0 ? '' : 'd-none'}>
+            <Row className="justify-content-center">
+              <JhiItemCount page={paginationState.activePage} total={totalItems} itemsPerPage={paginationState.itemsPerPage} />
+            </Row>
+            <Row className="justify-content-center">
+              <JhiPagination
+                activePage={paginationState.activePage}
+                onSelect={handlePagination}
+                maxButtons={5}
+                itemsPerPage={paginationState.itemsPerPage}
+                totalItems={props.totalItems}
+              />
+            </Row>
+          </div>
         </div>
       </div>
     </Card>
