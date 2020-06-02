@@ -39,8 +39,8 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
       props.getEntity(props.match.params.id, userId);
     }
 
-    props.getUsers();
-    props.getTransactions();
+    // props.getUsers();
+    // props.getTransactions();
   }, []);
 
   useEffect(() => {
@@ -57,9 +57,10 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
     if (errors.length === 0) {
       const entity = {
         ...orderEntity,
-        ...values
+        ...values,
+        user: account
       };
-      entity.user = users[values.user];
+      // entity.user = users[values.user];
 
       if (isNew) {
         props.createEntity(entity);
