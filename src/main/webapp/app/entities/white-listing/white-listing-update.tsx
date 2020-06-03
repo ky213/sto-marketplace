@@ -84,7 +84,7 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                   <AvInput id="white-listing-id" type="text" className="form-control" name="id" required readOnly />
                 </AvGroup>
               ) : null}
-              <Row>
+              {/* <Row>
                 <AvGroup className="col-md-6">
                   <Label id="statusLabel" for="white-listing-status">
                     Status
@@ -183,7 +183,7 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                   </Label>
                   <AvField id="white-listing-balance" type="string" className="form-control" name="balance" />
                 </AvGroup>
-              </Row>
+              </Row> */}
               <Row>
                 <AvGroup className="col-md-6">
                   <Label for="white-listing-user">User</Label>
@@ -199,7 +199,7 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                   </AvInput>
                 </AvGroup>
                 <AvGroup className="col-md-6">
-                  <Label for="white-listing-securitytoken">Securitytoken</Label>
+                  <Label for="white-listing-securitytoken">Security token</Label>
                   <AvInput id="white-listing-securitytoken" type="select" className="form-control" name="securitytoken.id">
                     <option value="" key="0" />
                     {securityTokens

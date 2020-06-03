@@ -9,11 +9,14 @@ import { IRootState } from 'app/shared/reducers';
 import { connect } from 'react-redux';
 import './menu.scss';
 
-const Menu = ({ account, totalBankItems, getBanks }) => {
+const Menu = ({ account, totalBankItems, getBanks, banks }) => {
+  const bank = banks[0];
   const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
   const isBank = account.authorities.includes(AUTHORITIES.BANK);
   const homeLink = isAdmin || isBank ? '/home-bank' : '/home-customer';
-  const bankInfoLink = totalBankItems ? `/bank-info/1/${isAdmin || isBank ? 'edit' : ''}` : `/bank-info/${isAdmin || isBank ? 'new' : '1'}`;
+  const bankInfoLink = bank
+    ? `/bank-info/${bank.id}${isAdmin || isBank ? '/edit' : ''}`
+    : `/bank-info/${isAdmin || isBank ? 'new' : bank?.id}`;
 
   useEffect(() => {
     getBanks();
@@ -78,7 +81,8 @@ const Menu = ({ account, totalBankItems, getBanks }) => {
 };
 
 const mapStateToProps = ({ bankInfo }: IRootState) => ({
-  totalBankItems: bankInfo.totalItems
+  totalBankItems: bankInfo.totalItems,
+  banks: bankInfo.entities
 });
 
 const mapDispatchToProps = {

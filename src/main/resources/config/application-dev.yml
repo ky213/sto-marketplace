@@ -67,8 +67,8 @@ spring:
         path:
           home: target/elasticsearch
         http:
-            enabled: true
-            port: 9200
+          enabled: true
+          port: 9200
         cluster.routing.allocation.disk.threshold_enabled: false
   liquibase:
     # Remove 'faker' if you do not want the sample data to be loaded automatically

@@ -108,7 +108,7 @@ const apiSearchUrl = 'api/_search/white-listings';
 
 export const getSearchEntities: ICrudSearchAction<IWhiteListing> = (query, page, size, sort) => ({
   type: ACTION_TYPES.SEARCH_WHITELISTINGS,
-  payload: axios.get<IWhiteListing>(`${apiSearchUrl}?query=${query}${sort ? `&page=${page}&size=${size}&sort=${sort}` : ''}`)
+  payload: axios.get<IWhiteListing>(`${apiSearchUrl}?query=${query}${sort ? `&page=${page}&size=${size}` : ''}`)
 });
 
 export const getEntities: ICrudGetAllAction<IWhiteListing> = (page, size, sort) => {

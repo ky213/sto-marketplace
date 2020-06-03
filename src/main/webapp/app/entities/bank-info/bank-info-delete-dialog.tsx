@@ -12,6 +12,9 @@ import { getEntity, deleteEntity } from './bank-info.reducer';
 export interface IBankInfoDeleteDialogProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const BankInfoDeleteDialog = (props: IBankInfoDeleteDialogProps) => {
+  const { bankInfoEntities } = props;
+  const bank = bankInfoEntities[0];
+
   useEffect(() => {
     props.getEntity(props.match.params.id);
   }, []);
@@ -27,10 +30,9 @@ export const BankInfoDeleteDialog = (props: IBankInfoDeleteDialogProps) => {
   }, [props.updateSuccess]);
 
   const confirmDelete = () => {
-    props.deleteEntity(props.bankInfoEntity.id);
+    props.deleteEntity(bank.id);
   };
 
-  const { bankInfoEntity } = props;
   return (
     <Modal isOpen toggle={handleClose}>
       <ModalHeader toggle={handleClose}>Confirm delete operation</ModalHeader>
@@ -50,7 +52,7 @@ export const BankInfoDeleteDialog = (props: IBankInfoDeleteDialogProps) => {
 };
 
 const mapStateToProps = ({ bankInfo }: IRootState) => ({
-  bankInfoEntity: bankInfo.entity,
+  bankInfoEntities: bankInfo.entities,
   updateSuccess: bankInfo.updateSuccess
 });
 

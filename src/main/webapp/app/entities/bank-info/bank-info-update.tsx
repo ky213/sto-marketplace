@@ -17,20 +17,17 @@ export interface IBankInfoUpdateProps extends StateProps, DispatchProps, RouteCo
 
 export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
-
-  const { bankInfoEntity, loading, updating } = props;
-
-  const { logo, logoContentType } = bankInfoEntity;
+  const { bank, loading, updating, match } = props;
 
   const handleClose = () => {
-    // props.history.push('/bank-info' + props.location.search);
+    if (bank && bank.id) props.history.replace(`/bank-info/${bank.id}/edit`);
   };
 
   useEffect(() => {
     if (isNew) {
       props.reset();
     } else {
-      props.getEntity('');
+      props.getEntity(match.params.id);
     }
   }, []);
 
@@ -51,14 +48,14 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
   const saveEntity = (event, errors, values) => {
     if (errors.length === 0) {
       const entity = {
-        ...bankInfoEntity,
+        ...bank,
         ...values
       };
 
-      if (isNew) {
-        props.createEntity(entity);
-      } else {
+      if (bank && bank.id) {
         props.updateEntity(entity);
+      } else {
+        props.createEntity(entity);
       }
     }
   };
@@ -66,29 +63,6 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
   return (
     <div>
       <Row className="mx-auto">
-        <Col md="4" className=" p-0">
-          <Card className="p-0">
-            <CardBody className="p-3">
-              <h6>{bankInfoEntity.bankName}</h6>
-              <Row>
-                <Col xs="6">
-                  <small className="text-muted">
-                    {bankInfoEntity.country} <br />
-                    {moment().format('LLL')}
-                  </small>
-                </Col>
-                <Col>
-                  <img
-                    className="bg-secondary d-block ml-auto"
-                    src={`data:image/png;base64,${bankInfoEntity.logo}`}
-                    alt="bank_logo"
-                    style={{ height: '80px', width: '80px' }}
-                  />
-                </Col>
-              </Row>
-            </CardBody>
-          </Card>
-        </Col>
         <Col className="p-0 ml-2">
           <Card className="p-0">
             <CardHeader>
@@ -99,7 +73,7 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
               {loading ? (
                 <p>Loading...</p>
               ) : (
-                <AvForm model={isNew ? {} : bankInfoEntity} onSubmit={saveEntity}>
+                <AvForm model={bank} onSubmit={saveEntity}>
                   <AvGroup>
                     <Label id="bankNameLabel" for="bank-info-bankName">
                       Bank Name
@@ -123,6 +97,7 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
                         type="text"
                         name="bicNumber"
                         validate={{
+                          required: { value: true, errorMessage: 'This field is required.' },
                           minLength: { value: 10, errorMessage: 'This field is required to be at least 10 characters.' },
                           maxLength: { value: 12, errorMessage: 'This field cannot be longer than 12 characters.' }
                         }}
@@ -137,7 +112,7 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
                         type="select"
                         className="form-control"
                         name="country"
-                        value={(!isNew && bankInfoEntity.country) || 'FRANCE'}
+                        value={(!isNew && bank.country) || 'FRANCE'}
                       >
                         <option value="FRANCE">FRANCE</option>
                         <option value="USA">USA</option>
@@ -161,6 +136,7 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
                       type="text"
                       name="omnibusAccount"
                       validate={{
+                        required: { value: true, errorMessage: 'This field is required.' },
                         minLength: { value: 14, errorMessage: 'This field is required to be at least 14 characters.' },
                         maxLength: { value: 35, errorMessage: 'This field cannot be longer than 35 characters.' }
                       }}
@@ -207,16 +183,16 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
                         Logo
                       </Label>
                       <br />
-                      {logo ? (
+                      {bank?.logo ? (
                         <div>
-                          <a onClick={openFile(logoContentType, logo)}>
-                            <img src={`data:${logoContentType};base64,${logo}`} style={{ maxHeight: '100px' }} />
+                          <a onClick={openFile(bank?.logoContentType, bank?.logo)}>
+                            <img src={`data:${bank?.logoContentType};base64,${bank?.logo}`} style={{ maxHeight: '100px' }} />
                           </a>
                           <br />
                           <Row>
                             <Col md="11">
                               <span>
-                                {logoContentType}, {byteSize(logo)}
+                                {bank?.logoContentType}, {byteSize(bank?.logo)}
                               </span>
                             </Col>
                             <Col md="1">
@@ -228,7 +204,7 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
                         </div>
                       ) : null}
                       <input id="file_logo" type="file" onChange={onBlobChange(true, 'logo')} accept="image/*" />
-                      <AvInput type="hidden" name="logo" value={logo} />
+                      <AvInput type="hidden" name="logo" value={bank?.logo} />
                     </AvGroup>
                   </AvGroup>
                   &nbsp;
@@ -247,7 +223,7 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
 };
 
 const mapStateToProps = (storeState: IRootState) => ({
-  bankInfoEntity: storeState.bankInfo.entity,
+  bank: storeState.bankInfo.entity,
   loading: storeState.bankInfo.loading,
   updating: storeState.bankInfo.updating,
   updateSuccess: storeState.bankInfo.updateSuccess

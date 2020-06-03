@@ -116,9 +116,9 @@ export const WhiteListing = (props: IWhiteListingProps) => {
             <AvGroup>
               <InputGroup>
                 <AvInput type="text" name="search" value={search} onChange={handleSearch} placeholder="Search" />
-                {/* <Button className="input-group-addon">
+                <Button type="submit" className="input-group-addon">
                   <FontAwesomeIcon icon="search" />
-                </Button> */}
+                </Button>
                 <Button type="reset" className="input-group-addon" onClick={clear}>
                   <FontAwesomeIcon icon="trash" />
                 </Button>
@@ -148,6 +148,12 @@ export const WhiteListing = (props: IWhiteListingProps) => {
                 <th className="hand text-nowrap" onClick={sort('stName')}>
                   Token Name <FontAwesomeIcon icon="sort" />
                 </th>
+                <th className="hand text-nowrap" onClick={sort('balance')}>
+                  Balance <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand text-nowrap" onClick={sort('ethAddress')}>
+                  Eth Address <FontAwesomeIcon icon="sort" />
+                </th>
                 {(isAdmin || isBank) && (
                   <th className="hand text-nowrap" onClick={sort('customerName')}>
                     Customer Name <FontAwesomeIcon icon="sort" />
@@ -167,6 +173,8 @@ export const WhiteListing = (props: IWhiteListingProps) => {
                     <TextFormat type="date" value={whiteListing.dateSynchBlk} format={APP_DATE_FORMAT} />
                   </td>
                   <td>{whiteListing.stName}</td>
+                  <td>{whiteListing.balance.toLocaleString()} CHF</td>
+                  <td>{whiteListing.ethAddress}</td>
                   {(isAdmin || isBank) && (
                     <>
                       <td>{whiteListing.customerName}</td>
