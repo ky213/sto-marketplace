@@ -58,7 +58,7 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
       const entity = {
         ...orderEntity,
         ...values,
-        user: account
+        user: { id: account.id }
       };
 
       if (isNew) {
