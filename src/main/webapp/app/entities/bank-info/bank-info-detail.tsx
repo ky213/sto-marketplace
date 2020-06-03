@@ -26,7 +26,6 @@ export const BankInfoDetail = ({ getBanks, bankInfoEntities, loading, match }: I
                 <p>Loading...</p>
               ) : (
                 <>
-                  <h6>{bank?.bankName}</h6>
                   <Row>
                     <Col xs="6">
                       <h6>{bank?.bankName}</h6>
