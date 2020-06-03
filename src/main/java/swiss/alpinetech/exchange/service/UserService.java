@@ -275,7 +275,23 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Page<UserDTO> getAllManagedUsers(Pageable pageable) {
-        return userRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER).map(UserDTO::new);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN)) {
+                return userRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER).map(UserDTO::new);
+            }
+        }
+        List<UserDTO> userList = userRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER)
+            .stream()
+            .filter(user -> !this.userIsAdmin(user))
+            .map(UserDTO::new)
+            .collect(Collectors.toList());
+
+        Page<UserDTO> usersPage = new PageImpl<UserDTO>(
+            userList,
+            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
+            userList.size());
+        return usersPage;
     }
 
     @Transactional(readOnly = true)

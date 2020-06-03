@@ -29,6 +29,7 @@ export const BankInfoDetail = ({ getBanks, bankInfoEntities, loading, match }: I
                   <h6>{bank?.bankName}</h6>
                   <Row>
                     <Col xs="6">
+                      <h6>{bank?.bankName}</h6>
                       <small className="text-muted">
                         {bank?.country} <br />
                         {moment().format('LLL')}

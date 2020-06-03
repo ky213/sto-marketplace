@@ -21,6 +21,14 @@ public interface WhiteListingService {
     WhiteListing save(WhiteListing whiteListing);
 
     /**
+     * Create a whiteListing.
+     *
+     * @param whiteListing the entity to save.
+     * @return the persisted entity.
+     */
+    WhiteListing create(WhiteListing whiteListing);
+
+    /**
      * Get all the whiteListings.
      *
      * @param pageable the pagination information.
@@ -47,7 +55,7 @@ public interface WhiteListingService {
      * Search for the whiteListing corresponding to the query.
      *
      * @param query the query of the search.
-     * 
+     *
      * @param pageable the pagination information.
      * @return the list of entities.
      */

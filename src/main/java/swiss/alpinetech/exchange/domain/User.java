@@ -1,5 +1,6 @@
 package swiss.alpinetech.exchange.domain;
 
+import org.springframework.data.elasticsearch.annotations.Field;
 import swiss.alpinetech.exchange.config.Constants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -86,7 +87,6 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @Column(name = "reset_date")
     private Instant resetDate = null;
 
-    @JsonIgnore
     @ManyToMany
     @JoinTable(
         name = "jhi_user_authority",
