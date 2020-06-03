@@ -1,10 +1,12 @@
 package swiss.alpinetech.exchange.service;
 
+import org.springframework.security.test.context.support.WithMockUser;
 import swiss.alpinetech.exchange.ExchangeApp;
 import swiss.alpinetech.exchange.config.Constants;
 import swiss.alpinetech.exchange.domain.User;
 import swiss.alpinetech.exchange.repository.search.UserSearchRepository;
 import swiss.alpinetech.exchange.repository.UserRepository;
+import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.dto.UserDTO;
 
 import io.github.jhipster.security.RandomUtil;
@@ -37,6 +39,7 @@ import static org.mockito.Mockito.when;
  */
 @SpringBootTest(classes = ExchangeApp.class)
 @Transactional
+@WithMockUser(authorities = {AuthoritiesConstants.ADMIN, AuthoritiesConstants.USER, AuthoritiesConstants.BANK})
 public class UserServiceIT {
 
     private static final String DEFAULT_LOGIN = "johndoe";

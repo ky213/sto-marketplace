@@ -188,46 +188,10 @@ public class WhiteListingResourceIT {
 
     @Test
     @Transactional
-    public void checkDateEventIsRequired() throws Exception {
-        int databaseSizeBeforeTest = whiteListingRepository.findAll().size();
-        // set the field null
-        whiteListing.setDateEvent(null);
-
-        // Create the WhiteListing, which fails.
-
-        restWhiteListingMockMvc.perform(post("/api/white-listings")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(whiteListing)))
-            .andExpect(status().isBadRequest());
-
-        List<WhiteListing> whiteListingList = whiteListingRepository.findAll();
-        assertThat(whiteListingList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
     public void checkActiveIsRequired() throws Exception {
         int databaseSizeBeforeTest = whiteListingRepository.findAll().size();
         // set the field null
         whiteListing.setActive(null);
-
-        // Create the WhiteListing, which fails.
-
-        restWhiteListingMockMvc.perform(post("/api/white-listings")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(whiteListing)))
-            .andExpect(status().isBadRequest());
-
-        List<WhiteListing> whiteListingList = whiteListingRepository.findAll();
-        assertThat(whiteListingList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
-    public void checkStNameIsRequired() throws Exception {
-        int databaseSizeBeforeTest = whiteListingRepository.findAll().size();
-        // set the field null
-        whiteListing.setStName(null);
 
         // Create the WhiteListing, which fails.
 
