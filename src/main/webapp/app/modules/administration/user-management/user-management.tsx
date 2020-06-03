@@ -50,6 +50,18 @@ export const UserManagement = (props: IUserManagementProps) => {
 
   const handleSearch = event => setSearch(event.target.value);
 
+  const clear = () => {
+    if (search) {
+      props.reset();
+      setSearch('');
+      setPagination({
+        ...pagination,
+        activePage: 1
+      });
+      props.getUsers(pagination.activePage - 1, pagination.itemsPerPage, `${pagination.sort},${pagination.order}`);
+    }
+  };
+
   const { account, users, match, totalItems, loading } = props;
 
   return (
@@ -67,7 +79,12 @@ export const UserManagement = (props: IUserManagementProps) => {
             <AvGroup>
               <InputGroup>
                 <AvInput type="text" name="search" value={search} onChange={handleSearch} placeholder="Search" />
-                <Button className="ml-2 input-group-addon">Search</Button>
+                <Button className="input-group-addon" onClick={startSearching}>
+                  <FontAwesomeIcon icon="search" />
+                </Button>
+                <Button type="reset" className="input-group-addon" onClick={clear}>
+                  <FontAwesomeIcon icon="trash" />
+                </Button>
               </InputGroup>
             </AvGroup>
           </AvForm>
