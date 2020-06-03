@@ -1,5 +1,9 @@
 package swiss.alpinetech.exchange.service.impl;
 
+import org.apache.commons.collections4.IteratorUtils;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 import swiss.alpinetech.exchange.service.WhiteListingService;
 import swiss.alpinetech.exchange.domain.WhiteListing;
@@ -15,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -54,6 +59,8 @@ public class WhiteListingServiceImpl implements WhiteListingService {
     @Override
     public WhiteListing create(WhiteListing whiteListing) {
         log.debug("Request to create WhiteListing : {}", whiteListing);
+        whiteListing.setActive(false);
+        whiteListing.setCustomerName("");
         whiteListing.setStatus(STATUS.PENDING);
         whiteListing.setDateEvent(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
         whiteListing.setDateSynchBlk(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
@@ -76,6 +83,17 @@ public class WhiteListingServiceImpl implements WhiteListingService {
     public Page<WhiteListing> findAll(Pageable pageable) {
         log.debug("Request to get all WhiteListings");
         return whiteListingRepository.findAll(pageable);
+    }
+
+    /**
+     * Get all user whiteListings.
+     *
+     * @return the list of entities.
+     */
+    @Override
+    public Page<WhiteListing> findUserwhiteListings(Pageable pageable) {
+        log.debug("Request to get user WhiteListings");
+        return whiteListingRepository.findByUserIsCurrentUser(pageable);
     }
 
     /**
@@ -114,5 +132,27 @@ public class WhiteListingServiceImpl implements WhiteListingService {
     @Transactional(readOnly = true)
     public Page<WhiteListing> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of WhiteListings for query {}", query);
-        return whiteListingSearchRepository.search(queryStringQuery(query), pageable);    }
+        return whiteListingSearchRepository.search(queryStringQuery(query), pageable);
+    }
+
+    /**
+     * Search for the whiteListing user corresponding to the query.
+     *
+     * @param query the query of the search.
+     * @param userId the id of the user.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    @Override
+    public Page<WhiteListing> searchUserWhiteListings(String query, Long userId, Pageable pageable) {
+        List<WhiteListing> WhiteListings = IteratorUtils.toList(whiteListingSearchRepository.search(QueryBuilders.boolQuery()
+            .must(queryStringQuery(query))
+            .must(matchQuery("user.id", userId))).iterator());
+        Page<WhiteListing> WhiteListingPage = new PageImpl<WhiteListing>(
+            WhiteListings,
+            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
+            WhiteListings.size());
+        return WhiteListingPage;
+    }
 }

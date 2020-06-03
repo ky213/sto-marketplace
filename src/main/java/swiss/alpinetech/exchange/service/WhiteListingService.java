@@ -1,5 +1,6 @@
 package swiss.alpinetech.exchange.service;
 
+import swiss.alpinetech.exchange.domain.Order;
 import swiss.alpinetech.exchange.domain.WhiteListing;
 
 import org.springframework.data.domain.Page;
@@ -37,6 +38,14 @@ public interface WhiteListingService {
     Page<WhiteListing> findAll(Pageable pageable);
 
     /**
+     * Get all the user's whiteListings.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    Page<WhiteListing> findUserwhiteListings(Pageable pageable);
+
+    /**
      * Get the "id" whiteListing.
      *
      * @param id the id of the entity.
@@ -60,4 +69,15 @@ public interface WhiteListingService {
      * @return the list of entities.
      */
     Page<WhiteListing> search(String query, Pageable pageable);
+
+    /**
+     * Search for the whiteListing user corresponding to the query.
+     *
+     * @param query the query of the search.
+     * @param userId the id of the user.
+     *
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    Page<WhiteListing> searchUserWhiteListings(String query, Long userId, Pageable pageable);
 }

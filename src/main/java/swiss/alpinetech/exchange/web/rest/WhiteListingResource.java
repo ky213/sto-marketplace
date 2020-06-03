@@ -1,6 +1,7 @@
 package swiss.alpinetech.exchange.web.rest;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import swiss.alpinetech.exchange.domain.Order;
 import swiss.alpinetech.exchange.domain.WhiteListing;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.WhiteListingService;
@@ -127,6 +128,20 @@ public class WhiteListingResource {
     }
 
     /**
+     * {@code GET  /user-orders} : get user orders.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the user orders, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/user-white-listings")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<List<WhiteListing>> getUserWhiteListings(Pageable pageable) {
+        log.debug("REST request to get User WhiteListings");
+        Page<WhiteListing> page = whiteListingService.findUserwhiteListings(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
      * {@code GET  /white-listings/:id} : get the "id" whiteListing.
      *
      * @param id the id of the whiteListing to retrieve.
@@ -164,6 +179,23 @@ public class WhiteListingResource {
     public ResponseEntity<List<WhiteListing>> searchWhiteListings(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of WhiteListings for query {}", query);
         Page<WhiteListing> page = whiteListingService.search(query, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code SEARCH  /_search/white-listings?query=:query} : search for the whiteListing corresponding
+     * to the query.
+     *
+     * @param query the query of the whiteListing search.
+     * @param pageable the pagination information.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search/user-white-listings")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<List<WhiteListing>> searchUserWhiteListings(@RequestParam String query, @RequestParam Long userId, Pageable pageable) {
+        log.debug("REST request to search for a page of user {} WhiteListings for query {}", userId, query);
+        Page<WhiteListing> page = whiteListingService.searchUserWhiteListings(query, userId, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

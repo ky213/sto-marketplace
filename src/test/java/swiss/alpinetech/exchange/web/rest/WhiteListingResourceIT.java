@@ -185,43 +185,6 @@ public class WhiteListingResourceIT {
         verify(mockWhiteListingSearchRepository, times(0)).save(whiteListing);
     }
 
-
-    @Test
-    @Transactional
-    public void checkActiveIsRequired() throws Exception {
-        int databaseSizeBeforeTest = whiteListingRepository.findAll().size();
-        // set the field null
-        whiteListing.setActive(null);
-
-        // Create the WhiteListing, which fails.
-
-        restWhiteListingMockMvc.perform(post("/api/white-listings")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(whiteListing)))
-            .andExpect(status().isBadRequest());
-
-        List<WhiteListing> whiteListingList = whiteListingRepository.findAll();
-        assertThat(whiteListingList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
-    public void checkCustomerNameIsRequired() throws Exception {
-        int databaseSizeBeforeTest = whiteListingRepository.findAll().size();
-        // set the field null
-        whiteListing.setCustomerName(null);
-
-        // Create the WhiteListing, which fails.
-
-        restWhiteListingMockMvc.perform(post("/api/white-listings")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(whiteListing)))
-            .andExpect(status().isBadRequest());
-
-        List<WhiteListing> whiteListingList = whiteListingRepository.findAll();
-        assertThat(whiteListingList).hasSize(databaseSizeBeforeTest);
-    }
-
     @Test
     @Transactional
     public void getAllWhiteListings() throws Exception {

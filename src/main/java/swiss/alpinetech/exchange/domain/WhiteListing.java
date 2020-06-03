@@ -38,7 +38,6 @@ public class WhiteListing implements Serializable {
     @Column(name = "status")
     private STATUS status;
 
-    @NotNull
     @Column(name = "active", nullable = false)
     private Boolean active;
 
@@ -51,7 +50,6 @@ public class WhiteListing implements Serializable {
     @Column(name = "st_name", nullable = false)
     private String stName;
 
-    @NotNull
     @Column(name = "customer_name", nullable = false)
     private String customerName;
 
