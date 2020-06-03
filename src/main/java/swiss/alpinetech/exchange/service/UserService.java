@@ -342,18 +342,19 @@ public class UserService {
         }
     }
 
-    public Page<User> search(String query, Pageable pageable) {
+    public Page<UserDTO> search(String query, Pageable pageable) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         for (GrantedAuthority authority : authentication.getAuthorities()) {
             if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN)) {
-                return userSearchRepository.search(queryStringQuery(query), pageable);
+                return userSearchRepository.search(queryStringQuery(query), pageable).map(UserDTO::new);
             }
         }
-        List<User> userList = IteratorUtils.toList(userSearchRepository.search(queryStringQuery(query)).iterator())
+        List<UserDTO> userList = IteratorUtils.toList(userSearchRepository.search(queryStringQuery(query)).iterator())
             .stream()
             .filter(user -> !this.userIsAdmin(user))
+            .map(UserDTO::new)
             .collect(Collectors.toList());
-        Page<User> usersPage = new PageImpl<User>(
+        Page<UserDTO> usersPage = new PageImpl<UserDTO>(
             userList,
             PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
             userList.size());

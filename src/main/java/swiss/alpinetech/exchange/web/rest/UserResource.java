@@ -204,9 +204,9 @@ public class UserResource {
      */
     @GetMapping("/_search/users/{query}")
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
-    public ResponseEntity<List<User>> search(@PathVariable String query, Pageable pageable) {
+    public ResponseEntity<List<UserDTO>> search(@PathVariable String query, Pageable pageable) {
         log.debug("REST request to search for a page of Users for query {}", query);
-        Page<User> page = userService.search(query, pageable);
+        Page<UserDTO> page = userService.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
