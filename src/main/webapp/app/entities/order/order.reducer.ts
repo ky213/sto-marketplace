@@ -132,11 +132,11 @@ const apiSearchUrl = 'api/_search/orders';
 // Actions
 
 export const getSearchEntities: any = (query, page, size, sort, userId) => {
-  const url = userId ? '/api/_search/user-orders' : apiSearchUrl;
+  const url = userId ? `/api/_search/user-orders?userId=${userId}&query=${query}` : `${apiSearchUrl}?&query=${query}`;
 
   return {
     type: ACTION_TYPES.SEARCH_ORDERS,
-    payload: axios.get<IOrder>(`${url}?query=${query}${sort ? `&page=${page}&size=${size}&sort=${sort}` : ''}&userId=${userId}`)
+    payload: axios.get<IOrder>(url)
   };
 };
 
