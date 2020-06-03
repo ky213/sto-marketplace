@@ -60,7 +60,6 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
         ...values,
         user: account
       };
-      // entity.user = users[values.user];
 
       if (isNew) {
         props.createEntity(entity);
@@ -303,7 +302,7 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
                   </AvInput>
                 </AvGroup>
               </Row>
-              <Row>
+              {/* <Row>
                 <AvGroup className="col-md-6">
                   <Label for="order-transaction">Transaction</Label>
                   <AvInput id="order-transaction" type="select" className="form-control" name="transaction.id">
@@ -330,7 +329,7 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
                       : null}
                   </AvInput>
                 </AvGroup>
-              </Row>
+              </Row> */}
               <AvGroup check>
                 <Label id="activeLabel">
                   <AvInput id="order-active" type="checkbox" className="form-check-input" name="active" />

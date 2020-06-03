@@ -50,9 +50,7 @@ export const UserManagement = (props: IUserManagementProps) => {
 
   const handleSearch = event => setSearch(event.target.value);
 
-  const { account, match, totalItems, loading } = props;
-  const isBanker = account.authorities.includes(AUTHORITIES.BANK);
-  const users = props.users.filter(user => (isBanker ? !user.authorities.includes(AUTHORITIES.ADMIN) : user));
+  const { account, users, match, totalItems, loading } = props;
 
   return (
     <div>
