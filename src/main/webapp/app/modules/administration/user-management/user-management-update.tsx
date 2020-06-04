@@ -45,7 +45,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
     if (!values.setting) values.setting = {};
 
     values.authorities = newRoles;
-
+    values.langKey = 'en';
     values.setting.dateOfBirth = convertDateTimeToServer(values.setting.dateOfBirth || moment().toDate());
 
     if (!isUser) values.setting.iban = 'xxxxxxxxxxxxxx';
