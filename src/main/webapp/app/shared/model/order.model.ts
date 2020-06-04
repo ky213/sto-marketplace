@@ -5,6 +5,7 @@ import { ACTIONTYPE } from 'app/shared/model/enumerations/actiontype.model';
 import { ORDERTYPE } from 'app/shared/model/enumerations/ordertype.model';
 import { CATEGORY } from 'app/shared/model/enumerations/category.model';
 import { STATUS } from 'app/shared/model/enumerations/status.model';
+import { ISecurityToken } from './security-token.model';
 
 export interface IOrder {
   id?: number;
@@ -25,6 +26,7 @@ export interface IOrder {
   active?: boolean;
   user?: IUser;
   transaction?: ITransaction;
+  securityToken?: ISecurityToken;
 }
 
 export const defaultValue: Readonly<IOrder> = {

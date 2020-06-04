@@ -314,7 +314,7 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
                         <h5 className="mr-3">{securityToken.lastSellingprice.toLocaleString()}</h5>
                         <div className="d-flex flex-column">
                           <small>
-                            <b>BUY</b>
+                            <b>SELL</b>
                           </small>
                           <small>CHF</small>
                         </div>
