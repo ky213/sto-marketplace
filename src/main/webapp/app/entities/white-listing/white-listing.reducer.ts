@@ -111,8 +111,9 @@ export const getSearchEntities: ICrudSearchAction<IWhiteListing> = (query, page,
   payload: axios.get<IWhiteListing>(`${apiSearchUrl}?query=${query}${sort ? `&page=${page}&size=${size}` : ''}`)
 });
 
-export const getEntities: ICrudGetAllAction<IWhiteListing> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+export const getEntities: any = (page, size, sort, isUser) => {
+  const url = isUser ? 'api/user-white-listings' : apiUrl;
+  const requestUrl = `${url}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_WHITELISTING_LIST,
     payload: axios.get<IWhiteListing>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)

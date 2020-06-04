@@ -25,6 +25,9 @@ export interface IWhiteListingProps extends StateProps, DispatchProps, RouteComp
 export const WhiteListing = (props: IWhiteListingProps) => {
   const [search, setSearch] = useState('');
   const [paginationState, setPaginationState] = useState(getSortState(props.location, ITEMS_PER_PAGE));
+  const { whiteListingList, match, loading, totalItems, account } = props;
+  const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
+  const isBank = account.authorities.includes(AUTHORITIES.BANK);
 
   const getAllEntities = () => {
     if (search) {
@@ -35,7 +38,12 @@ export const WhiteListing = (props: IWhiteListingProps) => {
         `${paginationState.sort},${paginationState.order}`
       );
     } else {
-      props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`);
+      props.getEntities(
+        paginationState.activePage - 1,
+        paginationState.itemsPerPage,
+        `${paginationState.sort},${paginationState.order}`,
+        !isAdmin && !isBank
+      );
     }
   };
 
@@ -94,10 +102,6 @@ export const WhiteListing = (props: IWhiteListingProps) => {
       ...paginationState,
       activePage: currentPage
     });
-
-  const { whiteListingList, match, loading, totalItems, account } = props;
-  const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
-  const isBank = account.authorities.includes(AUTHORITIES.BANK);
 
   return (
     <Card className="bg-white p-3 mb-2">
