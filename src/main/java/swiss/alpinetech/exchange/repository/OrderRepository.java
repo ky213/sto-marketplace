@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Spring Data  repository for the Order entity.
@@ -28,4 +29,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query(value = "SELECT * from jhi_order where user_id = ?1 and update_date BETWEEN ?2 AND ?3", nativeQuery = true)
     List<Order> getByUserAllBetweenDates(Long userId, ZonedDateTime startDate, ZonedDateTime endDate);
+
+    @Query("select order from Order order where order.user.login = ?1 and order.id = ?2")
+    Optional<Order> findOneForUser(String login, Long orderId);
 }
