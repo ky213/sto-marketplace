@@ -82,15 +82,13 @@ export const Order = (props: IOrderProps) => {
   };
 
   const clear = () => {
-    if (search) {
-      props.reset();
-      setSearch('');
-      setPaginationState({
-        ...paginationState,
-        activePage: 1
-      });
-      props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `updateDate,desc`, userId);
-    }
+    props.reset();
+    setSearch('');
+    setPaginationState({
+      ...paginationState,
+      activePage: 1
+    });
+    props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `updateDate,desc`, userId);
   };
 
   const handleSearch = event => setSearch(event.target.value);

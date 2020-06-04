@@ -151,8 +151,7 @@ export const getEntities: any = (page, size, sort, userId) => {
 };
 
 export const getEntity: any = (id, userId) => {
-  const url = userId ? '/api/user-orders' : apiUrl;
-  const requestUrl = `${url}/${id}?userId=${userId}`;
+  const requestUrl = `${apiUrl}/${id}`;
 
   return {
     type: ACTION_TYPES.FETCH_ORDER,
