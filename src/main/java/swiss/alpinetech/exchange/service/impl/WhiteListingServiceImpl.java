@@ -4,7 +4,11 @@ import org.apache.commons.collections4.IteratorUtils;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import swiss.alpinetech.exchange.domain.enumeration.STATUS;
+import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.WhiteListingService;
 import swiss.alpinetech.exchange.domain.WhiteListing;
 import swiss.alpinetech.exchange.repository.WhiteListingRepository;
@@ -106,7 +110,13 @@ public class WhiteListingServiceImpl implements WhiteListingService {
     @Transactional(readOnly = true)
     public Optional<WhiteListing> findOne(Long id) {
         log.debug("Request to get WhiteListing : {}", id);
-        return whiteListingRepository.findById(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN) || authority.getAuthority().equals(AuthoritiesConstants.BANK)) {
+                return whiteListingRepository.findById(id);
+            }
+        }
+        return whiteListingRepository.findOneForUser(authentication.getName(),id);
     }
 
     /**

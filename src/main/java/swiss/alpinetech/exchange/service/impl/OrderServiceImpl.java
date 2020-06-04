@@ -5,7 +5,11 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import swiss.alpinetech.exchange.domain.enumeration.STATUS;
+import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.OrderService;
 import swiss.alpinetech.exchange.domain.Order;
 import swiss.alpinetech.exchange.repository.OrderRepository;
@@ -96,7 +100,13 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public Optional<Order> findOne(Long id) {
         log.debug("Request to get Order : {}", id);
-        return orderRepository.findById(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN) || authority.getAuthority().equals(AuthoritiesConstants.BANK)) {
+                return orderRepository.findById(id);
+            }
+        }
+        return orderRepository.findOneForUser(authentication.getName(),id);
     }
 
     /**
