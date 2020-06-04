@@ -187,8 +187,13 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
               <Row>
                 <AvGroup className="col-md-6">
                   <Label for="white-listing-user">User</Label>
-                  <AvInput id="white-listing-user" type="select" className="form-control" name="user.id">
-                    <option value="" key="0" />
+                  <AvInput
+                    value={whiteListingEntity?.user?.id}
+                    id="white-listing-user"
+                    type="select"
+                    className="form-control"
+                    name="user.id"
+                  >
                     {users
                       ? users.map((otherEntity, index) => (
                           <option key={index} value={otherEntity.id}>
@@ -200,8 +205,13 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                 </AvGroup>
                 <AvGroup className="col-md-6">
                   <Label for="white-listing-securitytoken">Security token</Label>
-                  <AvInput id="white-listing-securitytoken" type="select" className="form-control" name="securityToken.id">
-                    <option value="" key="0" />
+                  <AvInput
+                    value={whiteListingEntity?.securitytoken?.id}
+                    id="white-listing-securitytoken"
+                    type="select"
+                    className="form-control"
+                    name="securityToken.id"
+                  >
                     {securityTokens
                       ? securityTokens.map(otherEntity => (
                           <option value={otherEntity.id} key={otherEntity.id}>
