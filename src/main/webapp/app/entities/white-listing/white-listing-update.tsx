@@ -193,6 +193,9 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                     type="select"
                     className="form-control"
                     name="user.id"
+                    validate={{
+                      required: { value: true, errorMessage: 'This field is required.' }
+                    }}
                   >
                     {users
                       ? users.map((otherEntity, index) => (
@@ -211,6 +214,9 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                     type="select"
                     className="form-control"
                     name="securityToken.id"
+                    validate={{
+                      required: { value: true, errorMessage: 'This field is required.' }
+                    }}
                   >
                     {securityTokens
                       ? securityTokens.map(otherEntity => (

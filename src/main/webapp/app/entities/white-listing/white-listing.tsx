@@ -28,6 +28,7 @@ export const WhiteListing = (props: IWhiteListingProps) => {
   const { whiteListingList, match, loading, totalItems, account } = props;
   const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
   const isBank = account.authorities.includes(AUTHORITIES.BANK);
+  const userId = !isAdmin && !isBank ? account.id : null;
 
   const getAllEntities = () => {
     if (search) {
@@ -35,7 +36,8 @@ export const WhiteListing = (props: IWhiteListingProps) => {
         search,
         paginationState.activePage - 1,
         paginationState.itemsPerPage,
-        `${paginationState.sort},${paginationState.order}`
+        `${paginationState.sort},${paginationState.order}`,
+        userId
       );
     } else {
       props.getEntities(
@@ -57,7 +59,8 @@ export const WhiteListing = (props: IWhiteListingProps) => {
         search,
         paginationState.activePage - 1,
         paginationState.itemsPerPage,
-        `${paginationState.sort},${paginationState.order}`
+        `${paginationState.sort},${paginationState.order}`,
+        userId
       );
     }
   };
@@ -73,9 +76,7 @@ export const WhiteListing = (props: IWhiteListingProps) => {
 
   const handleSearch = event => {
     event.persist();
-    setTimeout(() => {
-      setSearch(event.target?.value);
-    }, 700);
+    setSearch(event.target?.value);
   };
 
   const sortEntities = () => {
