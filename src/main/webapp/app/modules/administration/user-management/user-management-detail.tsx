@@ -20,6 +20,7 @@ export const UserManagementDetail = (props: IUserManagementDetailProps) => {
   const { user } = props;
   const isBanker = user.authorities.includes(AUTHORITIES.BANK);
   const isUser = user.authorities.includes(AUTHORITIES.USER);
+  const userRoles = user.authorities.map(role => role.split('_')[1]).join(', ');
 
   return (
     <Row className=" flex-column align-items-center w-75 mx-auto">
@@ -36,6 +37,16 @@ export const UserManagementDetail = (props: IUserManagementDetailProps) => {
               <Col>
                 <small className="text-muted">Last Name</small>
                 <p>{user.lastName}</p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Login</small>
+                <p>{user.login}</p>
+              </Col>
+              <Col>
+                <small className="text-muted">Activated</small>
+                <p>{`${user.activated}`}</p>
               </Col>
             </Row>
             <Row>
@@ -113,6 +124,22 @@ export const UserManagementDetail = (props: IUserManagementDetailProps) => {
                   <p>{user.setting?.position}</p>
                 </Col>
               )}
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Created By </small>
+                <p>{user.createdBy}</p>
+              </Col>
+              <Col>
+                <small className="text-muted ">Registration Date </small>
+                <p>{user.createdDate ? moment(user.createdDate).format('LLL') : ''}</p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted">Roles</small>
+                <p>{userRoles}</p>
+              </Col>
             </Row>
           </Col>
         </Row>
