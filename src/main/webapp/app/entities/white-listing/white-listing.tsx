@@ -179,14 +179,14 @@ export const WhiteListing = (props: IWhiteListingProps) => {
                   <td>{whiteListing.stName}</td>
                   <td>{whiteListing.balance.toLocaleString()} CHF</td>
                   <td>{whiteListing.ethAddress}</td>
-                  {(isAdmin || isBank) && (
-                    <>
-                      <td>{whiteListing.customerName}</td>
-                      <td className="text-right">
-                        <div className="btn-group flex-btn-group-container">
-                          <Button tag={Link} to={`${match.url}/${whiteListing.id}`} color="info" size="sm">
-                            <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
-                          </Button>
+                  <td>{whiteListing.customerName}</td>
+                  <td className="text-right">
+                    <div className="btn-group flex-btn-group-container">
+                      <Button tag={Link} to={`${match.url}/${whiteListing.id}`} color="info" size="sm">
+                        <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
+                      </Button>
+                      {(isAdmin || isBank) && (
+                        <>
                           <Button
                             tag={Link}
                             to={`${match.url}/${whiteListing.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
@@ -203,10 +203,10 @@ export const WhiteListing = (props: IWhiteListingProps) => {
                           >
                             <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
                           </Button>
-                        </div>
-                      </td>
-                    </>
-                  )}
+                        </>
+                      )}
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>

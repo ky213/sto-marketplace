@@ -31,12 +31,7 @@ const Routes = ({ match }) => (
         component={WhiteListingUpdate}
         hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
       />
-      <PrivateRoute
-        exact
-        path={`${match.url}/:id`}
-        component={WhiteListingDetail}
-        hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
-      />
+      <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={WhiteListingDetail} />
       <ErrorBoundaryRoute path={match.url} component={WhiteListing} />
     </Switch>
   </>

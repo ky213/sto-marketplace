@@ -74,7 +74,7 @@ export const WhiteListingDetail = (props: IWhiteListingDetailProps) => {
         <Row>
           <Col>
             <small className="text-muted ">User</small>
-            <p>{whiteListingEntity?.user.login}</p>
+            <p>{whiteListingEntity?.user?.login}</p>
           </Col>
           <Col>
             <small className="text-muted ">Security token</small>
