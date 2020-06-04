@@ -53,9 +53,9 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
     if (errors.length === 0) {
       const entity = {
         ...whiteListingEntity,
-        ...values
+        user: { id: +values.user.id },
+        securitytoken: { ...securityTokens.find(st => st.id === +values.securityToken.id) }
       };
-      entity.user = users[values.user];
 
       if (isNew) {
         props.createEntity(entity);
@@ -187,11 +187,11 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
               <Row>
                 <AvGroup className="col-md-6">
                   <Label for="white-listing-user">User</Label>
-                  <AvInput id="white-listing-user" type="select" className="form-control" name="user">
+                  <AvInput id="white-listing-user" type="select" className="form-control" name="user.id">
                     <option value="" key="0" />
                     {users
                       ? users.map((otherEntity, index) => (
-                          <option value={index} key={otherEntity.id}>
+                          <option key={index} value={otherEntity.id}>
                             {otherEntity.id}
                           </option>
                         ))
@@ -200,7 +200,7 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                 </AvGroup>
                 <AvGroup className="col-md-6">
                   <Label for="white-listing-securitytoken">Security token</Label>
-                  <AvInput id="white-listing-securitytoken" type="select" className="form-control" name="securitytoken.id">
+                  <AvInput id="white-listing-securitytoken" type="select" className="form-control" name="securityToken.id">
                     <option value="" key="0" />
                     {securityTokens
                       ? securityTokens.map(otherEntity => (

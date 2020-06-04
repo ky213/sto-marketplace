@@ -131,7 +131,7 @@ export const getEntity: ICrudGetAction<IWhiteListing> = id => {
 export const createEntity: ICrudPutAction<IWhiteListing> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.CREATE_WHITELISTING,
-    payload: axios.post(apiUrl, cleanEntity(entity))
+    payload: axios.post('api/create-whitelistings', cleanEntity(entity))
   });
   dispatch(getEntities());
   return result;
