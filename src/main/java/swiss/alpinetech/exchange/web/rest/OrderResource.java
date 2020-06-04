@@ -1,6 +1,9 @@
 package swiss.alpinetech.exchange.web.rest;
 
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.security.access.prepost.PreAuthorize;
 import swiss.alpinetech.exchange.domain.Order;
+import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.OrderService;
 import swiss.alpinetech.exchange.web.rest.errors.BadRequestAlertException;
 
@@ -19,11 +22,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -88,17 +92,84 @@ public class OrderResource {
     }
 
     /**
+     * {@code PUT  /orders} : Updates an existing order.
+     *
+     * @param orderId the order to cancel.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the canceled order,
+     * or with status {@code 400 (Bad Request)} if the order is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the order couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PutMapping("/cancel-order")
+    public ResponseEntity<Order> cancelOrder(@Valid @RequestParam Long orderId) throws URISyntaxException {
+        log.debug("REST request to cancel Order by Id : {}", orderId);
+        if (orderId == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        Order result = orderService.cancel(orderId);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, orderId.toString()))
+            .body(result);
+    }
+
+    /**
      * {@code GET  /orders} : get all the orders.
      *
      * @param pageable the pagination information.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of orders in body.
      */
     @GetMapping("/orders")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
     public ResponseEntity<List<Order>> getAllOrders(Pageable pageable) {
         log.debug("REST request to get a page of Orders");
         Page<Order> page = orderService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+
+    /**
+     * {@code GET  /orders} : get all the orders.
+     *
+     * @param beginDateParam the begin date of orders.
+     * @param endDateParam the end date of orders.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the excel file list of orders in body.
+     */
+    @GetMapping("/orders/export")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
+    public ResponseEntity<InputStreamResource> exportOrders(@RequestParam String beginDateParam, @RequestParam String endDateParam) throws IOException {
+        log.debug("REST request to export list of Orders between beginDate {} and endDate {}", beginDateParam, endDateParam);
+        ZonedDateTime beginDate = ZonedDateTime.parse(beginDateParam);
+        ZonedDateTime endDate = ZonedDateTime.parse(endDateParam);
+        InputStreamResource ordersExcelFile = orderService.exportOrders(beginDate, endDate);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=orders.xlsx");
+        return ResponseEntity
+            .ok()
+            .headers(headers)
+            .body(ordersExcelFile);
+    }
+
+    /**
+     * {@code GET  /orders} : get all the orders.
+     *
+     * @param beginDateParam the begin date of orders.
+     * @param endDateParam the end date of orders.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the excel file list of orders in body.
+     */
+    @GetMapping("/user-orders/export")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<InputStreamResource> exportUserOrders(@RequestParam Long userId, @RequestParam String beginDateParam, @RequestParam String endDateParam) throws IOException {
+        log.debug("REST request to export list of user {} Orders between beginDate {} and endDate {}", userId, beginDateParam, endDateParam);
+        ZonedDateTime beginDate = ZonedDateTime.parse(beginDateParam);
+        ZonedDateTime endDate = ZonedDateTime.parse(endDateParam);
+        InputStreamResource ordersExcelFile = orderService.exportUserOrders(userId, beginDate, endDate);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=orders.xlsx");
+        return ResponseEntity
+            .ok()
+            .headers(headers)
+            .body(ordersExcelFile);
     }
 
     /**
@@ -112,6 +183,20 @@ public class OrderResource {
         log.debug("REST request to get Order : {}", id);
         Optional<Order> order = orderService.findOne(id);
         return ResponseUtil.wrapOrNotFound(order);
+    }
+
+    /**
+     * {@code GET  /user-orders} : get user orders.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the user orders, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/user-orders")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<List<Order>> getUserOrders(@RequestParam Long userId, Pageable pageable) {
+        log.debug("REST request to get User Orders");
+        Page<Order> page = orderService.findUserOrders(userId, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -136,9 +221,28 @@ public class OrderResource {
      * @return the result of the search.
      */
     @GetMapping("/_search/orders")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
     public ResponseEntity<List<Order>> searchOrders(@RequestParam String query, Pageable pageable) {
         log.debug("REST request to search for a page of Orders for query {}", query);
         Page<Order> page = orderService.search(query, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code SEARCH  /_search/orders?query=:query} : search for the order corresponding
+     * to the query.
+     *
+     * @param query the query of the order search.
+     * @param pageable the pagination information.
+     * @param userId the order user Id.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search/user-orders")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<List<Order>> searchUserOrders(@RequestParam String query, @RequestParam Long userId, Pageable pageable) {
+        log.debug("REST request to search for a page of user {} Orders for query {}", userId, query);
+        Page<Order> page = orderService.searchUserOrders(query, userId, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

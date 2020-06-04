@@ -33,6 +33,9 @@
             <column name="lang_key" type="varchar(10)"/>
             <column name="activation_key" type="varchar(20)"/>
             <column name="reset_key" type="varchar(20)"/>
+            <column name="setting_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
             <column name="created_by" type="varchar(50)">
                 <constraints nullable="false"/>
             </column>
@@ -42,6 +45,52 @@
             </column>
             <column name="last_modified_by" type="varchar(50)"/>
             <column name="last_modified_date" type="timestamp"/>
+        </createTable>
+
+        <createTable tableName="user_setting" remarks="Home page Dashborad.\n@author Charles">
+            <column name="id" type="bigint" autoIncrement="${autoIncrement}">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="date_of_birth" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="nationality" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="phone_number" type="varchar(15)">
+                <constraints nullable="true" />
+            </column>
+            <column name="position" type="varchar(50)">
+                <constraints nullable="true" />
+            </column>
+            <column name="address" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="code" type="varchar(8)">
+                <constraints nullable="true" />
+            </column>
+            <column name="city" type="varchar(50)">
+                <constraints nullable="true" />
+            </column>
+            <column name="country" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="iban" type="varchar(35)">
+                <constraints nullable="false" />
+            </column>
+            <column name="eth_address" type="varchar(42)">
+                <constraints nullable="true" />
+            </column>
+            <column name="risk_profil" type="integer">
+                <constraints nullable="true" />
+            </column>
+            <column name="balance" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
 
         <createTable tableName="jhi_authority">
@@ -61,6 +110,11 @@
 
         <addPrimaryKey columnNames="user_id, authority_name" tableName="jhi_user_authority"/>
 
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="user_setting"
+                                 constraintName="fk_user_setting_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="jhi_user"/>
         <addForeignKeyConstraint baseColumnNames="authority_name"
                                  baseTableName="jhi_user_authority"
                                  constraintName="fk_authority_name"
@@ -82,8 +136,30 @@
                   tableName="jhi_user">
             <column name="activated" type="boolean"/>
             <column name="created_date" type="timestamp"/>
+            <column name="setting_id" type="numeric"/>
         </loadData>
         <dropDefaultValue tableName="jhi_user" columnName="created_date" columnDataType="datetime"/>
+        <loadData
+            file="config/liquibase/fake-data/user_setting.csv"
+            separator=";"
+            tableName="user_setting">
+            <column name="id" type="numeric"/>
+            <column name="date_of_birth" type="datetime"/>
+            <column name="nationality" type="string"/>
+            <column name="phone_number" type="string"/>
+            <column name="position" type="string"/>
+            <column name="address" type="string"/>
+            <column name="code" type="string"/>
+            <column name="city" type="string"/>
+            <column name="country" type="string"/>
+            <column name="iban" type="string"/>
+            <column name="eth_address" type="string"/>
+            <column name="risk_profil" type="numeric"/>
+            <column name="balance" type="numeric"/>
+            <column name="user_id" type="numeric"/>
+            <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here, do not remove-->
+        </loadData>
+        <dropDefaultValue tableName="user_setting" columnName="date_of_birth" columnDataType="datetime"/>
         <loadData
                   file="config/liquibase/data/authority.csv"
                   separator=";"

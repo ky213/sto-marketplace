@@ -132,7 +132,7 @@ export const getEntities: ICrudGetAllAction<IBankInfo> = (page, size, sort) => {
 };
 
 export const getEntity: ICrudGetAction<IBankInfo> = id => {
-  const requestUrl = `${apiUrl}/${id}`;
+  const requestUrl = `${apiUrl}/${id || 'first-element'}`;
   return {
     type: ACTION_TYPES.FETCH_BANKINFO,
     payload: axios.get<IBankInfo>(requestUrl)

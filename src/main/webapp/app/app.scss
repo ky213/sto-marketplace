@@ -1,10 +1,22 @@
 // Override Boostrap variables
-@import '~bootswatch/dist/materia/variables';
+
+@import 'bootstrap-variables';
+// @import '~bootswatch/dist/lux/variables';
 // Import Bootstrap source files from node_modules
 @import 'node_modules/bootstrap/scss/bootstrap';
-@import '~bootswatch/dist/materia/bootswatch';
+@import '~bootswatch/dist/flatly/bootswatch';
 body {
   margin: 0;
+}
+
+html,
+body,
+#root {
+  height: 100% !important;
+}
+
+#root > div {
+  height: 100% !important;
 }
 
 a {
@@ -311,3 +323,20 @@ http://stackoverflow.com/questions/23436430/bootstrap-3-input-group-100-width */
 }
 
 /* jhipster-needle-scss-add-main JHipster will add new css style */
+
+/* ==========================================================================
+Custom Styles
+========================================================================== */
+
+.navbar-nav .svg-inline--fa {
+  width: auto !important;
+  padding-right: 0.5rem !important;
+}
+
+.auth-image {
+  background-image: url('../content/images/hero_alpine-2.jpg');
+}
+
+.bg-beige {
+  background-color: $beige;
+}

@@ -61,17 +61,25 @@ spring:
       hibernate.generate_statistics: false
   data:
     elasticsearch:
+      rest:
+        uris: http://localhost:9200
       properties:
         path:
           home: target/elasticsearch
+        http:
+          enabled: true
+          port: 9200
+        cluster.routing.allocation.disk.threshold_enabled: false
   liquibase:
     # Remove 'faker' if you do not want the sample data to be loaded automatically
     contexts: dev, faker
   mail:
     host: localhost
-    port: 25
+    port: 8025
     username:
     password:
+    protocol: smtp
+
   messages:
     cache-duration: PT1S # 1 second, see the ISO 8601 standard
   thymeleaf:

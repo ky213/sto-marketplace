@@ -28,6 +28,25 @@ import { faTimesCircle } from '@fortawesome/free-solid-svg-icons/faTimesCircle';
 import { faSearch } from '@fortawesome/free-solid-svg-icons/faSearch';
 import { faRoad } from '@fortawesome/free-solid-svg-icons/faRoad';
 import { faCloud } from '@fortawesome/free-solid-svg-icons/faCloud';
+import { faBox } from '@fortawesome/free-solid-svg-icons/faBox';
+import { faFileInvoiceDollar } from '@fortawesome/free-solid-svg-icons/faFileInvoiceDollar';
+import { faFileSignature } from '@fortawesome/free-solid-svg-icons/faFileSignature';
+import { faCogs } from '@fortawesome/free-solid-svg-icons/faCogs';
+import { faUsers } from '@fortawesome/free-solid-svg-icons/faUsers';
+import { faUniversity } from '@fortawesome/free-solid-svg-icons/faUniversity';
+import { faChartBar } from '@fortawesome/free-solid-svg-icons/faChartBar';
+import { faArrowUp } from '@fortawesome/free-solid-svg-icons/faArrowUp';
+import { faArrowDown } from '@fortawesome/free-solid-svg-icons/faArrowDown';
+import { faMoneyBillWave } from '@fortawesome/free-solid-svg-icons/faMoneyBillWave';
+import { faWallet } from '@fortawesome/free-solid-svg-icons/faWallet';
+import { faUserTag } from '@fortawesome/free-solid-svg-icons/faUserTag';
+import { faBuilding } from '@fortawesome/free-solid-svg-icons/faBuilding';
+import { faCubes } from '@fortawesome/free-solid-svg-icons/faCubes';
+import { faRedo } from '@fortawesome/free-solid-svg-icons/faRedo';
+import { faCaretRight } from '@fortawesome/free-solid-svg-icons/faCaretRight';
+import { faFileContract } from '@fortawesome/free-solid-svg-icons/faFileContract';
+import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload';
+import { faUserShield } from '@fortawesome/free-solid-svg-icons/faUserShield';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -62,6 +81,25 @@ export const loadIcons = () => {
     faRoad,
     faCloud,
     faTimesCircle,
-    faSearch
+    faSearch,
+    faBox,
+    faFileInvoiceDollar,
+    faFileSignature,
+    faCogs,
+    faUsers,
+    faUniversity,
+    faChartBar,
+    faArrowUp,
+    faArrowDown,
+    faMoneyBillWave,
+    faWallet,
+    faUserTag,
+    faBuilding,
+    faCubes,
+    faRedo,
+    faCaretRight,
+    faFileContract,
+    faDownload,
+    faUserShield
   );
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Redirect, RouteComponentProps } from 'react-router-dom';
+import { Row, Col } from 'reactstrap';
 
 import { IRootState } from 'app/shared/reducers';
 import { login } from 'app/shared/reducers/authentication';
@@ -27,7 +28,14 @@ export const Login = (props: ILoginProps) => {
   if (isAuthenticated) {
     return <Redirect to={from} />;
   }
-  return <LoginModal showModal={showModal} handleLogin={handleLogin} handleClose={handleClose} loginError={props.loginError} />;
+  return (
+    <Row className="h-100">
+      <Col className="auth-image"></Col>
+      <Col className="w-100 d-flex align-items-center justify-content-center">
+        <LoginModal showModal={showModal} handleLogin={handleLogin} handleClose={handleClose} loginError={props.loginError} />
+      </Col>
+    </Row>
+  );
 };
 
 const mapStateToProps = ({ authentication }: IRootState) => ({

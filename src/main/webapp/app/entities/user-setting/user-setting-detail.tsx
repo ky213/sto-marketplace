@@ -76,7 +76,7 @@ export const UserSettingDetail = (props: IUserSettingDetailProps) => {
           </dt>
           <dd>{userSettingEntity.balance}</dd>
           <dt>User</dt>
-          <dd>{userSettingEntity.user ? userSettingEntity.user.id : ''}</dd>
+          <dd>{userSettingEntity.user?.id}</dd>
         </dl>
         <Button tag={Link} to="/user-setting" replace color="info">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>

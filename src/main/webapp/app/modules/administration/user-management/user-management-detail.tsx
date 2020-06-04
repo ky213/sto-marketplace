@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Badge } from 'reactstrap';
-import { TextFormat } from 'react-jhipster';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-import { APP_DATE_FORMAT } from 'app/config/constants';
+import { RouteComponentProps, Link } from 'react-router-dom';
+import { Row, Col } from 'reactstrap';
+import { Button } from 'reactstrap';
 
 import { getUser } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import moment from 'moment';
+import { AUTHORITIES } from 'app/config/constants';
 
 export interface IUserManagementDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ login: string }> {}
 
@@ -18,55 +18,111 @@ export const UserManagementDetail = (props: IUserManagementDetailProps) => {
   }, []);
 
   const { user } = props;
+  const isBanker = user.authorities.includes(AUTHORITIES.BANK);
+  const isUser = user.authorities.includes(AUTHORITIES.USER);
 
   return (
-    <div>
-      <h2>
-        User [<b>{user.login}</b>]
-      </h2>
-      <Row size="md">
-        <dl className="jh-entity-details">
-          <dt>Login</dt>
-          <dd>
-            <span>{user.login}</span>&nbsp;
-            {user.activated ? <Badge color="success">Activated</Badge> : <Badge color="danger">Deactivated</Badge>}
-          </dd>
-          <dt>First Name</dt>
-          <dd>{user.firstName}</dd>
-          <dt>Last Name</dt>
-          <dd>{user.lastName}</dd>
-          <dt>Email</dt>
-          <dd>{user.email}</dd>
-          <dt>Created By</dt>
-          <dd>{user.createdBy}</dd>
-          <dt>Created Date</dt>
-          <dd>
-            <TextFormat value={user.createdDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
-          </dd>
-          <dt>Last Modified By</dt>
-          <dd>{user.lastModifiedBy}</dd>
-          <dt>Last Modified Date</dt>
-          <dd>
-            <TextFormat value={user.lastModifiedDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
-          </dd>
-          <dt>Profiles</dt>
-          <dd>
-            <ul className="list-unstyled">
-              {user.authorities
-                ? user.authorities.map((authority, i) => (
-                    <li key={`user-auth-${i}`}>
-                      <Badge color="info">{authority}</Badge>
-                    </li>
-                  ))
-                : null}
-            </ul>
-          </dd>
-        </dl>
-      </Row>
-      <Button tag={Link} to="/admin/user-management" replace color="info">
-        <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
-      </Button>
-    </div>
+    <Row className=" flex-column align-items-center w-75 mx-auto">
+      <h4 className="col py-0 mb-0"> Profile</h4>
+      <span className="col mb-3 py-0 text-muted"> profile information</span>
+      <Col className=" ml-3 p-0">
+        <Row className="mx-auto">
+          <Col className=" ml-3 p-0">
+            <Row>
+              <Col>
+                <small className="text-muted ">First Name</small>
+                <p>{user.firstName}</p>
+              </Col>
+              <Col>
+                <small className="text-muted">Last Name</small>
+                <p>{user.lastName}</p>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Email Address</small>
+                <p>{user.email}</p>
+              </Col>
+              {(isUser || isBanker) && (
+                <Col>
+                  <small className="text-muted">Phone Number</small>
+                  <p>{user.setting?.phoneNumber}</p>
+                </Col>
+              )}
+            </Row>
+            <Row>
+              {isUser && (
+                <>
+                  <Col>
+                    <small className="text-muted ">Date of Birth </small>
+                    <p>{moment(user.setting?.dateOfBirth).format('LLL')}</p>
+                  </Col>
+                  <Col>
+                    <small className="text-muted">Nationality</small>
+                    <p>{user.setting?.nationality}</p>
+                  </Col>
+                </>
+              )}
+            </Row>
+            <Row>
+              {(isBanker || isUser) && (
+                <>
+                  <Col>
+                    <small className="text-muted ">City</small>
+                    <p>{user.setting?.city}</p>
+                  </Col>
+                  <Col>
+                    <small className="text-muted">Country</small>
+                    <p>{user.setting?.country}</p>
+                  </Col>
+                </>
+              )}
+            </Row>
+            <Row>
+              {isUser && (
+                <>
+                  <Col>
+                    <small className="text-muted ">Address</small>
+                    <p>{user.setting?.address}</p>
+                  </Col>
+                  <Col>
+                    <small className="text-muted">Postal Code</small>
+                    <p>{user.setting?.code}</p>
+                  </Col>
+                </>
+              )}
+            </Row>
+            <Row>
+              {isUser && (
+                <>
+                  <Col>
+                    <small className="text-muted ">Bank Account</small>
+                    <p>{user.setting?.iban}</p>
+                  </Col>
+                  <Col>
+                    <small className="text-muted ">Ethereum Address</small>
+                    <p>{user.setting?.ethAddress}</p>
+                  </Col>
+                </>
+              )}
+            </Row>
+            <Row>
+              {isBanker && (
+                <Col>
+                  <small className="text-muted">Position</small>
+                  <p>{user.setting?.position}</p>
+                </Col>
+              )}
+            </Row>
+          </Col>
+        </Row>
+        <Button tag={Link} to="/admin/user-management" replace color="info">
+          <FontAwesomeIcon icon="arrow-left" />
+          &nbsp;
+          <span className="d-none d-md-inline">Back</span>
+        </Button>
+      </Col>
+    </Row>
   );
 };
 

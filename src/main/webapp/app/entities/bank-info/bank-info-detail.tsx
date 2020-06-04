@@ -1,87 +1,84 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col } from 'reactstrap';
-import { ICrudGetAction, openFile, byteSize } from 'react-jhipster';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { RouteComponentProps } from 'react-router-dom';
+import { Row, Col, Card, CardHeader, CardBody } from 'reactstrap';
 
 import { IRootState } from 'app/shared/reducers';
-import { getEntity } from './bank-info.reducer';
-import { IBankInfo } from 'app/shared/model/bank-info.model';
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { getEntities } from './bank-info.reducer';
+import moment from 'moment';
 
 export interface IBankInfoDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
-export const BankInfoDetail = (props: IBankInfoDetailProps) => {
+export const BankInfoDetail = ({ getBanks, bankInfoEntities, loading, match }: IBankInfoDetailProps) => {
+  const bank = bankInfoEntities[0];
+
   useEffect(() => {
-    props.getEntity(props.match.params.id);
+    getBanks();
   }, []);
 
-  const { bankInfoEntity } = props;
   return (
-    <Row>
-      <Col md="8">
-        <h2>
-          BankInfo [<b>{bankInfoEntity.id}</b>]
-        </h2>
-        <dl className="jh-entity-details">
-          <dt>
-            <span id="bankName">Bank Name</span>
-          </dt>
-          <dd>{bankInfoEntity.bankName}</dd>
-          <dt>
-            <span id="logo">Logo</span>
-          </dt>
-          <dd>
-            {bankInfoEntity.logo ? (
-              <div>
-                <a onClick={openFile(bankInfoEntity.logoContentType, bankInfoEntity.logo)}>
-                  <img src={`data:${bankInfoEntity.logoContentType};base64,${bankInfoEntity.logo}`} style={{ maxHeight: '30px' }} />
-                </a>
-                <span>
-                  {bankInfoEntity.logoContentType}, {byteSize(bankInfoEntity.logo)}
-                </span>
-              </div>
-            ) : null}
-          </dd>
-          <dt>
-            <span id="country">Country</span>
-          </dt>
-          <dd>{bankInfoEntity.country}</dd>
-          <dt>
-            <span id="bicNumber">Bic Number</span>
-          </dt>
-          <dd>{bankInfoEntity.bicNumber}</dd>
-          <dt>
-            <span id="omnibusAccount">Omnibus Account</span>
-          </dt>
-          <dd>{bankInfoEntity.omnibusAccount}</dd>
-          <dt>
-            <span id="fixedFee">Fixed Fee</span>
-          </dt>
-          <dd>{bankInfoEntity.fixedFee}</dd>
-          <dt>
-            <span id="percentFee">Percent Fee</span>
-          </dt>
-          <dd>{bankInfoEntity.percentFee}</dd>
-        </dl>
-        <Button tag={Link} to="/bank-info" replace color="info">
-          <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
-        </Button>
-        &nbsp;
-        <Button tag={Link} to={`/bank-info/${bankInfoEntity.id}/edit`} replace color="primary">
-          <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
-        </Button>
-      </Col>
-    </Row>
+    <div>
+      <Row className="mx-auto">
+        <Col className="p-0 mx-auto">
+          <Card className="p-0">
+            <CardBody>
+              {loading ? (
+                <p>Loading...</p>
+              ) : (
+                <>
+                  <Row>
+                    <Col xs="6">
+                      <h6>{bank?.bankName}</h6>
+                      <small className="text-muted">
+                        {bank?.country} <br />
+                        {moment().format('LLL')}
+                      </small>
+                    </Col>
+                    <Col>
+                      <img
+                        className="bg-secondary d-block"
+                        src={`data:image/png;base64,${bank?.logo}`}
+                        alt="bank_logo"
+                        style={{ height: '80px', width: '80px' }}
+                      />
+                    </Col>
+                  </Row>
+                  <Row className="mt-5">
+                    <Col>
+                      <small className="text-muted ">BIC Number</small>
+                      <p>{bank?.bicNumber}</p>
+                    </Col>
+                    <Col>
+                      <small className="text-muted ">Omnibus Account</small>
+                      <p>{bank?.omnibusAccount}</p>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <small className="text-muted ">Fixed fee</small>
+                      <p>{bank?.fixedFee}</p>
+                    </Col>
+                    <Col>
+                      <small className="text-muted ">Percent Fee</small>
+                      <p>{bank?.percentFee}</p>
+                    </Col>
+                  </Row>
+                </>
+              )}
+            </CardBody>
+          </Card>
+        </Col>
+      </Row>
+    </div>
   );
 };
 
 const mapStateToProps = ({ bankInfo }: IRootState) => ({
-  bankInfoEntity: bankInfo.entity
+  bankInfoEntities: bankInfo.entities,
+  loading: bankInfo.loading
 });
 
-const mapDispatchToProps = { getEntity };
+const mapDispatchToProps = { getBanks: getEntities };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

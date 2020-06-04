@@ -4,6 +4,7 @@ import swiss.alpinetech.exchange.ExchangeApp;
 import swiss.alpinetech.exchange.domain.WhiteListing;
 import swiss.alpinetech.exchange.repository.WhiteListingRepository;
 import swiss.alpinetech.exchange.repository.search.WhiteListingSearchRepository;
+import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.WhiteListingService;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -43,7 +44,7 @@ import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 @SpringBootTest(classes = ExchangeApp.class)
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
-@WithMockUser
+@WithMockUser(authorities = {AuthoritiesConstants.ADMIN, AuthoritiesConstants.USER, AuthoritiesConstants.BANK})
 public class WhiteListingResourceIT {
 
     private static final ZonedDateTime DEFAULT_DATE_EVENT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
@@ -184,79 +185,6 @@ public class WhiteListingResourceIT {
         verify(mockWhiteListingSearchRepository, times(0)).save(whiteListing);
     }
 
-
-    @Test
-    @Transactional
-    public void checkDateEventIsRequired() throws Exception {
-        int databaseSizeBeforeTest = whiteListingRepository.findAll().size();
-        // set the field null
-        whiteListing.setDateEvent(null);
-
-        // Create the WhiteListing, which fails.
-
-        restWhiteListingMockMvc.perform(post("/api/white-listings")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(whiteListing)))
-            .andExpect(status().isBadRequest());
-
-        List<WhiteListing> whiteListingList = whiteListingRepository.findAll();
-        assertThat(whiteListingList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
-    public void checkActiveIsRequired() throws Exception {
-        int databaseSizeBeforeTest = whiteListingRepository.findAll().size();
-        // set the field null
-        whiteListing.setActive(null);
-
-        // Create the WhiteListing, which fails.
-
-        restWhiteListingMockMvc.perform(post("/api/white-listings")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(whiteListing)))
-            .andExpect(status().isBadRequest());
-
-        List<WhiteListing> whiteListingList = whiteListingRepository.findAll();
-        assertThat(whiteListingList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
-    public void checkStNameIsRequired() throws Exception {
-        int databaseSizeBeforeTest = whiteListingRepository.findAll().size();
-        // set the field null
-        whiteListing.setStName(null);
-
-        // Create the WhiteListing, which fails.
-
-        restWhiteListingMockMvc.perform(post("/api/white-listings")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(whiteListing)))
-            .andExpect(status().isBadRequest());
-
-        List<WhiteListing> whiteListingList = whiteListingRepository.findAll();
-        assertThat(whiteListingList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
-    public void checkCustomerNameIsRequired() throws Exception {
-        int databaseSizeBeforeTest = whiteListingRepository.findAll().size();
-        // set the field null
-        whiteListing.setCustomerName(null);
-
-        // Create the WhiteListing, which fails.
-
-        restWhiteListingMockMvc.perform(post("/api/white-listings")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(whiteListing)))
-            .andExpect(status().isBadRequest());
-
-        List<WhiteListing> whiteListingList = whiteListingRepository.findAll();
-        assertThat(whiteListingList).hasSize(databaseSizeBeforeTest);
-    }
-
     @Test
     @Transactional
     public void getAllWhiteListings() throws Exception {
@@ -277,7 +205,7 @@ public class WhiteListingResourceIT {
             .andExpect(jsonPath("$.[*].customerName").value(hasItem(DEFAULT_CUSTOMER_NAME)))
             .andExpect(jsonPath("$.[*].balance").value(hasItem(DEFAULT_BALANCE.doubleValue())));
     }
-    
+
     @Test
     @Transactional
     public void getWhiteListing() throws Exception {

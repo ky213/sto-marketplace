@@ -21,6 +21,8 @@ export const ACTION_TYPES = {
   CREATE_ORDER: 'order/CREATE_ORDER',
   UPDATE_ORDER: 'order/UPDATE_ORDER',
   DELETE_ORDER: 'order/DELETE_ORDER',
+  CANCEL_ORDER: 'order/CANCEL_ORDER',
+  EXPORT_ORDER: 'order/EXPORT_ORDER',
   RESET: 'order/RESET'
 };
 
@@ -32,7 +34,8 @@ const initialState = {
   links: { next: 0 },
   updating: false,
   totalItems: 0,
-  updateSuccess: false
+  updateSuccess: false,
+  ordersSheet: null
 };
 
 export type OrderState = Readonly<typeof initialState>;
@@ -44,6 +47,7 @@ export default (state: OrderState = initialState, action): OrderState => {
     case REQUEST(ACTION_TYPES.SEARCH_ORDERS):
     case REQUEST(ACTION_TYPES.FETCH_ORDER_LIST):
     case REQUEST(ACTION_TYPES.FETCH_ORDER):
+    case FAILURE(ACTION_TYPES.EXPORT_ORDER):
       return {
         ...state,
         errorMessage: null,
@@ -52,7 +56,8 @@ export default (state: OrderState = initialState, action): OrderState => {
       };
     case REQUEST(ACTION_TYPES.CREATE_ORDER):
     case REQUEST(ACTION_TYPES.UPDATE_ORDER):
-    case REQUEST(ACTION_TYPES.DELETE_ORDER):
+    case REQUEST(ACTION_TYPES.EXPORT_ORDER):
+    case REQUEST(ACTION_TYPES.CANCEL_ORDER):
       return {
         ...state,
         errorMessage: null,
@@ -64,7 +69,7 @@ export default (state: OrderState = initialState, action): OrderState => {
     case FAILURE(ACTION_TYPES.FETCH_ORDER):
     case FAILURE(ACTION_TYPES.CREATE_ORDER):
     case FAILURE(ACTION_TYPES.UPDATE_ORDER):
-    case FAILURE(ACTION_TYPES.DELETE_ORDER):
+    case FAILURE(ACTION_TYPES.CANCEL_ORDER):
       return {
         ...state,
         loading: false,
@@ -90,8 +95,15 @@ export default (state: OrderState = initialState, action): OrderState => {
         loading: false,
         entity: action.payload.data
       };
+    case SUCCESS(ACTION_TYPES.EXPORT_ORDER):
+      return {
+        ...state,
+        loading: false,
+        ordersSheet: action.payload.data
+      };
     case SUCCESS(ACTION_TYPES.CREATE_ORDER):
     case SUCCESS(ACTION_TYPES.UPDATE_ORDER):
+    case SUCCESS(ACTION_TYPES.CANCEL_ORDER):
       return {
         ...state,
         updating: false,
@@ -119,21 +131,28 @@ const apiSearchUrl = 'api/_search/orders';
 
 // Actions
 
-export const getSearchEntities: ICrudSearchAction<IOrder> = (query, page, size, sort) => ({
-  type: ACTION_TYPES.SEARCH_ORDERS,
-  payload: axios.get<IOrder>(`${apiSearchUrl}?query=${query}${sort ? `&page=${page}&size=${size}&sort=${sort}` : ''}`)
-});
+export const getSearchEntities: any = (query, page, size, sort, userId) => {
+  const url = userId ? `/api/_search/user-orders?userId=${userId}&query=${query}` : `${apiSearchUrl}?&query=${query}`;
 
-export const getEntities: ICrudGetAllAction<IOrder> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.SEARCH_ORDERS,
+    payload: axios.get<IOrder>(url)
+  };
+};
+
+export const getEntities: any = (page, size, sort, userId) => {
+  const url = userId ? '/api/user-orders' : apiUrl;
+  const requestUrl = `${url}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}&userId=${userId}`;
+
   return {
     type: ACTION_TYPES.FETCH_ORDER_LIST,
     payload: axios.get<IOrder>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
   };
 };
 
-export const getEntity: ICrudGetAction<IOrder> = id => {
+export const getEntity: any = (id, userId) => {
   const requestUrl = `${apiUrl}/${id}`;
+
   return {
     type: ACTION_TYPES.FETCH_ORDER,
     payload: axios.get<IOrder>(requestUrl)
@@ -157,12 +176,27 @@ export const updateEntity: ICrudPutAction<IOrder> = entity => async dispatch => 
 };
 
 export const deleteEntity: ICrudDeleteAction<IOrder> = id => async dispatch => {
-  const requestUrl = `${apiUrl}/${id}`;
+  const requestUrl = `/api/cancel-order?orderId=${id}`;
   const result = await dispatch({
-    type: ACTION_TYPES.DELETE_ORDER,
-    payload: axios.delete(requestUrl)
+    type: ACTION_TYPES.CANCEL_ORDER,
+    payload: axios.put(requestUrl)
   });
   return result;
+};
+
+export const exportOrder: any = (fromDate, toDate, userId) => {
+  const url = userId ? 'api/user-orders/export' : `${apiUrl}/export`;
+  return {
+    type: ACTION_TYPES.EXPORT_ORDER,
+    payload: axios.get(url, {
+      responseType: 'blob',
+      params: {
+        beginDateParam: fromDate,
+        endDateParam: toDate,
+        userId
+      }
+    })
+  };
 };
 
 export const reset = () => ({

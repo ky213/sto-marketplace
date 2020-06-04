@@ -7,14 +7,26 @@ import SecurityToken from './security-token';
 import SecurityTokenDetail from './security-token-detail';
 import SecurityTokenUpdate from './security-token-update';
 import SecurityTokenDeleteDialog from './security-token-delete-dialog';
+import PrivateRoute from 'app/shared/auth/private-route';
+import { AUTHORITIES } from 'app/config/constants';
 
 const Routes = ({ match }) => (
   <>
     <Switch>
-      <ErrorBoundaryRoute exact path={`${match.url}/:id/delete`} component={SecurityTokenDeleteDialog} />
-      <ErrorBoundaryRoute exact path={`${match.url}/new`} component={SecurityTokenUpdate} />
-      <ErrorBoundaryRoute exact path={`${match.url}/:id/edit`} component={SecurityTokenUpdate} />
-      <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={SecurityTokenDetail} />
+      <PrivateRoute exact path={`${match.url}/:id/delete`} component={SecurityTokenDeleteDialog} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
+      <PrivateRoute exact path={`${match.url}/new`} component={SecurityTokenUpdate} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
+      <PrivateRoute
+        exact
+        path={`${match.url}/:id/edit`}
+        component={SecurityTokenUpdate}
+        hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
+      />
+      <PrivateRoute
+        exact
+        path={`${match.url}/:id`}
+        component={SecurityTokenDetail}
+        hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
+      />
       <ErrorBoundaryRoute path={match.url} component={SecurityToken} />
     </Switch>
   </>

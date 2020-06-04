@@ -1,6 +1,8 @@
 package swiss.alpinetech.exchange.web.rest;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import swiss.alpinetech.exchange.domain.SecurityToken;
+import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.SecurityTokenService;
 import swiss.alpinetech.exchange.web.rest.errors.BadRequestAlertException;
 
@@ -13,7 +15,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +24,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing {@link swiss.alpinetech.exchange.domain.SecurityToken}.
@@ -55,6 +53,7 @@ public class SecurityTokenResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PostMapping("/security-tokens")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<SecurityToken> createSecurityToken(@Valid @RequestBody SecurityToken securityToken) throws URISyntaxException {
         log.debug("REST request to save SecurityToken : {}", securityToken);
         if (securityToken.getId() != null) {
@@ -76,6 +75,7 @@ public class SecurityTokenResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/security-tokens")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.ADMIN+"\")")
     public ResponseEntity<SecurityToken> updateSecurityToken(@Valid @RequestBody SecurityToken securityToken) throws URISyntaxException {
         log.debug("REST request to update SecurityToken : {}", securityToken);
         if (securityToken.getId() == null) {
@@ -87,6 +87,35 @@ public class SecurityTokenResource {
             .body(result);
     }
 
+    @PutMapping("/security-tokens/status")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
+    public ResponseEntity<SecurityToken> updateSecurityTokenStatus(@Valid @RequestBody SecurityToken securityToken) throws URISyntaxException {
+        log.debug("REST request to update SecurityToken status : {}", securityToken);
+        if (securityToken.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        SecurityToken newSecurityToken = securityTokenService.findOne(securityToken.getId()).get();
+        newSecurityToken.setStatus(securityToken.getStatus());
+        SecurityToken result = securityTokenService.save(newSecurityToken);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, securityToken.getId().toString()))
+            .body(result);
+    }
+
+
+    @PutMapping("/security-tokens/{id}/deactivate")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.ADMIN+"\")")
+    public ResponseEntity<SecurityToken> deactivateSecurityToken(@PathVariable Long id) throws URISyntaxException {
+        log.debug("REST request to deactivate SecurityToken status : {}", id);
+        if (id == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        SecurityToken securityToken = securityTokenService.deactivateSecurityToken(id);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, securityToken.getId().toString()))
+            .body(securityToken);
+    }
+
     /**
      * {@code GET  /security-tokens} : get all the securityTokens.
      *
@@ -94,6 +123,7 @@ public class SecurityTokenResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of securityTokens in body.
      */
     @GetMapping("/security-tokens")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
     public ResponseEntity<List<SecurityToken>> getAllSecurityTokens(Pageable pageable) {
         log.debug("REST request to get a page of SecurityTokens");
         Page<SecurityToken> page = securityTokenService.findAll(pageable);
@@ -108,6 +138,7 @@ public class SecurityTokenResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the securityToken, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/security-tokens/{id}")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
     public ResponseEntity<SecurityToken> getSecurityToken(@PathVariable Long id) {
         log.debug("REST request to get SecurityToken : {}", id);
         Optional<SecurityToken> securityToken = securityTokenService.findOne(id);
@@ -121,6 +152,7 @@ public class SecurityTokenResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/security-tokens/{id}")
+    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteSecurityToken(@PathVariable Long id) {
         log.debug("REST request to delete SecurityToken : {}", id);
         securityTokenService.delete(id);

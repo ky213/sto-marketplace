@@ -2,16 +2,25 @@ import React, { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, InputGroup, Col, Row, Table } from 'reactstrap';
+import { Button, InputGroup, Col, Row, Table, Card, Badge } from 'reactstrap';
 import { AvForm, AvGroup, AvInput } from 'availity-reactstrap-validation';
-import { ICrudSearchAction, ICrudGetAllAction, TextFormat, getSortState, IPaginationBaseState } from 'react-jhipster';
+import {
+  ICrudSearchAction,
+  ICrudGetAllAction,
+  TextFormat,
+  getSortState,
+  IPaginationBaseState,
+  JhiItemCount,
+  JhiPagination
+} from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
 import { getSearchEntities, getEntities, reset } from './order.reducer';
 import { IOrder } from 'app/shared/model/order.model';
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
+import OrderExportDialog from './components/OrderExport';
 
 export interface IOrderProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
@@ -19,6 +28,10 @@ export const Order = (props: IOrderProps) => {
   const [search, setSearch] = useState('');
   const [paginationState, setPaginationState] = useState(getSortState(props.location, ITEMS_PER_PAGE));
   const [sorting, setSorting] = useState(false);
+  const [exportOrders, setExportOrders] = useState(false);
+  const isAdmin = props.account.authorities.includes(AUTHORITIES.ADMIN);
+  const isBank = props.account.authorities.includes(AUTHORITIES.BANK);
+  const userId = !(isAdmin || isBank) ? props.account.id : null;
 
   const getAllEntities = () => {
     if (search) {
@@ -26,10 +39,16 @@ export const Order = (props: IOrderProps) => {
         search,
         paginationState.activePage - 1,
         paginationState.itemsPerPage,
-        `${paginationState.sort},${paginationState.order}`
+        `${sorting ? paginationState.sort : 'updateDate'},${sorting ? paginationState.order : 'desc'}`,
+        userId
       );
     } else {
-      props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `${paginationState.sort},${paginationState.order}`);
+      props.getEntities(
+        paginationState.activePage - 1,
+        paginationState.itemsPerPage,
+        `${sorting ? paginationState.sort : 'updateDate'},${sorting ? paginationState.order : 'desc'}`,
+        userId
+      );
     }
   };
 
@@ -56,7 +75,8 @@ export const Order = (props: IOrderProps) => {
         search,
         paginationState.activePage - 1,
         paginationState.itemsPerPage,
-        `${paginationState.sort},${paginationState.order}`
+        `${paginationState.sort},${paginationState.order}`,
+        userId
       );
     }
   };
@@ -68,10 +88,16 @@ export const Order = (props: IOrderProps) => {
       ...paginationState,
       activePage: 1
     });
-    props.getEntities();
+    props.getEntities(paginationState.activePage - 1, paginationState.itemsPerPage, `updateDate,desc`, userId);
   };
 
   const handleSearch = event => setSearch(event.target.value);
+
+  const handlePagination = currentPage =>
+    setPaginationState({
+      ...paginationState,
+      activePage: currentPage
+    });
 
   useEffect(() => {
     getAllEntities();
@@ -104,161 +130,173 @@ export const Order = (props: IOrderProps) => {
     setSorting(true);
   };
 
-  const { orderList, match, loading } = props;
+  const orderStatus = {
+    INIT: 'primary',
+    PENDING: 'warning',
+    SUCCESS: 'success',
+    REMOVE: 'danger',
+    FAIL: 'danger',
+    NONE: 'info'
+  };
+
+  const { orderList, match, loading, totalItems } = props;
+
   return (
-    <div>
-      <h2 id="order-heading">
-        Orders
-        <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
-          <FontAwesomeIcon icon="plus" />
-          &nbsp; Create new Order
-        </Link>
-      </h2>
-      <Row>
-        <Col sm="12">
-          <AvForm onSubmit={startSearching}>
-            <AvGroup>
-              <InputGroup>
-                <AvInput type="text" name="search" value={search} onChange={handleSearch} placeholder="Search" />
-                <Button className="input-group-addon">
-                  <FontAwesomeIcon icon="search" />
-                </Button>
-                <Button type="reset" className="input-group-addon" onClick={clear}>
-                  <FontAwesomeIcon icon="trash" />
-                </Button>
-              </InputGroup>
-            </AvGroup>
-          </AvForm>
-        </Col>
-      </Row>
-      <div className="table-responsive">
-        <InfiniteScroll
-          pageStart={paginationState.activePage}
-          loadMore={handleLoadMore}
-          hasMore={paginationState.activePage - 1 < props.links.next}
-          loader={<div className="loader">Loading ...</div>}
-          threshold={0}
-          initialLoad={false}
-        >
-          {orderList && orderList.length > 0 ? (
-            <Table responsive>
-              <thead>
-                <tr>
-                  <th className="hand" onClick={sort('id')}>
-                    ID <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('idOrder')}>
-                    Id Order <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('refOrder')}>
-                    Ref Order <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('createDate')}>
-                    Create Date <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('updateDate')}>
-                    Update Date <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('closeDate')}>
-                    Close Date <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('securityTokenName')}>
-                    Security Token Name <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('symbol')}>
-                    Symbol <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('type')}>
-                    Type <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('limitOrMarket')}>
-                    Limit Or Market <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('volume')}>
-                    Volume <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('price')}>
-                    Price <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('totalAmount')}>
-                    Total Amount <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('categoryToken')}>
-                    Category Token <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('status')}>
-                    Status <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('active')}>
-                    Active <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th>
-                    User <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th>
-                    Transaction <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {orderList.map((order, i) => (
-                  <tr key={`entity-${i}`}>
-                    <td>
-                      <Button tag={Link} to={`${match.url}/${order.id}`} color="link" size="sm">
-                        {order.id}
-                      </Button>
-                    </td>
-                    <td>{order.idOrder}</td>
-                    <td>{order.refOrder}</td>
-                    <td>
-                      <TextFormat type="date" value={order.createDate} format={APP_DATE_FORMAT} />
-                    </td>
-                    <td>
-                      <TextFormat type="date" value={order.updateDate} format={APP_DATE_FORMAT} />
-                    </td>
-                    <td>
-                      <TextFormat type="date" value={order.closeDate} format={APP_DATE_FORMAT} />
-                    </td>
-                    <td>{order.securityTokenName}</td>
-                    <td>{order.symbol}</td>
-                    <td>{order.type}</td>
-                    <td>{order.limitOrMarket}</td>
-                    <td>{order.volume}</td>
-                    <td>{order.price}</td>
-                    <td>{order.totalAmount}</td>
-                    <td>{order.categoryToken}</td>
-                    <td>{order.status}</td>
-                    <td>{order.active ? 'true' : 'false'}</td>
-                    <td>{order.user ? order.user.id : ''}</td>
-                    <td>{order.transaction ? <Link to={`transaction/${order.transaction.id}`}>{order.transaction.id}</Link> : ''}</td>
-                    <td className="text-right">
-                      <div className="btn-group flex-btn-group-container">
-                        <Button tag={Link} to={`${match.url}/${order.id}`} color="info" size="sm">
-                          <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
-                        </Button>
-                        <Button tag={Link} to={`${match.url}/${order.id}/edit`} color="primary" size="sm">
-                          <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
-                        </Button>
-                        <Button tag={Link} to={`${match.url}/${order.id}/delete`} color="danger" size="sm">
-                          <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
-                        </Button>
-                      </div>
-                    </td>
+    <Card className="bg-white p-3 mb-2">
+      <OrderExportDialog open={exportOrders} setExportdialog={(status: boolean) => setExportOrders(status)} />
+      <div>
+        <h2 id="order-heading">
+          Orders
+          <Button color="primary" className="float-right ml-2" onClick={() => setExportOrders(true)}>
+            <FontAwesomeIcon icon="download" />
+            &nbsp; Export orders
+          </Button>
+          <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
+            <FontAwesomeIcon icon="plus" />
+            &nbsp; Create new Order
+          </Link>
+        </h2>
+        <Row>
+          <Col sm="12">
+            <AvForm onSubmit={startSearching}>
+              <AvGroup>
+                <InputGroup>
+                  <AvInput type="text" name="search" value={search} onChange={handleSearch} placeholder="Search" />
+                  <Button className="input-group-addon">
+                    <FontAwesomeIcon icon="search" />
+                  </Button>
+                  <Button type="reset" className="input-group-addon" onClick={clear}>
+                    <FontAwesomeIcon icon="trash" />
+                  </Button>
+                </InputGroup>
+              </AvGroup>
+            </AvForm>
+          </Col>
+        </Row>
+        <div className="table-responsive">
+          <InfiniteScroll
+            pageStart={paginationState.activePage}
+            loadMore={handleLoadMore}
+            hasMore={paginationState.activePage - 1 < props.links.next}
+            loader={<div className="loader">Loading ...</div>}
+            threshold={0}
+            initialLoad={false}
+          >
+            {orderList && orderList.length > 0 ? (
+              <Table responsive>
+                <thead>
+                  <tr>
+                    <th className="hand text-nowrap" onClick={sort('idOrder')}>
+                      Order <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand text-nowrap" onClick={sort('refOrder')}>
+                      Order Ref <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th></th>
+                    <th className="hand text-nowrap" onClick={sort('securityTokenName')}>
+                      Token <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand text-nowrap" onClick={sort('symbol')}>
+                      Symbol <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand text-nowrap" onClick={sort('categoryToken')}>
+                      Category <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand text-nowrap" onClick={sort('type')}>
+                      Type <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand text-nowrap" onClick={sort('volume')}>
+                      Volume <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand text-nowrap" onClick={sort('price')}>
+                      Price <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand text-nowrap" onClick={sort('totalAmount')}>
+                      Total Amount <FontAwesomeIcon icon="sort" />
+                    </th>
+                    {(isAdmin || isBank) && (
+                      <th className="text-nowrap" onClick={sort('user.login')}>
+                        Username <FontAwesomeIcon icon="sort" />
+                      </th>
+                    )}
+                    <th className="hand text-nowrap" onClick={sort('updateDate')}>
+                      Date <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th />
                   </tr>
-                ))}
-              </tbody>
-            </Table>
-          ) : (
-            !loading && <div className="alert alert-warning">No Orders found</div>
-          )}
-        </InfiniteScroll>
+                </thead>
+                <tbody>
+                  {orderList.map((order, i) => (
+                    <tr key={`entity-${i}`}>
+                      <td className="text-nowrap">{order.idOrder}</td>
+                      <td className="text-nowrap">{order.refOrder}</td>
+                      <td>
+                        <Badge color="none" className={`ml-3 btn btn-outline-${orderStatus[order.status]}`}>
+                          {order.status.toLowerCase()}
+                        </Badge>
+                      </td>
+                      <td>{order.securityTokenName}</td>
+                      <td>{order.symbol}</td>
+                      <td>{order.categoryToken}</td>
+                      <td>{order.type}</td>
+                      <td>{order.volume}</td>
+                      <td className="text-nowrap">{order.price.toLocaleString()} CHF</td>
+                      <td className="text-nowrap">{order.totalAmount.toLocaleString()} CHF</td>
+                      {(isAdmin || isBank) && <td>{order.user ? order.user.login : ''}</td>}
+                      <td>
+                        <TextFormat type="date" value={order.updateDate} format={APP_DATE_FORMAT} />
+                      </td>
+                      <td className="text-right">
+                        <div className="btn-group flex-btn-group-container">
+                          <Button tag={Link} to={`${match.url}/${order.id}`} color="info" size="sm">
+                            <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
+                          </Button>
+                          <>
+                            {/* <Button tag={Link} to={`${match.url}/${order.id}/edit`} color="primary" size="sm">
+                                <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
+                              </Button> */}
+                            <Button
+                              tag={Link}
+                              to={`${match.url}/${order.id}/cancel`}
+                              color="danger"
+                              size="sm"
+                              disabled={order.status === 'REMOVE'}
+                            >
+                              <FontAwesomeIcon icon="ban" /> <span className="d-none d-md-inline">Cancel</span>
+                            </Button>
+                          </>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            ) : (
+              !loading && <div className="alert alert-warning">No Orders found</div>
+            )}
+          </InfiniteScroll>
+          <div className={orderList && orderList.length > 0 ? '' : 'd-none'}>
+            <Row className="justify-content-center">
+              <JhiItemCount page={paginationState.activePage} total={totalItems} itemsPerPage={paginationState.itemsPerPage} />
+            </Row>
+            <Row className="justify-content-center">
+              <JhiPagination
+                activePage={paginationState.activePage}
+                onSelect={handlePagination}
+                maxButtons={5}
+                itemsPerPage={paginationState.itemsPerPage}
+                totalItems={props.totalItems}
+              />
+            </Row>
+          </div>
+        </div>
       </div>
-    </div>
+    </Card>
   );
 };
 
-const mapStateToProps = ({ order }: IRootState) => ({
+const mapStateToProps = ({ order, authentication }: IRootState) => ({
+  account: authentication.account,
   orderList: order.entities,
   loading: order.loading,
   totalItems: order.totalItems,

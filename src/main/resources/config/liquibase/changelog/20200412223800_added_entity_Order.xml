@@ -22,6 +22,9 @@
             <column name="ref_order" type="bigint">
                 <constraints nullable="false" />
             </column>
+            <column name="securitytoken_name" type="varchar(255)">
+                <constraints nullable="true"/>
+            </column>
             <column name="create_date" type="datetime">
                 <constraints nullable="false" />
             </column>
@@ -30,9 +33,6 @@
             </column>
             <column name="close_date" type="datetime">
                 <constraints nullable="true" />
-            </column>
-            <column name="security_token_name" type="varchar(255)">
-                <constraints nullable="false" />
             </column>
             <column name="symbol" type="varchar(255)">
                 <constraints nullable="false" />
@@ -59,6 +59,9 @@
                 <constraints nullable="true" />
             </column>
             <column name="active" type="boolean">
+                <constraints nullable="true" />
+            </column>
+            <column name="securitytoken_id" type="bigint">
                 <constraints nullable="true" />
             </column>
             <column name="user_id" type="bigint">
@@ -95,10 +98,10 @@
             <column name="id" type="numeric"/>
             <column name="id_order" type="string"/>
             <column name="ref_order" type="numeric"/>
+            <column name="securitytoken_name" type="string"/>
             <column name="create_date" type="datetime"/>
             <column name="update_date" type="datetime"/>
             <column name="close_date" type="datetime"/>
-            <column name="security_token_name" type="string"/>
             <column name="symbol" type="string"/>
             <column name="type" type="string"/>
             <column name="limit_or_market" type="string"/>
@@ -108,6 +111,8 @@
             <column name="category_token" type="string"/>
             <column name="status" type="string"/>
             <column name="active" type="boolean"/>
+            <column name="user_id" type="numeric"/>
+            <column name="securitytoken_id" type="numeric"/>
             <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here, do not remove-->
         </loadData>
     </changeSet>

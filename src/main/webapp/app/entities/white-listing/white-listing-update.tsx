@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col, Label } from 'reactstrap';
+import { Button, Row, Col, Label, Card } from 'reactstrap';
 import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
 import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -53,9 +53,9 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
     if (errors.length === 0) {
       const entity = {
         ...whiteListingEntity,
-        ...values
+        user: { id: +values.user.id },
+        securitytoken: { ...securityTokens.find(st => st.id === +values.securityToken.id) }
       };
-      entity.user = users[values.user];
 
       if (isNew) {
         props.createEntity(entity);
@@ -66,7 +66,7 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
   };
 
   return (
-    <div>
+    <Card>
       <Row className="justify-content-center">
         <Col md="8">
           <h2 id="exchangeApp.whiteListing.home.createOrEditLabel">Create or edit a WhiteListing</h2>
@@ -84,124 +84,150 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                   <AvInput id="white-listing-id" type="text" className="form-control" name="id" required readOnly />
                 </AvGroup>
               ) : null}
-              <AvGroup>
-                <Label id="dateEventLabel" for="white-listing-dateEvent">
-                  Date Event
-                </Label>
-                <AvInput
-                  id="white-listing-dateEvent"
-                  type="datetime-local"
-                  className="form-control"
-                  name="dateEvent"
-                  placeholder={'YYYY-MM-DD HH:mm'}
-                  value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.whiteListingEntity.dateEvent)}
-                  validate={{
-                    required: { value: true, errorMessage: 'This field is required.' }
-                  }}
-                />
-              </AvGroup>
-              <AvGroup>
-                <Label id="statusLabel" for="white-listing-status">
-                  Status
-                </Label>
-                <AvInput
-                  id="white-listing-status"
-                  type="select"
-                  className="form-control"
-                  name="status"
-                  value={(!isNew && whiteListingEntity.status) || 'NONE'}
-                >
-                  <option value="NONE">NONE</option>
-                  <option value="INIT">INIT</option>
-                  <option value="PENDING">PENDING</option>
-                  <option value="SUCCESS">SUCCESS</option>
-                  <option value="FAIL">FAIL</option>
-                  <option value="REMOVE">REMOVE</option>
-                </AvInput>
-              </AvGroup>
-              <AvGroup check>
-                <Label id="activeLabel">
-                  <AvInput id="white-listing-active" type="checkbox" className="form-check-input" name="active" />
-                  Active
-                </Label>
-              </AvGroup>
-              <AvGroup>
-                <Label id="ethAddressLabel" for="white-listing-ethAddress">
-                  Eth Address
-                </Label>
-                <AvField id="white-listing-ethAddress" type="text" name="ethAddress" />
-              </AvGroup>
-              <AvGroup>
-                <Label id="dateSynchBlkLabel" for="white-listing-dateSynchBlk">
-                  Date Synch Blk
-                </Label>
-                <AvInput
-                  id="white-listing-dateSynchBlk"
-                  type="datetime-local"
-                  className="form-control"
-                  name="dateSynchBlk"
-                  placeholder={'YYYY-MM-DD HH:mm'}
-                  value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.whiteListingEntity.dateSynchBlk)}
-                />
-              </AvGroup>
-              <AvGroup>
-                <Label id="stNameLabel" for="white-listing-stName">
-                  St Name
-                </Label>
-                <AvField
-                  id="white-listing-stName"
-                  type="text"
-                  name="stName"
-                  validate={{
-                    required: { value: true, errorMessage: 'This field is required.' }
-                  }}
-                />
-              </AvGroup>
-              <AvGroup>
-                <Label id="customerNameLabel" for="white-listing-customerName">
-                  Customer Name
-                </Label>
-                <AvField
-                  id="white-listing-customerName"
-                  type="text"
-                  name="customerName"
-                  validate={{
-                    required: { value: true, errorMessage: 'This field is required.' }
-                  }}
-                />
-              </AvGroup>
-              <AvGroup>
-                <Label id="balanceLabel" for="white-listing-balance">
-                  Balance
-                </Label>
-                <AvField id="white-listing-balance" type="string" className="form-control" name="balance" />
-              </AvGroup>
-              <AvGroup>
-                <Label for="white-listing-user">User</Label>
-                <AvInput id="white-listing-user" type="select" className="form-control" name="user">
-                  <option value="" key="0" />
-                  {users
-                    ? users.map((otherEntity, index) => (
-                        <option value={index} key={otherEntity.id}>
-                          {otherEntity.id}
-                        </option>
-                      ))
-                    : null}
-                </AvInput>
-              </AvGroup>
-              <AvGroup>
-                <Label for="white-listing-securitytoken">Securitytoken</Label>
-                <AvInput id="white-listing-securitytoken" type="select" className="form-control" name="securitytoken.id">
-                  <option value="" key="0" />
-                  {securityTokens
-                    ? securityTokens.map(otherEntity => (
-                        <option value={otherEntity.id} key={otherEntity.id}>
-                          {otherEntity.id}
-                        </option>
-                      ))
-                    : null}
-                </AvInput>
-              </AvGroup>
+              {/* <Row>
+                <AvGroup className="col-md-6">
+                  <Label id="statusLabel" for="white-listing-status">
+                    Status
+                  </Label>
+                  <AvInput
+                    id="white-listing-status"
+                    type="select"
+                    className="form-control"
+                    name="status"
+                    value={(!isNew && whiteListingEntity.status) || 'NONE'}
+                  >
+                    <option value="NONE">NONE</option>
+                    <option value="INIT">INIT</option>
+                    <option value="PENDING">PENDING</option>
+                    <option value="SUCCESS">SUCCESS</option>
+                    <option value="FAIL">FAIL</option>
+                    <option value="REMOVE">REMOVE</option>
+                  </AvInput>
+                </AvGroup>
+                <AvGroup className="col-md-6  d-flex align-items-center" check>
+                  <Label id="activeLabel" className="ml-4" for="white-listing-active" style={{ marginTop: '12px' }}>
+                    Active
+                  </Label>
+                  <AvInput id="white-listing-active" type="checkbox" className="form-check-input ml-1" name="active" />
+                </AvGroup>
+              </Row>
+              <Row>
+                <AvGroup className="col-md-6">
+                  <Label id="dateEventLabel" for="white-listing-dateEvent">
+                    Date Event
+                  </Label>
+                  <AvInput
+                    id="white-listing-dateEvent"
+                    type="datetime-local"
+                    className="form-control"
+                    name="dateEvent"
+                    placeholder={'YYYY-MM-DD HH:mm'}
+                    value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.whiteListingEntity.dateEvent)}
+                    validate={{
+                      required: { value: true, errorMessage: 'This field is required.' }
+                    }}
+                  />
+                </AvGroup>
+                <AvGroup className="col-md-6">
+                  <Label id="dateSynchBlkLabel" for="white-listing-dateSynchBlk">
+                    Date Synch Blk
+                  </Label>
+                  <AvInput
+                    id="white-listing-dateSynchBlk"
+                    type="datetime-local"
+                    className="form-control"
+                    name="dateSynchBlk"
+                    placeholder={'YYYY-MM-DD HH:mm'}
+                    value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.whiteListingEntity.dateSynchBlk)}
+                  />
+                </AvGroup>
+              </Row>
+              <Row>
+                <AvGroup className="col-md-6">
+                  <Label id="stNameLabel" for="white-listing-stName">
+                    St Name
+                  </Label>
+                  <AvField
+                    id="white-listing-stName"
+                    type="text"
+                    name="stName"
+                    validate={{
+                      required: { value: true, errorMessage: 'This field is required.' }
+                    }}
+                  />
+                </AvGroup>
+                <AvGroup className="col-md-6">
+                  <Label id="ethAddressLabel" for="white-listing-ethAddress">
+                    Eth Address
+                  </Label>
+                  <AvField id="white-listing-ethAddress" type="text" name="ethAddress" />
+                </AvGroup>
+              </Row>
+              <Row>
+                <AvGroup className="col-md-6">
+                  <Label id="customerNameLabel" for="white-listing-customerName">
+                    Customer Name
+                  </Label>
+                  <AvField
+                    id="white-listing-customerName"
+                    type="text"
+                    name="customerName"
+                    validate={{
+                      required: { value: true, errorMessage: 'This field is required.' }
+                    }}
+                  />
+                </AvGroup>
+                <AvGroup className="col-md-6">
+                  <Label id="balanceLabel" for="white-listing-balance">
+                    Balance
+                  </Label>
+                  <AvField id="white-listing-balance" type="string" className="form-control" name="balance" />
+                </AvGroup>
+              </Row> */}
+              <Row>
+                <AvGroup className="col-md-6">
+                  <Label for="white-listing-user">User</Label>
+                  <AvInput
+                    value={whiteListingEntity?.user?.id}
+                    id="white-listing-user"
+                    type="select"
+                    className="form-control"
+                    name="user.id"
+                    validate={{
+                      required: { value: true, errorMessage: 'This field is required.' }
+                    }}
+                  >
+                    {users
+                      ? users.map((otherEntity, index) => (
+                          <option key={index} value={otherEntity.id}>
+                            {otherEntity.id}
+                          </option>
+                        ))
+                      : null}
+                  </AvInput>
+                </AvGroup>
+                <AvGroup className="col-md-6">
+                  <Label for="white-listing-securitytoken">Security token</Label>
+                  <AvInput
+                    value={whiteListingEntity?.securitytoken?.id}
+                    id="white-listing-securitytoken"
+                    type="select"
+                    className="form-control"
+                    name="securityToken.id"
+                    validate={{
+                      required: { value: true, errorMessage: 'This field is required.' }
+                    }}
+                  >
+                    {securityTokens
+                      ? securityTokens.map(otherEntity => (
+                          <option value={otherEntity.id} key={otherEntity.id}>
+                            {otherEntity.id}
+                          </option>
+                        ))
+                      : null}
+                  </AvInput>
+                </AvGroup>
+              </Row>
               <Button tag={Link} id="cancel-save" to="/white-listing" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
@@ -216,7 +242,7 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
           )}
         </Col>
       </Row>
-    </div>
+    </Card>
   );
 };
 

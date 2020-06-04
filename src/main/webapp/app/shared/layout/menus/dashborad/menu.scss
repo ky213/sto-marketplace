@@ -1,0 +1,22 @@
+$primary: #0b2662 !default;
+
+.active-menu {
+  background: $primary !important;
+  color: white !important;
+  &:hover {
+    background: $primary !important;
+    text-decoration: none !important;
+  }
+}
+
+a.text-primary {
+  &:focus {
+    background: $primary !important;
+    color: white !important;
+    text-decoration: none !important;
+  }
+  &:hover {
+    background: rgba(211, 211, 211, 0.589);
+    text-decoration: none !important;
+  }
+}

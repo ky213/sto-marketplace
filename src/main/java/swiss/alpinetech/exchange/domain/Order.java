@@ -45,6 +45,9 @@ public class Order implements Serializable {
     @Column(name = "ref_order", nullable = false)
     private Long refOrder;
 
+    @Column(name = "securitytoken_name", nullable = false)
+    private String securityTokenName;
+
     @NotNull
     @Column(name = "create_date", nullable = false)
     private ZonedDateTime createDate;
@@ -54,10 +57,6 @@ public class Order implements Serializable {
 
     @Column(name = "close_date")
     private ZonedDateTime closeDate;
-
-    @NotNull
-    @Column(name = "security_token_name", nullable = false)
-    private String securityTokenName;
 
     @NotNull
     @Column(name = "symbol", nullable = false)
@@ -98,6 +97,12 @@ public class Order implements Serializable {
     private Boolean active;
 
     @ManyToOne
+    @JoinColumn(name = "securitytoken_id", referencedColumnName = "id", updatable = false)
+    @JsonIgnoreProperties("orders")
+    private SecurityToken securityToken;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id", updatable = false)
     @JsonIgnoreProperties("orders")
     private User user;
 
@@ -125,6 +130,19 @@ public class Order implements Serializable {
 
     public void setIdOrder(String idOrder) {
         this.idOrder = idOrder;
+    }
+
+    public String getSecurityTokenName() {
+        return securityTokenName;
+    }
+
+    public Order securityTokenName(String securityTokenName) {
+        this.securityTokenName = securityTokenName;
+        return this;
+    }
+
+    public void setSecurityTokenName(String securityTokenName) {
+        this.securityTokenName = securityTokenName;
     }
 
     public Long getRefOrder() {
@@ -177,19 +195,6 @@ public class Order implements Serializable {
 
     public void setCloseDate(ZonedDateTime closeDate) {
         this.closeDate = closeDate;
-    }
-
-    public String getSecurityTokenName() {
-        return securityTokenName;
-    }
-
-    public Order securityTokenName(String securityTokenName) {
-        this.securityTokenName = securityTokenName;
-        return this;
-    }
-
-    public void setSecurityTokenName(String securityTokenName) {
-        this.securityTokenName = securityTokenName;
     }
 
     public String getSymbol() {
@@ -309,6 +314,17 @@ public class Order implements Serializable {
         this.active = active;
     }
 
+    public SecurityToken getSecurityToken() { return securityToken; }
+
+    public Order securityToken(SecurityToken securityToken) {
+        this.securityToken = securityToken;
+        return this;
+    }
+
+    public void setSecurityToken(SecurityToken securityToken) {
+        this.securityToken = securityToken;
+    }
+
     public User getUser() {
         return user;
     }
@@ -358,10 +374,10 @@ public class Order implements Serializable {
             "id=" + getId() +
             ", idOrder='" + getIdOrder() + "'" +
             ", refOrder=" + getRefOrder() +
+            ", securityTokenName=" + getSecurityTokenName() +
             ", createDate='" + getCreateDate() + "'" +
             ", updateDate='" + getUpdateDate() + "'" +
             ", closeDate='" + getCloseDate() + "'" +
-            ", securityTokenName='" + getSecurityTokenName() + "'" +
             ", symbol='" + getSymbol() + "'" +
             ", type='" + getType() + "'" +
             ", limitOrMarket='" + getLimitOrMarket() + "'" +

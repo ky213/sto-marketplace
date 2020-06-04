@@ -1,4 +1,5 @@
 import React from 'react';
+import { Card } from 'reactstrap';
 
 import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 import UserManagement from './user-management';
@@ -11,6 +12,7 @@ import Docs from './docs/docs';
 import Tracker from './tracker/tracker';
 
 const Routes = ({ match }) => (
+  <Card className="jh-card">
   <div>
     <ErrorBoundaryRoute path={`${match.url}/user-management`} component={UserManagement} />
     <ErrorBoundaryRoute exact path={`${match.url}/tracker`} component={Tracker} />
@@ -21,6 +23,7 @@ const Routes = ({ match }) => (
     <ErrorBoundaryRoute exact path={`${match.url}/audits`} component={Audits} />
     <ErrorBoundaryRoute exact path={`${match.url}/logs`} component={Logs} />
   </div>
+  </Card>
 );
 
 export default Routes;

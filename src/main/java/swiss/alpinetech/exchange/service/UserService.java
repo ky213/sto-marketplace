@@ -1,5 +1,11 @@
 package swiss.alpinetech.exchange.service;
 
+import org.apache.commons.collections4.IteratorUtils;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import swiss.alpinetech.exchange.config.Constants;
 import swiss.alpinetech.exchange.domain.Authority;
 import swiss.alpinetech.exchange.domain.User;
@@ -26,6 +32,8 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 /**
  * Service class for managing users.
@@ -168,6 +176,7 @@ public class UserService {
                 .collect(Collectors.toSet());
             user.setAuthorities(authorities);
         }
+        user.setSetting(userDTO.getSetting());
         userRepository.save(user);
         userSearchRepository.save(user);
         this.clearUserCaches(user);
@@ -230,6 +239,8 @@ public class UserService {
                     .filter(Optional::isPresent)
                     .map(Optional::get)
                     .forEach(managedAuthorities::add);
+                user.setSetting(userDTO.getSetting());
+                userRepository.save(user);
                 userSearchRepository.save(user);
                 this.clearUserCaches(user);
                 log.debug("Changed Information for User: {}", user);
@@ -264,7 +275,23 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Page<UserDTO> getAllManagedUsers(Pageable pageable) {
-        return userRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER).map(UserDTO::new);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN)) {
+                return userRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER).map(UserDTO::new);
+            }
+        }
+        List<UserDTO> userList = userRepository.findAllByLoginNot(pageable, Constants.ANONYMOUS_USER)
+            .stream()
+            .filter(user -> !this.userIsAdmin(user))
+            .map(UserDTO::new)
+            .collect(Collectors.toList());
+
+        Page<UserDTO> usersPage = new PageImpl<UserDTO>(
+            userList,
+            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
+            userList.size());
+        return usersPage;
     }
 
     @Transactional(readOnly = true)
@@ -313,5 +340,34 @@ public class UserService {
         if (user.getEmail() != null) {
             Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evict(user.getEmail());
         }
+    }
+
+    public Page<UserDTO> search(String query, Pageable pageable) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN)) {
+                return userSearchRepository.search(queryStringQuery(query), pageable).map(UserDTO::new);
+            }
+        }
+        List<UserDTO> userList = IteratorUtils.toList(userSearchRepository.search(queryStringQuery(query)).iterator())
+            .stream()
+            .filter(user -> !this.userIsAdmin(user))
+            .map(UserDTO::new)
+            .collect(Collectors.toList());
+        Page<UserDTO> usersPage = new PageImpl<UserDTO>(
+            userList,
+            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
+            userList.size());
+        return usersPage;
+    }
+
+    private boolean userIsAdmin(User user) {
+        Set<Authority> userAuthorities =  this.getUserWithAuthorities(user.getId()).get().getAuthorities();
+        for (Authority userAuthority : userAuthorities) {
+            if(userAuthority.getName().equals(AuthoritiesConstants.ADMIN)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

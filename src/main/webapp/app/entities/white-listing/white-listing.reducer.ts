@@ -106,13 +106,18 @@ const apiSearchUrl = 'api/_search/white-listings';
 
 // Actions
 
-export const getSearchEntities: ICrudSearchAction<IWhiteListing> = (query, page, size, sort) => ({
-  type: ACTION_TYPES.SEARCH_WHITELISTINGS,
-  payload: axios.get<IWhiteListing>(`${apiSearchUrl}?query=${query}${sort ? `&page=${page}&size=${size}&sort=${sort}` : ''}`)
-});
+export const getSearchEntities: any = (query, page, size, sort, userId) => {
+  const url = userId ? 'api/_search/user-white-listings' : apiSearchUrl;
 
-export const getEntities: ICrudGetAllAction<IWhiteListing> = (page, size, sort) => {
-  const requestUrl = `${apiUrl}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
+  return {
+    type: ACTION_TYPES.SEARCH_WHITELISTINGS,
+    payload: axios.get<IWhiteListing>(`${url}?query=${query}&userId=${userId}${sort ? `&page=${page}&size=${size}` : ''}`)
+  };
+};
+
+export const getEntities: any = (page, size, sort, isUser) => {
+  const url = isUser ? 'api/user-white-listings' : apiUrl;
+  const requestUrl = `${url}${sort ? `?page=${page}&size=${size}&sort=${sort}` : ''}`;
   return {
     type: ACTION_TYPES.FETCH_WHITELISTING_LIST,
     payload: axios.get<IWhiteListing>(`${requestUrl}${sort ? '&' : '?'}cacheBuster=${new Date().getTime()}`)
@@ -130,7 +135,7 @@ export const getEntity: ICrudGetAction<IWhiteListing> = id => {
 export const createEntity: ICrudPutAction<IWhiteListing> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.CREATE_WHITELISTING,
-    payload: axios.post(apiUrl, cleanEntity(entity))
+    payload: axios.post('api/create-whitelistings', cleanEntity(entity))
   });
   dispatch(getEntities());
   return result;

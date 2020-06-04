@@ -1,5 +1,6 @@
 package swiss.alpinetech.exchange.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -78,8 +79,9 @@ public class UserSetting implements Serializable {
     @Column(name = "balance")
     private Double balance;
 
+    @JsonIgnore
     @OneToOne
-    @JoinColumn(unique = true)
+    @JoinColumn(name = "user_id", nullable = false, referencedColumnName = "id")
     private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

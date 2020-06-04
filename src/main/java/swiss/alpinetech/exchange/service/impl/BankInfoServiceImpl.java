@@ -98,4 +98,10 @@ public class BankInfoServiceImpl implements BankInfoService {
     public Page<BankInfo> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of BankInfos for query {}", query);
         return bankInfoSearchRepository.search(queryStringQuery(query), pageable);    }
+
+    @Override
+    public Optional<BankInfo> getFirstBankInfo() {
+        log.debug("Request to get first element BankInfo");
+        return Optional.of(bankInfoRepository.findAll().isEmpty() ? null : bankInfoRepository.findAll().get(0));
+    }
 }

@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Table, Row, Badge } from 'reactstrap';
+import { Button, Table, Row, Col, InputGroup, Badge } from 'reactstrap';
 import { TextFormat, JhiPagination, JhiItemCount, getSortState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { AvForm, AvGroup, AvInput } from 'availity-reactstrap-validation';
 
-import { APP_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
-import { getUsers, updateUser } from './user-management.reducer';
+import { getUser, getUsers, getSearchUsers, updateUser, reset } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
 
 export interface IUserManagementProps extends StateProps, DispatchProps, RouteComponentProps<{}> {}
 
 export const UserManagement = (props: IUserManagementProps) => {
   const [pagination, setPagination] = useState(getSortState(props.location, ITEMS_PER_PAGE));
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     props.getUsers(pagination.activePage - 1, pagination.itemsPerPage, `${pagination.sort},${pagination.order}`);
@@ -27,19 +29,41 @@ export const UserManagement = (props: IUserManagementProps) => {
       sort: p
     });
 
-  const handlePagination = currentPage =>
+  const handPagination = currentPage =>
     setPagination({
       ...pagination,
       activePage: currentPage
     });
 
-  const toggleActive = user => () =>
-    props.updateUser({
-      ...user,
-      activated: !user.activated
-    });
+  const startSearching = () => {
+    if (search) {
+      props.reset();
+      setPagination({
+        ...pagination,
+        activePage: 1
+      });
+      props.getSearchUsers(search);
+    } else {
+      props.getUsers(pagination.activePage - 1, pagination.itemsPerPage, `${pagination.sort},${pagination.order}`);
+    }
+  };
 
-  const { users, account, match, totalItems } = props;
+  const handleSearch = event => setSearch(event.target.value);
+
+  const clear = () => {
+    if (search) {
+      props.reset();
+      setSearch('');
+      setPagination({
+        ...pagination,
+        activePage: 1
+      });
+      props.getUsers(pagination.activePage - 1, pagination.itemsPerPage, `${pagination.sort},${pagination.order}`);
+    }
+  };
+
+  const { account, users, match, totalItems, loading } = props;
+
   return (
     <div>
       <h2 id="user-management-page-heading">
@@ -48,34 +72,53 @@ export const UserManagement = (props: IUserManagementProps) => {
           <FontAwesomeIcon icon="plus" /> Create a new user
         </Link>
       </h2>
+
+      <Row>
+        <Col sm="12">
+          <AvForm onSubmit={startSearching}>
+            <AvGroup>
+              <InputGroup>
+                <AvInput type="text" name="search" value={search} onChange={handleSearch} placeholder="Search" />
+                <Button className="input-group-addon" onClick={startSearching}>
+                  <FontAwesomeIcon icon="search" />
+                </Button>
+                <Button type="reset" className="input-group-addon" onClick={clear}>
+                  <FontAwesomeIcon icon="trash" />
+                </Button>
+              </InputGroup>
+            </AvGroup>
+          </AvForm>
+        </Col>
+      </Row>
+
       <Table responsive striped>
         <thead>
           <tr>
-            <th className="hand" onClick={sort('id')}>
-              ID
-              <FontAwesomeIcon icon="sort" />
+            <th className="hand text-nowrap" onClick={sort('login')}>
+              Username
+              <FontAwesomeIcon icon="sort" className="ml-2" />
             </th>
-            <th className="hand" onClick={sort('login')}>
-              Login
-              <FontAwesomeIcon icon="sort" />
+            <th className="hand text-nowrap" onClick={sort('firstName')}>
+              Name
+              <FontAwesomeIcon icon="sort" className="ml-2" />
             </th>
-            <th className="hand" onClick={sort('email')}>
+            <th className="hand text-nowrap" onClick={sort('email')}>
               Email
-              <FontAwesomeIcon icon="sort" />
+              <FontAwesomeIcon icon="sort" className="ml-2" />
             </th>
-            <th />
-            <th>Profiles</th>
-            <th className="hand" onClick={sort('createdDate')}>
-              Created Date
-              <FontAwesomeIcon icon="sort" />
+            <th className="hand text-nowrap" onClick={sort('setting.city')}>
+              City
+              <FontAwesomeIcon icon="sort" className="ml-2" />
             </th>
-            <th className="hand" onClick={sort('lastModifiedBy')}>
-              Last Modified By
-              <FontAwesomeIcon icon="sort" />
+            <th className="hand text-nowrap" onClick={sort('setting.country')}>
+              Country
+              <FontAwesomeIcon icon="sort" className="ml-2" />
             </th>
-            <th id="modified-date-sort" className="hand" onClick={sort('lastModifiedDate')}>
-              Last Modified Date
-              <FontAwesomeIcon icon="sort" />
+            <th> Phone</th>
+            <th>Role</th>
+            <th className="hand text-nowrap text-nowrap" onClick={sort('createdDate')}>
+              Registration Date
+              <FontAwesomeIcon icon="sort" className="ml-2" />
             </th>
             <th />
           </tr>
@@ -83,24 +126,14 @@ export const UserManagement = (props: IUserManagementProps) => {
         <tbody>
           {users.map((user, i) => (
             <tr id={user.login} key={`user-${i}`}>
-              <td>
-                <Button tag={Link} to={`${match.url}/${user.login}`} color="link" size="sm">
-                  {user.id}
-                </Button>
-              </td>
               <td>{user.login}</td>
-              <td>{user.email}</td>
               <td>
-                {user.activated ? (
-                  <Button color="success" onClick={toggleActive(user)}>
-                    Activated
-                  </Button>
-                ) : (
-                  <Button color="danger" onClick={toggleActive(user)}>
-                    Deactivated
-                  </Button>
-                )}
+                {user.firstName} {user.lastName}
               </td>
+              <td>{user.email}</td>
+              <td>{user.setting?.city}</td>
+              <td>{user.setting?.country}</td>
+              <td>{user.setting?.phoneNumber}</td>
               <td>
                 {user.authorities
                   ? user.authorities.map((authority, j) => (
@@ -112,10 +145,6 @@ export const UserManagement = (props: IUserManagementProps) => {
               </td>
               <td>
                 <TextFormat value={user.createdDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
-              </td>
-              <td>{user.lastModifiedBy}</td>
-              <td>
-                <TextFormat value={user.lastModifiedDate} type="date" format={APP_DATE_FORMAT} blankOnInvalid />
               </td>
               <td className="text-right">
                 <div className="btn-group flex-btn-group-container">
@@ -140,20 +169,24 @@ export const UserManagement = (props: IUserManagementProps) => {
           ))}
         </tbody>
       </Table>
-      <div className={users && users.length > 0 ? '' : 'd-none'}>
-        <Row className="justify-content-center">
-          <JhiItemCount page={pagination.activePage} total={totalItems} itemsPerPage={pagination.itemsPerPage} i18nEnabled />
-        </Row>
-        <Row className="justify-content-center">
-          <JhiPagination
-            activePage={pagination.activePage}
-            onSelect={handlePagination}
-            maxButtons={5}
-            itemsPerPage={pagination.itemsPerPage}
-            totalItems={props.totalItems}
-          />
-        </Row>
-      </div>
+      {users && users.length > 0 ? (
+        <div>
+          <Row className="justify-content-center">
+            <JhiItemCount page={pagination.activePage} total={totalItems} itemsPerPage={pagination.itemsPerPage} i18nEnabled />
+          </Row>
+          <Row className="justify-content-center">
+            <JhiPagination
+              activePage={pagination.activePage}
+              onSelect={handPagination}
+              maxButtons={5}
+              itemsPerPage={pagination.itemsPerPage}
+              totalItems={props.totalItems}
+            />
+          </Row>
+        </div>
+      ) : (
+        !loading && <div className="alert alert-warning">No Users found</div>
+      )}
     </div>
   );
 };
@@ -161,10 +194,11 @@ export const UserManagement = (props: IUserManagementProps) => {
 const mapStateToProps = (storeState: IRootState) => ({
   users: storeState.userManagement.users,
   totalItems: storeState.userManagement.totalItems,
-  account: storeState.authentication.account
+  account: storeState.authentication.account,
+  loading: storeState.administration.loading
 });
 
-const mapDispatchToProps = { getUsers, updateUser };
+const mapDispatchToProps = { getUser, getUsers, updateUser, getSearchUsers, reset };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;

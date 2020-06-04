@@ -1,5 +1,6 @@
 package swiss.alpinetech.exchange.domain;
 
+import org.springframework.data.elasticsearch.annotations.Field;
 import swiss.alpinetech.exchange.config.Constants;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -86,7 +87,6 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @Column(name = "reset_date")
     private Instant resetDate = null;
 
-    @JsonIgnore
     @ManyToMany
     @JoinTable(
         name = "jhi_user_authority",
@@ -95,6 +95,11 @@ public class User extends AbstractAuditingEntity implements Serializable {
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @BatchSize(size = 20)
     private Set<Authority> authorities = new HashSet<>();
+
+    @OneToOne(mappedBy = "user",
+        cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name="setting_id", referencedColumnName = "id")
+    private UserSetting setting;
 
     public Long getId() {
         return id;
@@ -199,6 +204,15 @@ public class User extends AbstractAuditingEntity implements Serializable {
 
     public void setAuthorities(Set<Authority> authorities) {
         this.authorities = authorities;
+    }
+
+    public UserSetting getSetting() { return setting; }
+
+    public void setSetting(UserSetting setting) {
+        this.setting = setting;
+        if(this.setting != null) {
+            this.setting.setUser(this);
+        }
     }
 
     @Override

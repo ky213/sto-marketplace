@@ -49,7 +49,7 @@ import swiss.alpinetech.exchange.domain.enumeration.STSTATUS;
 @SpringBootTest(classes = ExchangeApp.class)
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
-@WithMockUser
+@WithMockUser(username = "ram", roles={"ADMIN"})
 public class SecurityTokenResourceIT {
 
     private static final String DEFAULT_ID_RED = "AAAAAAAAAA";
@@ -424,7 +424,7 @@ public class SecurityTokenResourceIT {
             .andExpect(jsonPath("$.[*].kycAddress").value(hasItem(DEFAULT_KYC_ADDRESS)))
             .andExpect(jsonPath("$.[*].website").value(hasItem(DEFAULT_WEBSITE)));
     }
-    
+
     @Test
     @Transactional
     public void getSecurityToken() throws Exception {

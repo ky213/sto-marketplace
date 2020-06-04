@@ -47,9 +47,15 @@ public interface BankInfoService {
      * Search for the bankInfo corresponding to the query.
      *
      * @param query the query of the search.
-     * 
+     *
      * @param pageable the pagination information.
      * @return the list of entities.
      */
     Page<BankInfo> search(String query, Pageable pageable);
+
+    /**
+     *
+     * @return the first entity of list of all bank info.
+     */
+    Optional<BankInfo> getFirstBankInfo();
 }
