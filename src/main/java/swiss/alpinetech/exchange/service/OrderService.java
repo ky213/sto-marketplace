@@ -25,6 +25,14 @@ public interface OrderService {
     Order save(Order order);
 
     /**
+     * Custom create a order.
+     *
+     * @param order the entity to save.
+     * @return the persisted entity.
+     */
+    Order create(Order order);
+
+    /**
      * Cancel order.
      *
      * @param orderId the entity to cancel.

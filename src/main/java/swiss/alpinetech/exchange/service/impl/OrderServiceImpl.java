@@ -2,13 +2,16 @@ package swiss.alpinetech.exchange.service.impl;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import swiss.alpinetech.exchange.domain.User;
 import swiss.alpinetech.exchange.domain.enumeration.STATUS;
+import swiss.alpinetech.exchange.repository.UserRepository;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.OrderService;
 import swiss.alpinetech.exchange.domain.Order;
@@ -24,7 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 import swiss.alpinetech.exchange.util.ExcelGenerator;
 
 import java.io.*;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,6 +48,11 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderSearchRepository orderSearchRepository;
 
+    private Authentication authentication;
+
+    @Autowired
+    private UserRepository userRepository;
+
     public OrderServiceImpl(OrderRepository orderRepository, OrderSearchRepository orderSearchRepository) {
         this.orderRepository = orderRepository;
         this.orderSearchRepository = orderSearchRepository;
@@ -57,6 +67,31 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order save(Order order) {
         log.debug("Request to save Order : {}", order);
+        Order result = orderRepository.save(order);
+        orderSearchRepository.save(result);
+        return result;
+    }
+
+    /**
+     * Create order.
+     *
+     * @param order the entity to save.
+     * @return the persisted entity.
+     */
+    @Override
+    public Order create(Order order) {
+        log.debug("Request to create Order : {}", order);
+        authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = this.userRepository.findOneByLogin(authentication.getName()).get();
+        order.setUser(user);
+        order.setCreateDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
+        order.setUpdateDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
+        String changedStatus[] = new String[] {
+            STATUS.SUCCESS.name(), STATUS.FAIL.name(), STATUS.REMOVE.name()
+        };
+        if (Arrays.stream(changedStatus).anyMatch(order.getStatus().name()::equals)) {
+            order.setCloseDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
+        }
         Order result = orderRepository.save(order);
         orderSearchRepository.save(result);
         return result;
@@ -100,7 +135,7 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     public Optional<Order> findOne(Long id) {
         log.debug("Request to get Order : {}", id);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        authentication = SecurityContextHolder.getContext().getAuthentication();
         for (GrantedAuthority authority : authentication.getAuthorities()) {
             if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN) || authority.getAuthority().equals(AuthoritiesConstants.BANK)) {
                 return orderRepository.findById(id);

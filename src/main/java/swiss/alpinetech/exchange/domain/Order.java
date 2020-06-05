@@ -48,7 +48,6 @@ public class Order implements Serializable {
     @Column(name = "securitytoken_name", nullable = false)
     private String securityTokenName;
 
-    @NotNull
     @Column(name = "create_date", nullable = false)
     private ZonedDateTime createDate;
 

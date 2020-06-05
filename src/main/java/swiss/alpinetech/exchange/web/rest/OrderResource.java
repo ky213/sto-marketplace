@@ -71,6 +71,25 @@ public class OrderResource {
     }
 
     /**
+     * {@code POST  /orders} : custom Create a new order.
+     *
+     * @param order the order to create.
+     * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new order, or with status {@code 400 (Bad Request)} if the order has already an ID.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PostMapping("/create-order")
+    public ResponseEntity<Order> customCreateOrder(@Valid @RequestBody Order order) throws URISyntaxException {
+        log.debug("REST request to create Order : {}", order);
+        if (order.getId() != null) {
+            throw new BadRequestAlertException("A new order cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        Order result = orderService.create(order);
+        return ResponseEntity.created(new URI("/api/orders/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(applicationName, false, ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+    /**
      * {@code PUT  /orders} : Updates an existing order.
      *
      * @param order the order to update.
