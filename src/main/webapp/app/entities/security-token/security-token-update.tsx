@@ -12,6 +12,7 @@ import { ISecurityToken } from 'app/shared/model/security-token.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 import './style.scss';
+import value from '*.json';
 
 export interface ISecurityTokenUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -53,6 +54,8 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
     values.registrationDate = convertDateTimeToServer(values.registrationDate);
     values.updateDate = convertDateTimeToServer(values.updateDate);
     values.dueDiligenceDate = convertDateTimeToServer(values.dueDiligenceDate);
+    values.restrictionCounty = values.restrictionCounty.join(', ');
+    values.restrictionNationality = values.restrictionNationality.join(', ');
 
     if (errors.length === 0) {
       const entity = {
@@ -278,7 +281,7 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                   type="datetime-local"
                   className="form-control"
                   name="laucheDate"
-                  placeholder={'YYYY-MM-DD HH:mm'}
+                  placeholder="YYYY-MM-DD"
                   value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.securityTokenEntity.laucheDate)}
                 />
               </AvGroup>
@@ -316,16 +319,48 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
               </Row>
               <Row>
                 <AvGroup className="col-md-6">
-                  <Label id="restrictionCountyLabel" for="security-token-restrictionCounty">
-                    Restriction County
-                  </Label>
-                  <AvField id="security-token-restrictionCounty" type="text" name="restrictionCounty" />
+                  <AvField
+                    id="security-token-restrictionCounty"
+                    type="select"
+                    name="restrictionCounty"
+                    label="Restriction County"
+                    helpMessage="cmd + click to select multiple countries"
+                    multiple
+                    value={securityTokenEntity.restrictionCounty.split(', ')}
+                  >
+                    <option value="FRANCE">FRANCE</option>
+                    <option value="USA">USA</option>
+                    <option value="SWITZERLAND">SWITZERLAND</option>
+                    <option value="GERMANY">GERMANY</option>
+                    <option value="ITALY">ITALY</option>
+                    <option value="IRAN">IRAN</option>
+                    <option value="CHINA">CHINA</option>
+                    <option value="NORTH_KOREA">NORTH KOREA</option>
+                    <option value="CANADA">CANADA</option>
+                    <option value="SENEGAL">SENEGAL</option>
+                  </AvField>
                 </AvGroup>
                 <AvGroup className="col-md-6">
-                  <Label id="restrictionNationalityLabel" for="security-token-restrictionNationality">
-                    Restriction Nationality
-                  </Label>
-                  <AvField id="security-token-restrictionNationality" type="text" name="restrictionNationality" />
+                  <AvField
+                    id="security-token-restrictionNationality"
+                    type="select"
+                    name="restrictionNationality"
+                    label="Restriction Nationality"
+                    helpMessage="cmd + click to select multiple nationalities"
+                    multiple
+                    value={securityTokenEntity.restrictionNationality.split(', ')}
+                  >
+                    <option value="FRANCE">FRANCE</option>
+                    <option value="USA">USA</option>
+                    <option value="SWITZERLAND">SWITZERLAND</option>
+                    <option value="GERMANY">GERMANY</option>
+                    <option value="ITALY">ITALY</option>
+                    <option value="IRAN">IRAN</option>
+                    <option value="CHINA">CHINA</option>
+                    <option value="NORTH_KOREA">NORTH KOREA</option>
+                    <option value="CANADA">CANADA</option>
+                    <option value="SENEGAL">SENEGAL</option>
+                  </AvField>
                 </AvGroup>
               </Row>
               <AvGroup>
