@@ -12,6 +12,7 @@ import { ISecurityToken } from 'app/shared/model/security-token.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 import './style.scss';
+import { APP_LOCAL_DATETIME_FORMAT, APP_TIMESTAMP_FORMAT } from 'app/config/constants';
 
 export interface ISecurityTokenUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -53,6 +54,8 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
     values.registrationDate = convertDateTimeToServer(values.registrationDate);
     values.updateDate = convertDateTimeToServer(values.updateDate);
     values.dueDiligenceDate = convertDateTimeToServer(values.dueDiligenceDate);
+    values.restrictionCounty = values.restrictionCounty.join(', ');
+    values.restrictionNationality = values.restrictionNationality.join(', ');
 
     if (errors.length === 0) {
       const entity = {
@@ -275,11 +278,12 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                 </Label>
                 <AvInput
                   id="security-token-laucheDate"
-                  type="datetime-local"
+                  type="text"
                   className="form-control"
                   name="laucheDate"
-                  placeholder={'YYYY-MM-DD HH:mm'}
-                  value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.securityTokenEntity.laucheDate)}
+                  value={
+                    isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.securityTokenEntity.laucheDate, APP_TIMESTAMP_FORMAT)
+                  }
                 />
               </AvGroup>
               <Row>
@@ -316,45 +320,48 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
               </Row>
               <Row>
                 <AvGroup className="col-md-6">
-                  <Label id="summaryLabel" for="security-token-summary">
-                    Summary
-                  </Label>
                   <AvField
-                    id="security-token-summary"
-                    type="text"
-                    name="summary"
-                    validate={{
-                      required: { value: true, errorMessage: 'This field is required.' },
-                      maxLength: { value: 1024, errorMessage: 'This field cannot be longer than 1024 characters.' }
-                    }}
-                  />
+                    id="security-token-restrictionCounty"
+                    type="select"
+                    name="restrictionCounty"
+                    label="Restriction County"
+                    helpMessage="cmd + click to select multiple countries"
+                    multiple
+                    value={securityTokenEntity.restrictionCounty?.split(', ')}
+                  >
+                    <option value="FRANCE">FRANCE</option>
+                    <option value="USA">USA</option>
+                    <option value="SWITZERLAND">SWITZERLAND</option>
+                    <option value="GERMANY">GERMANY</option>
+                    <option value="ITALY">ITALY</option>
+                    <option value="IRAN">IRAN</option>
+                    <option value="CHINA">CHINA</option>
+                    <option value="NORTH_KOREA">NORTH KOREA</option>
+                    <option value="CANADA">CANADA</option>
+                    <option value="SENEGAL">SENEGAL</option>
+                  </AvField>
                 </AvGroup>
                 <AvGroup className="col-md-6">
-                  <Label id="descriptionLabel" for="security-token-description">
-                    Description
-                  </Label>
                   <AvField
-                    id="security-token-description"
-                    type="text"
-                    name="description"
-                    validate={{
-                      maxLength: { value: 4096, errorMessage: 'This field cannot be longer than 4096 characters.' }
-                    }}
-                  />
-                </AvGroup>
-              </Row>
-              <Row>
-                <AvGroup className="col-md-6">
-                  <Label id="restrictionCountyLabel" for="security-token-restrictionCounty">
-                    Restriction County
-                  </Label>
-                  <AvField id="security-token-restrictionCounty" type="text" name="restrictionCounty" />
-                </AvGroup>
-                <AvGroup className="col-md-6">
-                  <Label id="restrictionNationalityLabel" for="security-token-restrictionNationality">
-                    Restriction Nationality
-                  </Label>
-                  <AvField id="security-token-restrictionNationality" type="text" name="restrictionNationality" />
+                    id="security-token-restrictionNationality"
+                    type="select"
+                    name="restrictionNationality"
+                    label="Restriction Nationality"
+                    helpMessage="cmd + click to select multiple nationalities"
+                    multiple
+                    value={securityTokenEntity.restrictionNationality?.split(', ')}
+                  >
+                    <option value="FRANCE">FRANCE</option>
+                    <option value="USA">USA</option>
+                    <option value="SWITZERLAND">SWITZERLAND</option>
+                    <option value="GERMANY">GERMANY</option>
+                    <option value="ITALY">ITALY</option>
+                    <option value="IRAN">IRAN</option>
+                    <option value="CHINA">CHINA</option>
+                    <option value="NORTH_KOREA">NORTH KOREA</option>
+                    <option value="CANADA">CANADA</option>
+                    <option value="SENEGAL">SENEGAL</option>
+                  </AvField>
                 </AvGroup>
               </Row>
               <AvGroup>
@@ -381,10 +388,9 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                   </Label>
                   <AvInput
                     id="security-token-registrationDate"
-                    type="datetime-local"
+                    type="text"
                     className="form-control"
                     name="registrationDate"
-                    placeholder={'YYYY-MM-DD HH:mm'}
                     value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.securityTokenEntity.registrationDate)}
                   />
                 </AvGroup>
@@ -394,10 +400,9 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                   </Label>
                   <AvInput
                     id="security-token-updateDate"
-                    type="datetime-local"
+                    type="text"
                     className="form-control"
                     name="updateDate"
-                    placeholder={'YYYY-MM-DD HH:mm'}
                     value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.securityTokenEntity.updateDate)}
                   />
                 </AvGroup>
@@ -408,10 +413,9 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                 </Label>
                 <AvInput
                   id="security-token-dueDiligenceDate"
-                  type="datetime-local"
+                  type="text"
                   className="form-control"
                   name="dueDiligenceDate"
-                  placeholder={'YYYY-MM-DD HH:mm'}
                   value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.securityTokenEntity.dueDiligenceDate)}
                 />
               </AvGroup>
@@ -527,6 +531,39 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                     <input id="file_prospectus" type="file" onChange={onBlobChange(false, 'prospectus')} />
                     <AvInput type="hidden" name="prospectus" value={prospectus} />
                   </AvGroup>
+                </AvGroup>
+              </Row>
+              <Row>
+                <AvGroup className="col">
+                  <Label id="summaryLabel" for="security-token-summary">
+                    Summary
+                  </Label>
+                  <AvField
+                    id="security-token-summary"
+                    type="textarea"
+                    rows="10"
+                    name="summary"
+                    validate={{
+                      required: { value: true, errorMessage: 'This field is required.' },
+                      maxLength: { value: 1024, errorMessage: 'This field cannot be longer than 1024 characters.' }
+                    }}
+                  />
+                </AvGroup>
+              </Row>
+              <Row>
+                <AvGroup className="col">
+                  <Label id="descriptionLabel" for="security-token-description">
+                    Description
+                  </Label>
+                  <AvField
+                    id="security-token-description"
+                    type="textarea"
+                    rows="10"
+                    name="description"
+                    validate={{
+                      maxLength: { value: 4096, errorMessage: 'This field cannot be longer than 4096 characters.' }
+                    }}
+                  />
                 </AvGroup>
               </Row>
               <Button tag={Link} id="cancel-save" to="/security-token" replace color="info">

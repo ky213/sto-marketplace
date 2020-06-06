@@ -13,7 +13,7 @@ import { AUTHORITIES } from 'app/config/constants';
 const Routes = ({ match }) => (
   <>
     <Switch>
-      <PrivateRoute exact path={`${match.url}/:id/cancel`} component={OrderCancelDialog} />
+      <ErrorBoundaryRoute exact path={`${match.url}/:id/cancel`} component={OrderCancelDialog} />
       <ErrorBoundaryRoute exact path={`${match.url}/new`} component={OrderUpdate} />
       {/* <PrivateRoute
         exact
