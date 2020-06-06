@@ -29,6 +29,7 @@ import swiss.alpinetech.exchange.util.ExcelGenerator;
 import java.io.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -92,6 +93,9 @@ public class OrderServiceImpl implements OrderService {
         if (Arrays.stream(changedStatus).anyMatch(order.getStatus().name()::equals)) {
             order.setCloseDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
         }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddhhmmss");
+        String formattedString = ZonedDateTime.now().format(formatter);
+        order.setRefOrder(Long.parseLong(formattedString));
         Order result = orderRepository.save(order);
         orderSearchRepository.save(result);
         return result;
