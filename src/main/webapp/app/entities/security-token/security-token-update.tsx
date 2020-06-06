@@ -316,35 +316,6 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
               </Row>
               <Row>
                 <AvGroup className="col-md-6">
-                  <Label id="summaryLabel" for="security-token-summary">
-                    Summary
-                  </Label>
-                  <AvField
-                    id="security-token-summary"
-                    type="text"
-                    name="summary"
-                    validate={{
-                      required: { value: true, errorMessage: 'This field is required.' },
-                      maxLength: { value: 1024, errorMessage: 'This field cannot be longer than 1024 characters.' }
-                    }}
-                  />
-                </AvGroup>
-                <AvGroup className="col-md-6">
-                  <Label id="descriptionLabel" for="security-token-description">
-                    Description
-                  </Label>
-                  <AvField
-                    id="security-token-description"
-                    type="text"
-                    name="description"
-                    validate={{
-                      maxLength: { value: 4096, errorMessage: 'This field cannot be longer than 4096 characters.' }
-                    }}
-                  />
-                </AvGroup>
-              </Row>
-              <Row>
-                <AvGroup className="col-md-6">
                   <Label id="restrictionCountyLabel" for="security-token-restrictionCounty">
                     Restriction County
                   </Label>
@@ -527,6 +498,39 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                     <input id="file_prospectus" type="file" onChange={onBlobChange(false, 'prospectus')} />
                     <AvInput type="hidden" name="prospectus" value={prospectus} />
                   </AvGroup>
+                </AvGroup>
+              </Row>
+              <Row>
+                <AvGroup className="col">
+                  <Label id="summaryLabel" for="security-token-summary">
+                    Summary
+                  </Label>
+                  <AvField
+                    id="security-token-summary"
+                    type="textarea"
+                    rows="10"
+                    name="summary"
+                    validate={{
+                      required: { value: true, errorMessage: 'This field is required.' },
+                      maxLength: { value: 1024, errorMessage: 'This field cannot be longer than 1024 characters.' }
+                    }}
+                  />
+                </AvGroup>
+              </Row>
+              <Row>
+                <AvGroup className="col">
+                  <Label id="descriptionLabel" for="security-token-description">
+                    Description
+                  </Label>
+                  <AvField
+                    id="security-token-description"
+                    type="textarea"
+                    rows="10"
+                    name="description"
+                    validate={{
+                      maxLength: { value: 4096, errorMessage: 'This field cannot be longer than 4096 characters.' }
+                    }}
+                  />
                 </AvGroup>
               </Row>
               <Button tag={Link} id="cancel-save" to="/security-token" replace color="info">

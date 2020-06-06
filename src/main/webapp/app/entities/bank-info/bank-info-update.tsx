@@ -188,17 +188,18 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
                           <a onClick={openFile(bank?.logoContentType, bank?.logo)}>
                             <img src={`data:${bank?.logoContentType};base64,${bank?.logo}`} style={{ maxHeight: '100px' }} />
                           </a>
+
                           <br />
                           <Row>
-                            <Col md="11">
+                            <Col>
                               <span>
                                 {bank?.logoContentType}, {byteSize(bank?.logo)}
                               </span>
-                            </Col>
-                            <Col md="1">
-                              <Button color="danger" onClick={clearBlob('logo')}>
-                                <FontAwesomeIcon icon="times-circle" />
-                              </Button>
+                              <span className="ml-4">
+                                <Button color="danger" onClick={clearBlob('logo')}>
+                                  <FontAwesomeIcon icon="times-circle" />
+                                </Button>
+                              </span>
                             </Col>
                           </Row>
                         </div>
