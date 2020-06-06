@@ -12,7 +12,7 @@ import { ISecurityToken } from 'app/shared/model/security-token.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 import './style.scss';
-import value from '*.json';
+import { APP_LOCAL_DATETIME_FORMAT, APP_TIMESTAMP_FORMAT } from 'app/config/constants';
 
 export interface ISecurityTokenUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -278,11 +278,12 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                 </Label>
                 <AvInput
                   id="security-token-laucheDate"
-                  type="datetime-local"
+                  type="text"
                   className="form-control"
                   name="laucheDate"
-                  placeholder="YYYY-MM-DD"
-                  value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.securityTokenEntity.laucheDate)}
+                  value={
+                    isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.securityTokenEntity.laucheDate, APP_TIMESTAMP_FORMAT)
+                  }
                 />
               </AvGroup>
               <Row>
@@ -326,7 +327,7 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                     label="Restriction County"
                     helpMessage="cmd + click to select multiple countries"
                     multiple
-                    value={securityTokenEntity.restrictionCounty.split(', ')}
+                    value={securityTokenEntity.restrictionCounty?.split(', ')}
                   >
                     <option value="FRANCE">FRANCE</option>
                     <option value="USA">USA</option>
@@ -348,7 +349,7 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                     label="Restriction Nationality"
                     helpMessage="cmd + click to select multiple nationalities"
                     multiple
-                    value={securityTokenEntity.restrictionNationality.split(', ')}
+                    value={securityTokenEntity.restrictionNationality?.split(', ')}
                   >
                     <option value="FRANCE">FRANCE</option>
                     <option value="USA">USA</option>
@@ -387,10 +388,9 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                   </Label>
                   <AvInput
                     id="security-token-registrationDate"
-                    type="datetime-local"
+                    type="text"
                     className="form-control"
                     name="registrationDate"
-                    placeholder={'YYYY-MM-DD HH:mm'}
                     value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.securityTokenEntity.registrationDate)}
                   />
                 </AvGroup>
@@ -400,10 +400,9 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                   </Label>
                   <AvInput
                     id="security-token-updateDate"
-                    type="datetime-local"
+                    type="text"
                     className="form-control"
                     name="updateDate"
-                    placeholder={'YYYY-MM-DD HH:mm'}
                     value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.securityTokenEntity.updateDate)}
                   />
                 </AvGroup>
@@ -414,10 +413,9 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                 </Label>
                 <AvInput
                   id="security-token-dueDiligenceDate"
-                  type="datetime-local"
+                  type="text"
                   className="form-control"
                   name="dueDiligenceDate"
-                  placeholder={'YYYY-MM-DD HH:mm'}
                   value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.securityTokenEntity.dueDiligenceDate)}
                 />
               </AvGroup>
