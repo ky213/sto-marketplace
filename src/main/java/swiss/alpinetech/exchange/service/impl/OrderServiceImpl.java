@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,6 +50,9 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderSearchRepository orderSearchRepository;
 
+    @Autowired
+    private SimpMessageSendingOperations messagingTemplate;
+
     private Authentication authentication;
 
     @Autowired
@@ -70,6 +74,7 @@ public class OrderServiceImpl implements OrderService {
         log.debug("Request to save Order : {}", order);
         Order result = orderRepository.save(order);
         orderSearchRepository.save(result);
+        this.messagingTemplate.convertAndSend("/topic/tracker", result);
         return result;
     }
 
