@@ -54,8 +54,8 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
     values.registrationDate = convertDateTimeToServer(values.registrationDate);
     values.updateDate = convertDateTimeToServer(values.updateDate);
     values.dueDiligenceDate = convertDateTimeToServer(values.dueDiligenceDate);
-    values.restrictionCounty = values.restrictionCounty.join(', ');
-    values.restrictionNationality = values.restrictionNationality.join(', ');
+    values.restrictionCounty = values.restrictionCounty.join('; ');
+    values.restrictionNationality = values.restrictionNationality.join('; ');
 
     if (errors.length === 0) {
       const entity = {
@@ -327,7 +327,7 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                     label="Restriction County"
                     helpMessage="cmd + click to select multiple countries"
                     multiple
-                    value={securityTokenEntity.restrictionCounty?.split(', ')}
+                    value={securityTokenEntity.restrictionCounty?.split('; ')}
                   >
                     <option value="FRANCE">FRANCE</option>
                     <option value="USA">USA</option>
@@ -349,7 +349,7 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                     label="Restriction Nationality"
                     helpMessage="cmd + click to select multiple nationalities"
                     multiple
-                    value={securityTokenEntity.restrictionNationality?.split(', ')}
+                    value={securityTokenEntity.restrictionNationality?.split('; ')}
                   >
                     <option value="FRANCE">FRANCE</option>
                     <option value="USA">USA</option>

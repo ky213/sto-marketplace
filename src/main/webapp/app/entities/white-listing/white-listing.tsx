@@ -184,7 +184,7 @@ export const WhiteListing = (props: IWhiteListingProps) => {
                   <td>{whiteListing.securitytoken.name}</td>
                   <td>{whiteListing.balance.toLocaleString()} CHF</td>
                   <td>{whiteListing.ethAddress}</td>
-                  <td>{whiteListing.customerName}</td>
+                  {(isAdmin || isBank) && <td>{whiteListing.customerName}</td>}
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`${match.url}/${whiteListing.id}`} color="info" size="sm">

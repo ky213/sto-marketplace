@@ -54,7 +54,8 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
       const entity = {
         ...whiteListingEntity,
         user: { id: +values.user.id },
-        securitytoken: { ...securityTokens.find(st => st.id === +values.securityToken.id) }
+        securitytoken: { ...securityTokens.find(st => st.id === +values.securityToken.id) },
+        active: values.active
       };
 
       if (isNew) {
@@ -103,12 +104,6 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                     <option value="FAIL">FAIL</option>
                     <option value="REMOVE">REMOVE</option>
                   </AvInput>
-                </AvGroup>
-                <AvGroup className="col-md-6  d-flex align-items-center" check>
-                  <Label id="activeLabel" className="ml-4" for="white-listing-active" style={{ marginTop: '12px' }}>
-                    Active
-                  </Label>
-                  <AvInput id="white-listing-active" type="checkbox" className="form-check-input ml-1" name="active" />
                 </AvGroup>
               </Row>
               <Row>
@@ -226,6 +221,20 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                         ))
                       : null}
                   </AvInput>
+                </AvGroup>
+              </Row>
+              <Row>
+                <AvGroup className="col-md-6  d-flex align-items-center mb-3" check>
+                  <Label id="activeLabel" className="ml-4" for="white-listing-active" style={{ marginTop: '12px' }}>
+                    Active
+                  </Label>
+                  <AvInput
+                    id="white-listing-active"
+                    type="checkbox"
+                    className="form-check-input ml-1"
+                    name="active"
+                    value={whiteListingEntity.active}
+                  />
                 </AvGroup>
               </Row>
               <Button tag={Link} id="cancel-save" to="/white-listing" replace color="info">

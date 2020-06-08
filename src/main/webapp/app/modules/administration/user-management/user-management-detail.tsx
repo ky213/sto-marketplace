@@ -66,7 +66,7 @@ export const UserManagementDetail = (props: IUserManagementDetailProps) => {
                 <>
                   <Col>
                     <small className="text-muted ">Date of Birth </small>
-                    <p>{moment(user.setting?.dateOfBirth).format('LLL')}</p>
+                    <p>{moment(user.setting?.dateOfBirth).format('LL')}</p>
                   </Col>
                   <Col>
                     <small className="text-muted">Nationality</small>

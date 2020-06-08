@@ -30,7 +30,6 @@ const DatePicker = props => {
         validate={{
           required: { value: true, errorMessage: 'This field is required.' }
         }}
-        readonly
       />
     </>
   );
