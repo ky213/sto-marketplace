@@ -30,9 +30,9 @@ describe('Account', () => {
 
   before(async () => {
     await browser.get('/login');
-    //navBarPage = new NavBarPage();
-    //signInPage = await navBarPage.getSignInPage();
-    //await signInPage.waitUntilDisplayed();
+    // navBarPage = new NavBarPage();
+    // signInPage = await navBarPage.getSignInPage();
+    // await signInPage.waitUntilDisplayed();
   });
 
   it('should fail to login with bad password', async () => {

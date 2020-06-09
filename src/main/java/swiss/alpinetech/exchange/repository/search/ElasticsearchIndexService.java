@@ -5,6 +5,7 @@ import io.micrometer.core.annotation.Timed;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.env.Environment;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,9 +82,9 @@ public class ElasticsearchIndexService {
     private final WhiteListingRepository whiteListingRepository;
     private final WhiteListingSearchRepository whiteListingSearchRepository;
 
-    private final JestElasticsearchTemplate elasticsearchTemplate;
+    private final ElasticsearchOperations elasticsearchTemplate;
 
-    public ElasticsearchIndexService(Environment env,BankInfoRepository bankInfoRepository, BankInfoSearchRepository bankInfoSearchRepository, HomeBankRepository homeBankRepository, HomeBankSearchRepository homeBankSearchRepository, HomeCustomerRepository homeCustomerRepository, HomeCustomerSearchRepository homeCustomerSearchRepository, OrderRepository orderRepository, OrderSearchRepository orderSearchRepository, SecurityTokenRepository securityTokenRepository, SecurityTokenSearchRepository securityTokenSearchRepository, TransactionRepository transactionRepository, TransactionSearchRepository transactionSearchRepository, UserRepository userRepository, UserSearchRepository userSearchRepository, UserSettingRepository userSettingRepository, UserSettingSearchRepository userSettingSearchRepository, WhiteListingRepository whiteListingRepository, WhiteListingSearchRepository whiteListingSearchRepository, JestElasticsearchTemplate elasticsearchTemplate) {
+    public ElasticsearchIndexService(Environment env,BankInfoRepository bankInfoRepository, BankInfoSearchRepository bankInfoSearchRepository, HomeBankRepository homeBankRepository, HomeBankSearchRepository homeBankSearchRepository, HomeCustomerRepository homeCustomerRepository, HomeCustomerSearchRepository homeCustomerSearchRepository, OrderRepository orderRepository, OrderSearchRepository orderSearchRepository, SecurityTokenRepository securityTokenRepository, SecurityTokenSearchRepository securityTokenSearchRepository, TransactionRepository transactionRepository, TransactionSearchRepository transactionSearchRepository, UserRepository userRepository, UserSearchRepository userSearchRepository, UserSettingRepository userSettingRepository, UserSettingSearchRepository userSettingSearchRepository, WhiteListingRepository whiteListingRepository, WhiteListingSearchRepository whiteListingSearchRepository, ElasticsearchOperations elasticsearchTemplate) {
         this.bankInfoRepository = bankInfoRepository;
         this.bankInfoSearchRepository = bankInfoSearchRepository;
         this.homeBankRepository = homeBankRepository;
