@@ -13,11 +13,7 @@ import { AUTHORITIES, APP_DATE_FORMAT } from 'app/config/constants';
 export interface IUserManagementDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ login: string }> {}
 
 export const UserManagementDetail = (props: IUserManagementDetailProps) => {
-  useEffect(() => {
-    props.getUser(props.match.params.login);
-  }, []);
-
-  const { user } = props;
+  const user = props.users.find(({ login }) => login === props.match.params.login);
   const isBanker = user.authorities.includes(AUTHORITIES.BANK);
   const isUser = user.authorities.includes(AUTHORITIES.USER);
   const userRoles = user.authorities.map(role => (role ? role.split('_')[1] : null)).join(', ');
@@ -154,7 +150,7 @@ export const UserManagementDetail = (props: IUserManagementDetailProps) => {
 };
 
 const mapStateToProps = (storeState: IRootState) => ({
-  user: storeState.userManagement.user
+  users: storeState.userManagement.users
 });
 
 const mapDispatchToProps = { getUser };
