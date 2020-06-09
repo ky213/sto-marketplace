@@ -8,7 +8,7 @@ import { getUser } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
-import { AUTHORITIES } from 'app/config/constants';
+import { AUTHORITIES, APP_DATE_FORMAT } from 'app/config/constants';
 
 export interface IUserManagementDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ login: string }> {}
 
@@ -132,7 +132,7 @@ export const UserManagementDetail = (props: IUserManagementDetailProps) => {
               </Col>
               <Col>
                 <small className="text-muted ">Registration Date </small>
-                <p>{user.createdDate ? moment(user.createdDate).format('LLL') : ''}</p>
+                <p>{user.createdDate ? moment(user.createdDate).format(APP_DATE_FORMAT) : ''}</p>
               </Col>
             </Row>
             <Row>
