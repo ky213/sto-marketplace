@@ -18,14 +18,10 @@ export interface IUserManagementUpdateProps extends StateProps, DispatchProps, R
 export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
   const { user, loading, updating } = props;
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.login);
-  const [newRoles, setNewroles] = useState([]);
+  const [selectedRoles, setSelectedRoles] = useState(new Set());
   const isInvalid = false;
-  const isBank = newRoles.includes(AUTHORITIES.BANK);
-  const isUser = newRoles.includes(AUTHORITIES.USER);
-
-  useEffect(() => {
-    setNewroles(user.authorities || []);
-  }, [props]);
+  const isBank = selectedRoles.has(AUTHORITIES.BANK);
+  const isUser = selectedRoles.has(AUTHORITIES.USER);
 
   useEffect(() => {
     if (isNew) {
@@ -44,7 +40,6 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
   const saveUser = (event, values) => {
     if (!values.setting) values.setting = {};
 
-    values.authorities = newRoles;
     values.langKey = 'en';
     values.setting.dateOfBirth = new Date(values.setting?.dateOfBirth || null);
 
@@ -57,6 +52,16 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
     }
     handleClose();
   };
+
+  const handleRoleSelect = (role: string, selected: boolean) => {
+    if (selected) selectedRoles.add(role);
+    else selectedRoles.delete(role);
+
+    setSelectedRoles(selectedRoles);
+    /* eslint no-console:off */
+    console.log(selectedRoles);
+  };
+
   return (
     <div>
       <Row className="justify-content-center">
@@ -69,14 +74,14 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
           {loading ? (
             <p>Loading...</p>
           ) : (
-            <AvForm onValidSubmit={saveUser}>
+            <AvForm onValidSubmit={saveUser} model={{ authorities: user.authorities }}>
               {user.id ? (
                 <AvGroup>
                   <Label for="id">ID</Label>
                   <AvField type="text" className="form-control" name="id" required readOnly value={user.id} />
                 </AvGroup>
               ) : null}
-              <SelectRole roles={user.authorities || []} reportRoles={(nr: string[]) => setNewroles(nr)} />
+              <SelectRole roles={user.authorities || []} selectedRole={handleRoleSelect} />
               <AvGroup>
                 <Label for="login">Username</Label>
                 <AvField

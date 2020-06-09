@@ -133,8 +133,8 @@ export const getRoles = () => ({
   payload: axios.get(`${apiUrl}/authorities`)
 });
 
-export const getUser: ICrudGetAction<IUser> = id => {
-  const requestUrl = `${apiUrl}/${id}`;
+export const getUser: ICrudGetAction<IUser> = login => {
+  const requestUrl = `${apiUrl}/${login}`;
   return {
     type: ACTION_TYPES.FETCH_USER,
     payload: axios.get<IUser>(requestUrl)

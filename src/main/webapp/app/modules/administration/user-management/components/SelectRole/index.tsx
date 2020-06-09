@@ -1,63 +1,59 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { AvCheckboxGroup, AvCheckbox } from 'availity-reactstrap-validation';
-import { Row, Col, Card } from 'reactstrap';
+import { Row, Col, Card, Label } from 'reactstrap';
 
 import { AUTHORITIES } from 'app/config/constants';
 import './style.scss';
 import { IRootState } from 'app/shared/reducers';
 
-const SelectRole = ({ account, roles, reportRoles }) => {
-  const [newRoles, setNewRoles] = useState(new Set([...roles]));
-
-  const setSelectedRole = (role: string) => {
-    if (newRoles.has(role)) newRoles.delete(role);
-    else newRoles.add(role);
-
-    setNewRoles(new Set(newRoles));
-    reportRoles([...newRoles]);
-  };
-
+const SelectRole = ({ roles, account, selectedRole }) => {
   return (
-    <AvCheckboxGroup name="authorities">
+    <AvCheckboxGroup name="authorities" required>
       <Row className="px-2">
         {account.authorities.includes(AUTHORITIES.ADMIN) && (
           <Col md="4" className="px-1">
-            <Card className="btn py-2 table-hover" onClick={() => setSelectedRole(AUTHORITIES.ADMIN)}>
-              <Row className="px-2">
-                <Col className="col-1 px-1">
-                  <AvCheckbox checked={newRoles.has(AUTHORITIES.ADMIN)} />
+            <Card className="btn py-2">
+              <Row className="align-items-center">
+                <Col xs="1">
+                  <AvCheckbox id="role-admin" value="ROLE_ADMIN" onChange={({ target }) => selectedRole(target.value, target.checked)} />
                 </Col>
-                <Col className="col-11 px-1 text-left">
-                  <p className="p-0 m-0">Admin</p>
-                  <small className="text-muted text-left">Admin with super privileges </small>
+                <Col className="p-0">
+                  <Label for="role-admin" className="text-left">
+                    <p className="p-0 m-0">Admin</p>
+                    <small className="text-muted">Admin with super privileges </small>
+                  </Label>
                 </Col>
               </Row>
             </Card>
           </Col>
         )}
         <Col className="px-1">
-          <Card className="btn py-2" onClick={() => setSelectedRole(AUTHORITIES.BANK)}>
-            <Row className="px-2">
-              <Col className="col-1 px-1">
-                <AvCheckbox checked={newRoles.has(AUTHORITIES.BANK)} />
+          <Card className="btn py-2">
+            <Row className="align-items-center">
+              <Col xs="1">
+                <AvCheckbox id="role-bank" value="ROLE_BANK" onChange={({ target }) => selectedRole(target.value, target.checked)} />
               </Col>
-              <Col className="col-11 px-1 text-left">
-                <p className="p-0 m-0">Banker</p>
-                <small className="text-muted">A banker to manage cutomers</small>
+              <Col>
+                <Label for="role-bank" className="text-left">
+                  <p className="p-0 m-0">Banker</p>
+                  <small className="text-muted">A banker to manage cutomers</small>
+                </Label>
               </Col>
             </Row>
           </Card>
         </Col>
         <Col className="px-1">
-          <Card className="btn py-2" onClick={() => setSelectedRole(AUTHORITIES.USER)}>
-            <Row className="px-2">
-              <Col className="col-1 px-1">
-                <AvCheckbox checked={newRoles.has(AUTHORITIES.USER)} />
+          <Card className="btn py-2">
+            <Row className="align-items-center">
+              <Col xs="1">
+                <AvCheckbox id="role-user" value="ROLE_USER" onChange={({ target }) => selectedRole(target.value, target.checked)} />
               </Col>
-              <Col className="col-11 px-1 text-left">
-                <p className="p-0 m-0">User</p>
-                <small className="text-muted">A new customer from a bank</small>
+              <Col>
+                <Label for="role-user" className="text-left">
+                  <p className="p-0 m-0">User</p>
+                  <small className="text-muted">A new customer from a bank</small>
+                </Label>
               </Col>
             </Row>
           </Card>
