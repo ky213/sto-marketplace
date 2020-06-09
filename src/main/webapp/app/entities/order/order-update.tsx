@@ -12,19 +12,23 @@ import { getUsers } from 'app/modules/administration/user-management/user-manage
 import { ITransaction } from 'app/shared/model/transaction.model';
 import { getEntities as getTransactions } from 'app/entities/transaction/transaction.reducer';
 import { getEntity, updateEntity, createEntity, reset } from './order.reducer';
+import { getEntity as getSecurityToken } from '../security-token/security-token.reducer';
 import { IOrder } from 'app/shared/model/order.model';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { mapIdList } from 'app/shared/util/entity-utils';
 import { AUTHORITIES } from 'app/config/constants';
 
-export interface IOrderUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
+export interface IOrderUpdateProps
+  extends StateProps,
+    DispatchProps,
+    RouteComponentProps<{ id: string; securityTokenId: string; type: string }> {}
 
 export const OrderUpdate = (props: IOrderUpdateProps) => {
-  // const [userId, setUserId] = useState('0');
-  // const [transactionId, setTransactionId] = useState('0');
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
+  const [price, setPrice] = useState(0);
+  const [volume, setVolume] = useState(0);
 
-  const { orderEntity, users, transactions, loading, updating, account } = props;
+  const { orderEntity, loading, updating, account } = props;
 
   const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
   const isBank = account.authorities.includes(AUTHORITIES.BANK);
@@ -39,6 +43,10 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
       props.getEntity(props.match.params.id, userId);
     }
 
+    if (props.match.params?.securityTokenId) {
+      props.getSecurityToken(props.match.params?.securityTokenId);
+    }
+
     // props.getUsers();
     // props.getTransactions();
   }, []);
@@ -50,15 +58,17 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
   }, [props.updateSuccess]);
 
   const saveEntity = (event, errors, values) => {
-    values.createDate = convertDateTimeToServer(values.createDate);
-    values.updateDate = convertDateTimeToServer(values.updateDate);
-    values.closeDate = convertDateTimeToServer(values.closeDate);
+    // values.createDate = convertDateTimeToServer(values.createDate);
+    // values.updateDate = convertDateTimeToServer(values.updateDate);
+    // values.closeDate = convertDateTimeToServer(values.closeDate);
 
     if (errors.length === 0) {
       const entity = {
         ...orderEntity,
         ...values,
-        user: { id: account.id }
+        totalAmount: price * volume,
+        user: { id: account.id },
+        securityToken: { id: props.securityToken.id }
       };
 
       if (isNew) {
@@ -73,7 +83,7 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
     <Row className="justify-content-center mb-2">
       <Col md="8">
         <Card>
-          <h2 id="exchangeApp.order.home.createOrEditLabel">Create or edit a Order</h2>
+          <h4 id="exchangeApp.order.home.createOrEditLabel">Create order</h4>
           {loading ? (
             <p>Loading...</p>
           ) : (
@@ -84,7 +94,7 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
                   <AvInput id="order-id" type="text" className="form-control" name="id" required readOnly />
                 </AvGroup>
               ) : null}
-              <Row>
+              {/* <Row>
                 <AvGroup className="col-md-6">
                   <Label id="idOrderLabel" for="order-idOrder">
                     Id Order
@@ -113,8 +123,8 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
                     }}
                   />
                 </AvGroup>
-              </Row>
-              <Row>
+              </Row> */}
+              {/* <Row>
                 <AvGroup className="col-md-6">
                   <Label id="createDateLabel" for="order-createDate">
                     Create Date
@@ -144,9 +154,9 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
                     value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.orderEntity.updateDate)}
                   />
                 </AvGroup>
-              </Row>
+              </Row> */}
               <Row>
-                <AvGroup className="col-md-6">
+                {/* <AvGroup className="col-md-6">
                   <Label id="closeDateLabel" for="order-closeDate">
                     Close Date
                   </Label>
@@ -158,8 +168,8 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
                     placeholder={'YYYY-MM-DD HH:mm'}
                     value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.orderEntity.closeDate)}
                   />
-                </AvGroup>
-                <AvGroup className="col-md-6">
+                </AvGroup> */}
+                <AvGroup className="col">
                   <Label id="securityTokenNameLabel" for="order-securityTokenName">
                     Security Token Name
                   </Label>
@@ -167,9 +177,11 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
                     id="order-securityTokenName"
                     type="text"
                     name="securityTokenName"
+                    value={props.securityToken?.name}
                     validate={{
                       required: { value: true, errorMessage: 'This field is required.' }
                     }}
+                    readOnly
                   />
                 </AvGroup>
               </Row>
@@ -182,16 +194,18 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
                     id="order-symbol"
                     type="text"
                     name="symbol"
+                    value={props.securityToken?.symbol}
                     validate={{
                       required: { value: true, errorMessage: 'This field is required.' }
                     }}
+                    readOnly
                   />
                 </AvGroup>
                 <AvGroup className="col-md-6">
                   <Label id="typeLabel" for="order-type">
                     Type
                   </Label>
-                  <AvInput id="order-type" type="select" className="form-control" name="type" value={(!isNew && orderEntity.type) || 'BUY'}>
+                  <AvInput id="order-type" type="select" className="form-control" name="type" value={props.match.params?.type}>
                     <option value="BUY">BUY</option>
                     <option value="SELL">SELL</option>
                   </AvInput>
@@ -222,11 +236,12 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
                     type="string"
                     className="form-control"
                     name="volume"
+                    value={volume}
                     validate={{
                       required: { value: true, errorMessage: 'This field is required.' },
-                      min: { value: 0, errorMessage: 'This field should be at least 0.' },
                       number: { value: true, errorMessage: 'This field should be a number.' }
                     }}
+                    onChange={({ target }) => setVolume(Math.abs(target.value))}
                   />
                 </AvGroup>
               </Row>
@@ -242,9 +257,9 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
                     name="price"
                     validate={{
                       required: { value: true, errorMessage: 'This field is required.' },
-                      min: { value: 0, errorMessage: 'This field should be at least 0.' },
                       number: { value: true, errorMessage: 'This field should be a number.' }
                     }}
+                    onChange={({ target }) => setPrice(Math.abs(target.value))}
                   />
                 </AvGroup>
                 <AvGroup className="col-md-6">
@@ -256,14 +271,12 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
                     type="string"
                     className="form-control"
                     name="totalAmount"
-                    validate={{
-                      required: { value: true, errorMessage: 'This field is required.' },
-                      min: { value: 0, errorMessage: 'This field should be at least 0.' },
-                      number: { value: true, errorMessage: 'This field should be a number.' }
-                    }}
+                    value={(price * volume).toLocaleString()}
+                    readOnly
                   />
                 </AvGroup>
               </Row>
+              {/* 
               <Row>
                 <AvGroup className="col-md-6">
                   <Label id="categoryTokenLabel" for="order-categoryToken">
@@ -302,7 +315,7 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
                   </AvInput>
                 </AvGroup>
               </Row>
-              {/* <Row>
+          <Row>
                 <AvGroup className="col-md-6">
                   <Label for="order-transaction">Transaction</Label>
                   <AvInput id="order-transaction" type="select" className="form-control" name="transaction.id">
@@ -329,13 +342,14 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
                       : null}
                   </AvInput>
                 </AvGroup>
-              </Row> */}
+              </Row> 
               <AvGroup check>
                 <Label id="activeLabel">
                   <AvInput id="order-active" type="checkbox" className="form-check-input" name="active" />
                   Active
                 </Label>
               </AvGroup>
+              */}
               <Button tag={Link} id="cancel-save" to="/order" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />
                 &nbsp;
@@ -361,7 +375,8 @@ const mapStateToProps = (storeState: IRootState) => ({
   loading: storeState.order.loading,
   updating: storeState.order.updating,
   updateSuccess: storeState.order.updateSuccess,
-  account: storeState.authentication.account
+  account: storeState.authentication.account,
+  securityToken: storeState.securityToken.entity
 });
 
 const mapDispatchToProps = {
@@ -370,7 +385,8 @@ const mapDispatchToProps = {
   getEntity,
   updateEntity,
   createEntity,
-  reset
+  reset,
+  getSecurityToken
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
