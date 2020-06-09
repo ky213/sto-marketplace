@@ -20,7 +20,7 @@ export const UserManagementDetail = (props: IUserManagementDetailProps) => {
   const { user } = props;
   const isBanker = user.authorities.includes(AUTHORITIES.BANK);
   const isUser = user.authorities.includes(AUTHORITIES.USER);
-  const userRoles = user.authorities.map(role => role.split('_')[1]).join(', ');
+  const userRoles = user.authorities.map(role => (role ? role.split('_')[1] : null)).join(', ');
 
   return (
     <Row className=" flex-column align-items-center w-75 mx-auto">

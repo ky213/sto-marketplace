@@ -12,13 +12,15 @@ import { convertDateTimeToServer } from 'app/shared/util/date-utils';
 import SelectRole from './components/SelectRole';
 import { AUTHORITIES } from 'app/config/constants';
 import DatePicker from './components/DatePicker';
+import value from '*.json';
 
 export interface IUserManagementUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ login: string }> {}
 
 export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
-  const { user, loading, updating } = props;
+  const { loading, updating } = props;
+  const user = props.users.find(({ login }) => login === props.match.params.login);
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.login);
-  const [selectedRoles, setSelectedRoles] = useState(new Set());
+  const [selectedRoles, setSelectedRoles] = useState(new Set(user?.authorities));
   const isInvalid = false;
   const isBank = selectedRoles.has(AUTHORITIES.BANK);
   const isUser = selectedRoles.has(AUTHORITIES.USER);
@@ -40,6 +42,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
   const saveUser = (event, values) => {
     if (!values.setting) values.setting = {};
 
+    values.authorities = [...selectedRoles];
     values.langKey = 'en';
     values.setting.dateOfBirth = new Date(values.setting?.dateOfBirth || null);
 
@@ -54,12 +57,12 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
   };
 
   const handleRoleSelect = (role: string, selected: boolean) => {
-    if (selected) selectedRoles.add(role);
-    else selectedRoles.delete(role);
+    const uniqueRoles = new Set(selectedRoles);
 
-    setSelectedRoles(selectedRoles);
-    /* eslint no-console:off */
-    console.log(selectedRoles);
+    if (selected) uniqueRoles.add(role);
+    else uniqueRoles.delete(role);
+
+    setSelectedRoles(uniqueRoles);
   };
 
   return (
@@ -74,14 +77,14 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
           {loading ? (
             <p>Loading...</p>
           ) : (
-            <AvForm onValidSubmit={saveUser} model={{ authorities: user.authorities }}>
-              {user.id ? (
+            <AvForm onValidSubmit={saveUser}>
+              {user?.id ? (
                 <AvGroup>
                   <Label for="id">ID</Label>
-                  <AvField type="text" className="form-control" name="id" required readOnly value={user.id} />
+                  <AvField type="text" className="form-control" name="id" required readOnly value={user?.id} />
                 </AvGroup>
               ) : null}
-              <SelectRole roles={user.authorities || []} selectedRole={handleRoleSelect} />
+              <SelectRole roles={[...selectedRoles]} selectedRole={handleRoleSelect} />
               <AvGroup>
                 <Label for="login">Username</Label>
                 <AvField
@@ -106,7 +109,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                       errorMessage: 'Your username cannot be longer than 50 characters.'
                     }
                   }}
-                  value={user.login}
+                  value={user?.login}
                 />
               </AvGroup>
               <div className="form-row">
@@ -122,7 +125,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                         errorMessage: 'This field cannot be longer than 50 characters.'
                       }
                     }}
-                    value={user.firstName}
+                    value={user?.firstName}
                   />
                 </AvGroup>
                 <AvGroup className="col-md-6">
@@ -137,7 +140,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                         errorMessage: 'This field cannot be longer than 50 characters.'
                       }
                     }}
-                    value={user.lastName}
+                    value={user?.lastName}
                   />
                   <AvFeedback>This field cannot be longer than 50 characters.</AvFeedback>
                 </AvGroup>
@@ -166,7 +169,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                         errorMessage: 'Your email cannot be longer than 50 characters.'
                       }
                     }}
-                    value={user.email}
+                    value={user?.email}
                   />
                 </AvGroup>
                 {(isBank || isUser) && (
@@ -178,7 +181,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                       id="user-setting-phoneNumber"
                       type="text"
                       name="setting.phoneNumber"
-                      value={user.setting?.phoneNumber}
+                      value={user?.setting?.phoneNumber}
                       validate={{
                         required: {
                           value: true,
@@ -198,7 +201,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                       <Label id="dateOfBirthLabel" for="user-setting-dateOfBirth">
                         Date Of Birth
                       </Label>
-                      <DatePicker value={isNew ? moment().format('YYYY-MM-DD') : moment(user.setting?.dateOfBirth).format('YYYY-MM-DD')} />
+                      <DatePicker value={isNew ? moment().format('YYYY-MM-DD') : moment(user?.setting?.dateOfBirth).format('YYYY-MM-DD')} />
                     </AvGroup>
                     <AvGroup className="col-md-6">
                       <Label id="nationalityLabel" for="user-setting-nationality">
@@ -209,7 +212,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                         type="select"
                         className="form-control"
                         name="setting.nationality"
-                        value={(!isNew && user.setting?.nationality) || 'FRANCE'}
+                        value={(!isNew && user?.setting?.nationality) || 'FRANCE'}
                       >
                         <option value="FRANCE">FRANCE</option>
                         <option value="USA">USA</option>
@@ -237,7 +240,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                         id="user-setting-address"
                         type="text"
                         name="setting.address"
-                        value={user.setting?.address}
+                        value={user?.setting?.address}
                         validate={{
                           required: {
                             value: true,
@@ -256,7 +259,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                         id="user-setting-code"
                         type="text"
                         name="setting.code"
-                        value={user.setting?.code}
+                        value={user?.setting?.code}
                         validate={{
                           required: {
                             value: true,
@@ -281,7 +284,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                         id="user-setting-city"
                         type="text"
                         name="setting.city"
-                        value={user.setting?.city}
+                        value={user?.setting?.city}
                         validate={{
                           required: {
                             value: true,
@@ -301,7 +304,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                         type="select"
                         className="form-control"
                         name="setting.country"
-                        value={(!isNew && user.setting?.country) || 'FRANCE'}
+                        value={(!isNew && user?.setting?.country) || 'FRANCE'}
                       >
                         <option value="FRANCE">FRANCE</option>
                         <option value="USA">USA</option>
@@ -327,7 +330,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                     id="user-setting-position"
                     type="text"
                     name="setting.position"
-                    value={user.setting?.position}
+                    value={user?.setting?.position}
                     validate={{
                       required: {
                         value: true,
@@ -349,7 +352,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                       id="user-setting-iban"
                       type="text"
                       name="setting.iban"
-                      value={user.setting?.iban}
+                      value={user?.setting?.iban}
                       validate={{
                         required: { value: true, errorMessage: 'This field is required.' },
                         minLength: { value: 14, errorMessage: 'This field is required to be at least 14 characters.' },
@@ -365,7 +368,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                       id="user-setting-ethAddress"
                       type="text"
                       name="setting.ethAddress"
-                      value={user.setting?.ethAddress}
+                      value={user?.setting?.ethAddress}
                       validate={{
                         required: {
                           value: true,
@@ -382,7 +385,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                       type="select"
                       name="setting.riskProfil"
                       label="Risk Profile"
-                      value={user.setting?.riskProfil || 0}
+                      value={user?.setting?.riskProfil || 0}
                       required
                       errorMessage="This field is required"
                     >
@@ -398,7 +401,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
               )}
               <AvGroup check>
                 <Label>
-                  <AvInput type="checkbox" name="activated" value={user.activated} checked={user.activated} disabled={!user.id} /> Activated
+                  <AvInput type="checkbox" name="activated" value={user?.activated} checked={user?.activated} /> Activated
                 </Label>
               </AvGroup>
               <Button tag={Link} to="/admin/user-management" replace color="info">
@@ -420,7 +423,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
 };
 
 const mapStateToProps = (storeState: IRootState) => ({
-  user: storeState.userManagement.user,
+  users: storeState.userManagement.users,
   roles: storeState.userManagement.authorities,
   loading: storeState.userManagement.loading,
   updating: storeState.userManagement.updating
