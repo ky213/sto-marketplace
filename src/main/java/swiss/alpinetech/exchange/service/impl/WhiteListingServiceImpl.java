@@ -41,6 +41,8 @@ public class WhiteListingServiceImpl implements WhiteListingService {
 
     private final WhiteListingSearchRepository whiteListingSearchRepository;
 
+    private Authentication authentication;
+
     public WhiteListingServiceImpl(WhiteListingRepository whiteListingRepository, WhiteListingSearchRepository whiteListingSearchRepository) {
         this.whiteListingRepository = whiteListingRepository;
         this.whiteListingSearchRepository = whiteListingSearchRepository;
@@ -63,8 +65,9 @@ public class WhiteListingServiceImpl implements WhiteListingService {
     @Override
     public WhiteListing create(WhiteListing whiteListing) {
         log.debug("Request to create WhiteListing : {}", whiteListing);
+        authentication = SecurityContextHolder.getContext().getAuthentication();
         whiteListing.setActive(false);
-        whiteListing.setCustomerName("");
+        whiteListing.setCustomerName(authentication.getName());
         whiteListing.setStatus(STATUS.PENDING);
         whiteListing.setDateEvent(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
         whiteListing.setDateSynchBlk(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
