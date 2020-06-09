@@ -62,6 +62,8 @@ public class ExchangeApp {
         DefaultProfileUtil.addDefaultProfile(app);
         Environment env = app.run(args).getEnvironment();
         logApplicationStartup(env);
+
+
     }
 
     private static void logApplicationStartup(Environment env) {
