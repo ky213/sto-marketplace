@@ -2,12 +2,15 @@ package swiss.alpinetech.exchange.service.impl;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import swiss.alpinetech.exchange.domain.User;
 import swiss.alpinetech.exchange.domain.enumeration.STATUS;
+import swiss.alpinetech.exchange.repository.UserRepository;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.WhiteListingService;
 import swiss.alpinetech.exchange.domain.WhiteListing;
@@ -41,7 +44,8 @@ public class WhiteListingServiceImpl implements WhiteListingService {
 
     private final WhiteListingSearchRepository whiteListingSearchRepository;
 
-    private Authentication authentication;
+    @Autowired
+    private UserRepository userRepository;
 
     public WhiteListingServiceImpl(WhiteListingRepository whiteListingRepository, WhiteListingSearchRepository whiteListingSearchRepository) {
         this.whiteListingRepository = whiteListingRepository;
@@ -65,9 +69,9 @@ public class WhiteListingServiceImpl implements WhiteListingService {
     @Override
     public WhiteListing create(WhiteListing whiteListing) {
         log.debug("Request to create WhiteListing : {}", whiteListing);
-        authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = this.userRepository.findById(whiteListing.getUser().getId()).get();
         whiteListing.setActive(false);
-        whiteListing.setCustomerName(authentication.getName());
+        whiteListing.setCustomerName(""+ user.getFirstName() +" "+ user.getLastName()+"");
         whiteListing.setStatus(STATUS.PENDING);
         whiteListing.setDateEvent(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
         whiteListing.setDateSynchBlk(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
