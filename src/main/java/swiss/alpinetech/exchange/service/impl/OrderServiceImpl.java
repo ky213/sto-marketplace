@@ -103,6 +103,7 @@ public class OrderServiceImpl implements OrderService {
         order.setRefOrder(Long.parseLong(formattedString));
         Order result = orderRepository.save(order);
         orderSearchRepository.save(result);
+        this.messagingTemplate.convertAndSend("/topic/tracker", result);
         return result;
     }
 
