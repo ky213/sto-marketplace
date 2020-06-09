@@ -147,7 +147,6 @@ export const createUser: ICrudPutAction<IUser> = user => async dispatch => {
     payload: axios.post(apiUrl, user)
   });
   dispatch(getUsers());
-  dispatch(getUser(user.login));
   return result;
 };
 
