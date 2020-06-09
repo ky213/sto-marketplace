@@ -8,19 +8,15 @@ import { getUser } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import moment from 'moment';
-import { AUTHORITIES } from 'app/config/constants';
+import { AUTHORITIES, APP_DATE_FORMAT } from 'app/config/constants';
 
 export interface IUserManagementDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ login: string }> {}
 
 export const UserManagementDetail = (props: IUserManagementDetailProps) => {
-  useEffect(() => {
-    props.getUser(props.match.params.login);
-  }, []);
-
-  const { user } = props;
+  const user = props.users.find(({ login }) => login === props.match.params.login);
   const isBanker = user.authorities.includes(AUTHORITIES.BANK);
   const isUser = user.authorities.includes(AUTHORITIES.USER);
-  const userRoles = user.authorities.map(role => role.split('_')[1]).join(', ');
+  const userRoles = user.authorities.map(role => (role ? role.split('_')[1] : null)).join(', ');
 
   return (
     <Row className=" flex-column align-items-center w-75 mx-auto">
@@ -132,7 +128,7 @@ export const UserManagementDetail = (props: IUserManagementDetailProps) => {
               </Col>
               <Col>
                 <small className="text-muted ">Registration Date </small>
-                <p>{user.createdDate ? moment(user.createdDate).format('LLL') : ''}</p>
+                <p>{user.createdDate ? moment(user.createdDate).format(APP_DATE_FORMAT) : ''}</p>
               </Col>
             </Row>
             <Row>
@@ -154,7 +150,7 @@ export const UserManagementDetail = (props: IUserManagementDetailProps) => {
 };
 
 const mapStateToProps = (storeState: IRootState) => ({
-  user: storeState.userManagement.user
+  users: storeState.userManagement.users
 });
 
 const mapDispatchToProps = { getUser };

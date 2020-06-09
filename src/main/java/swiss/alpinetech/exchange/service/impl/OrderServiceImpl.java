@@ -73,8 +73,18 @@ public class OrderServiceImpl implements OrderService {
     public Order save(Order order) {
         log.debug("Request to save Order : {}", order);
         Order result = orderRepository.save(order);
+        String changedStatus[] = new String[] {
+            STATUS.SUCCESS.name(), STATUS.FAIL.name(), STATUS.REMOVE.name()
+        };
+        if (Arrays.stream(changedStatus).anyMatch(order.getStatus().name()::equals)) {
+            order.setCloseDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
+        }
         orderSearchRepository.save(result);
-        this.messagingTemplate.convertAndSend("/topic/tracker", result);
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN) || authority.getAuthority().equals(AuthoritiesConstants.BANK)) {
+                this.messagingTemplate.convertAndSend("/topic/tracker", result);
+            }
+        }
         return result;
     }
 
@@ -92,18 +102,17 @@ public class OrderServiceImpl implements OrderService {
         order.setUser(user);
         order.setCreateDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
         order.setUpdateDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
-        String changedStatus[] = new String[] {
-            STATUS.SUCCESS.name(), STATUS.FAIL.name(), STATUS.REMOVE.name()
-        };
-        if (Arrays.stream(changedStatus).anyMatch(order.getStatus().name()::equals)) {
-            order.setCloseDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
-        }
+        order.setStatus(STATUS.INIT);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddhhmmss");
         String formattedString = ZonedDateTime.now().format(formatter);
         order.setRefOrder(Long.parseLong(formattedString));
         Order result = orderRepository.save(order);
         orderSearchRepository.save(result);
-        this.messagingTemplate.convertAndSend("/topic/tracker", result);
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN) || authority.getAuthority().equals(AuthoritiesConstants.BANK)) {
+                this.messagingTemplate.convertAndSend("/topic/tracker", result);
+            }
+        }
         return result;
     }
 

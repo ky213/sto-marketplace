@@ -162,7 +162,7 @@ export const getEntity: any = (id, userId) => {
 export const createEntity: ICrudPutAction<IOrder> = entity => async dispatch => {
   const result = await dispatch({
     type: ACTION_TYPES.CREATE_ORDER,
-    payload: axios.post(apiUrl, cleanEntity(entity))
+    payload: axios.post('api/create-order', cleanEntity(entity))
   });
   return result;
 };

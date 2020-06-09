@@ -37,7 +37,7 @@ public class Order implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "id_order", nullable = false)
+    @Column(name = "id_order")
     private String idOrder;
 
     @Column(name = "ref_order", nullable = false)
