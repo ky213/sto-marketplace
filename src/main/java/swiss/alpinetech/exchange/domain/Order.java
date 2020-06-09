@@ -41,7 +41,6 @@ public class Order implements Serializable {
     @Column(name = "id_order", nullable = false)
     private String idOrder;
 
-    @NotNull
     @Column(name = "ref_order", nullable = false)
     private Long refOrder;
 

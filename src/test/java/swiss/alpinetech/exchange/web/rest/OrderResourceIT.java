@@ -246,23 +246,23 @@ public class OrderResourceIT {
         assertThat(orderList).hasSize(databaseSizeBeforeTest);
     }
 
-    @Test
-    @Transactional
-    public void checkRefOrderIsRequired() throws Exception {
-        int databaseSizeBeforeTest = orderRepository.findAll().size();
-        // set the field null
-        order.setRefOrder(null);
-
-        // Create the Order, which fails.
-
-        restOrderMockMvc.perform(post("/api/orders")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(TestUtil.convertObjectToJsonBytes(order)))
-            .andExpect(status().isBadRequest());
-
-        List<Order> orderList = orderRepository.findAll();
-        assertThat(orderList).hasSize(databaseSizeBeforeTest);
-    }
+//    @Test
+//    @Transactional
+//    public void checkRefOrderIsRequired() throws Exception {
+//        int databaseSizeBeforeTest = orderRepository.findAll().size();
+//        // set the field null
+//        order.setRefOrder(null);
+//
+//        // Create the Order, which fails.
+//
+//        restOrderMockMvc.perform(post("/api/orders")
+//            .contentType(MediaType.APPLICATION_JSON)
+//            .content(TestUtil.convertObjectToJsonBytes(order)))
+//            .andExpect(status().isBadRequest());
+//
+//        List<Order> orderList = orderRepository.findAll();
+//        assertThat(orderList).hasSize(databaseSizeBeforeTest);
+//    }
 
     @Test
     @Transactional
