@@ -70,7 +70,6 @@ public class WhiteListingServiceImpl implements WhiteListingService {
     public WhiteListing create(WhiteListing whiteListing) {
         log.debug("Request to create WhiteListing : {}", whiteListing);
         User user = this.userRepository.findById(whiteListing.getUser().getId()).get();
-        whiteListing.setActive(false);
         whiteListing.setCustomerName(""+ user.getFirstName() +" "+ user.getLastName()+"");
         whiteListing.setStatus(STATUS.PENDING);
         whiteListing.setDateEvent(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
