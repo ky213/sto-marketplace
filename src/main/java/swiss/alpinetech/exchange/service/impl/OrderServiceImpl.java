@@ -98,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
     public Order create(Order order) {
         log.debug("Request to create Order : {}", order);
         authentication = SecurityContextHolder.getContext().getAuthentication();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddhhmmss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         String formattedString = ZonedDateTime.now().format(formatter);
         User user = this.userRepository.findOneByLogin(authentication.getName()).get();
         SecurityToken securityToken = this.securityTokenRepository.findById(order.getSecurityToken().getId()).get();
