@@ -6,6 +6,7 @@ import { Storage } from 'react-jhipster';
 
 import { ACTION_TYPES as ADMIN_ACTIONS } from 'app/modules/administration/administration.reducer';
 import { ACTION_TYPES as AUTH_ACTIONS } from 'app/shared/reducers/authentication';
+import { ACTION_TYPES as ORDER_ACTIONS } from 'app/entities/order/order.reducer';
 import { SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 let stompClient = null;
@@ -103,6 +104,12 @@ export default store => next => action => {
     connect();
     if (!alreadyConnectedOnce) {
       receive().subscribe(activity => {
+        if ('idOrder' in activity)
+          return store.dispatch({
+            type: ORDER_ACTIONS.PUSH_ORDER,
+            payload: activity
+          });
+
         return store.dispatch({
           type: ADMIN_ACTIONS.WEBSOCKET_ACTIVITY_MESSAGE,
           payload: activity
