@@ -81,7 +81,7 @@ export const OrderUpdate = (props: IOrderUpdateProps) => {
 
   return (
     <Row className="justify-content-center mb-2">
-      <Col md="8">
+      <Col>
         <Card>
           <h4 id="exchangeApp.order.home.createOrEditLabel">Create order</h4>
           {loading ? (

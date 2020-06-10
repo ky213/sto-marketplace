@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { uniqBy } from 'lodash';
 import {
   ICrudSearchAction,
   parseHeaderForLinks,
@@ -11,7 +12,6 @@ import {
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
-
 import { IOrder, defaultValue } from 'app/shared/model/order.model';
 import { stat } from 'fs';
 
@@ -126,7 +126,7 @@ export default (state: OrderState = initialState, action): OrderState => {
     case ACTION_TYPES.PUSH_ORDER:
       return {
         ...state,
-        entities: [action.payload, ...state.entities]
+        entities: uniqBy([action.payload, ...state.entities], 'id')
       };
 
     default:
