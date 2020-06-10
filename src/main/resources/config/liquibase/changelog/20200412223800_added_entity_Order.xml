@@ -17,7 +17,6 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="id_order" type="varchar(255)">
-                <constraints nullable="false" />
             </column>
             <column name="ref_order" type="bigint">
                 <constraints nullable="false" />
