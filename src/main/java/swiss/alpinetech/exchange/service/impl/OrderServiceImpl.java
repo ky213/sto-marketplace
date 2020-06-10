@@ -10,8 +10,10 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import swiss.alpinetech.exchange.domain.SecurityToken;
 import swiss.alpinetech.exchange.domain.User;
 import swiss.alpinetech.exchange.domain.enumeration.STATUS;
+import swiss.alpinetech.exchange.repository.SecurityTokenRepository;
 import swiss.alpinetech.exchange.repository.UserRepository;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.OrderService;
@@ -58,6 +60,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private SecurityTokenRepository securityTokenRepository;
+
     public OrderServiceImpl(OrderRepository orderRepository, OrderSearchRepository orderSearchRepository) {
         this.orderRepository = orderRepository;
         this.orderSearchRepository = orderSearchRepository;
@@ -80,11 +85,6 @@ public class OrderServiceImpl implements OrderService {
             order.setCloseDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
         }
         orderSearchRepository.save(result);
-        for (GrantedAuthority authority : authentication.getAuthorities()) {
-            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN) || authority.getAuthority().equals(AuthoritiesConstants.BANK)) {
-                this.messagingTemplate.convertAndSend("/topic/tracker", result);
-            }
-        }
         return result;
     }
 
@@ -98,21 +98,22 @@ public class OrderServiceImpl implements OrderService {
     public Order create(Order order) {
         log.debug("Request to create Order : {}", order);
         authentication = SecurityContextHolder.getContext().getAuthentication();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddhhmmss");
+        String formattedString = ZonedDateTime.now().format(formatter);
         User user = this.userRepository.findOneByLogin(authentication.getName()).get();
+        SecurityToken securityToken = this.securityTokenRepository.findById(order.getSecurityToken().getId()).get();
         order.setUser(user);
+        order.setSecurityToken(securityToken);
+        order.setCategoryToken(order.getSecurityToken().getCategory());
+        order.setActive(true);
+        order.setIdOrder(""+order.getSecurityToken().getSymbol()+""+formattedString);
         order.setCreateDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
         order.setUpdateDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
         order.setStatus(STATUS.INIT);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddhhmmss");
-        String formattedString = ZonedDateTime.now().format(formatter);
         order.setRefOrder(Long.parseLong(formattedString));
         Order result = orderRepository.save(order);
         orderSearchRepository.save(result);
-        for (GrantedAuthority authority : authentication.getAuthorities()) {
-            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN) || authority.getAuthority().equals(AuthoritiesConstants.BANK)) {
-                this.messagingTemplate.convertAndSend("/topic/tracker", result);
-            }
-        }
+        this.messagingTemplate.convertAndSend("/topic/tracker", result);
         return result;
     }
 

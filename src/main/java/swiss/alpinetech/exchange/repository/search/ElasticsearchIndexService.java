@@ -124,7 +124,6 @@ public class ElasticsearchIndexService {
                     reindexForClass(Transaction.class, transactionRepository, transactionSearchRepository);
                     reindexForClass(UserSetting.class, userSettingRepository, userSettingSearchRepository);
                     reindexForClass(WhiteListing.class, whiteListingRepository, whiteListingSearchRepository);
-                    reindexForClass(User.class, userRepository, userSearchRepository);
                 }
 
                 log.info("Elasticsearch: Successfully performed reindexing");
