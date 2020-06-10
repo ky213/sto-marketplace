@@ -140,6 +140,12 @@ public class ElasticsearchIndexService {
 
         ElasticsearchRepository<T, ID> elasticsearchRepository) {
 
+        if(entityClass.getName().equals("swiss.alpinetech.exchange.domain.User")) {
+            List<T> results = jpaRepository.findAll();
+            elasticsearchRepository.saveAll(results);
+            return;
+        }
+
         elasticsearchTemplate.putMapping(entityClass);
 
         if (jpaRepository.count() > 0 ) {
