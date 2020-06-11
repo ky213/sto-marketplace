@@ -13,6 +13,8 @@ import javax.persistence.ManyToMany;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
@@ -140,15 +142,14 @@ public class ElasticsearchIndexService {
 
         ElasticsearchRepository<T, ID> elasticsearchRepository) {
 
-        if(entityClass.getName().equals("swiss.alpinetech.exchange.domain.User")) {
-            List<T> results = jpaRepository.findAll();
-            elasticsearchRepository.saveAll(results);
-            return;
-        }
 
         elasticsearchTemplate.putMapping(entityClass);
 
         if (jpaRepository.count() > 0 ) {
+
+            if(entityClass.getName().equals("swiss.alpinetech.exchange.domain.User")) {
+                log.debug("###################################"+entityClass.getName());
+            }
 
 
             // if a entity field is the owner side of a many-to-many relationship, it should be loaded manually
@@ -172,19 +173,22 @@ public class ElasticsearchIndexService {
                 log.info("Indexing Entity of size {}", jpaRepository.count());
                 List<T> results = jpaRepository.findAll();
 
-                results.stream().map(result -> {
-                    // if there are any relationships to load, do it now
-                    relationshipGetters.forEach(method -> {
-                        try {
-                            // eagerly load the relationship set
-                            ((Set) method.invoke(result)).size();
-                        } catch (Exception ex) {
-                            log.error(ex.getMessage());
-                        }
-                    });
-                    return result;
-                });
-                elasticsearchRepository.saveAll(results);
+            // if there are any relationships to load, do it now
+            for (int i = 0 ; i < results.size() ; i++) {
+                T entity = results.get(i);
+                for (int j = 0 ; j < relationshipGetters.size() ; j++) {
+                    Method method = relationshipGetters.get(j);
+                    try {
+                        // eagerly load the relationship set
+                        long t = ((Set) method.invoke(entity)).size();
+                    } catch (Exception ex) {
+                        log.error(ex.getMessage());
+                    }
+                }
+            }
+
+            elasticsearchRepository.saveAll(results);
+
         }
         log.info("Elasticsearch: Indexed all rows for {}", entityClass.getSimpleName());
     }

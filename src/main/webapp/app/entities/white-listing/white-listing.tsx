@@ -111,7 +111,7 @@ export const WhiteListing = (props: IWhiteListingProps) => {
           White Listings
           <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
             <FontAwesomeIcon icon="plus" />
-            &nbsp; Create new White Listing
+            &nbsp; Add White Listing
           </Link>
         </h2>
       )}

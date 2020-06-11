@@ -103,7 +103,7 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
         {isAdmin && (
           <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
             <FontAwesomeIcon icon="plus" />
-            &nbsp; Create new Security Token
+            &nbsp; Add Security Token
           </Link>
         )}
       </h2>

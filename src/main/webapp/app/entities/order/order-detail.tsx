@@ -129,7 +129,7 @@ export const OrderDetail = (props: IOrderDetailProps) => {
               </Col>
               <Col>
                 <small className="text-muted ">User</small>
-                <p>{`${orderEntity.user?.firstName}  ${orderEntity.user?.firstName}`}</p>
+                <p>{`${orderEntity.user?.firstName}  ${orderEntity.user?.lastName}`}</p>
               </Col>
             </Row>
             <Button tag={Link} to="/order" replace color="info">
