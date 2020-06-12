@@ -1,5 +1,6 @@
 package swiss.alpinetech.exchange;
 
+import org.springframework.jms.annotation.EnableJms;
 import swiss.alpinetech.exchange.config.ApplicationProperties;
 
 import io.github.jhipster.config.DefaultProfileUtil;
@@ -22,6 +23,7 @@ import java.util.Collection;
 
 @SpringBootApplication
 @EnableConfigurationProperties({LiquibaseProperties.class, ApplicationProperties.class})
+@EnableJms
 public class ExchangeApp {
 
     private static final Logger log = LoggerFactory.getLogger(ExchangeApp.class);
