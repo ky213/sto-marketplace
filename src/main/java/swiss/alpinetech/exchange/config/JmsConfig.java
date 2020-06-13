@@ -1,6 +1,7 @@
 package swiss.alpinetech.exchange.config;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
@@ -9,8 +10,13 @@ import org.springframework.jms.core.JmsTemplate;
 @Configuration
 public class JmsConfig {
 
+//    @Value("${spring.activemq.broker-url}")
     String BROKER_URL = "tcp://localhost:61616";
+
+//    @Value("${spring.activemq.user}")
     String BROKER_USERNAME = "admin";
+
+//    @Value("${spring.activemq.password}")
     String BROKER_PASSWORD = "admin";
 
     @Bean

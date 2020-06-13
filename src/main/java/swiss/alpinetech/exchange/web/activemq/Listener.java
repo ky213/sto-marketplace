@@ -1,30 +1,31 @@
 package swiss.alpinetech.exchange.web.activemq;
 
-import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Component;
+import swiss.alpinetech.exchange.domain.Order;
+import swiss.alpinetech.exchange.domain.Trade;
+import swiss.alpinetech.exchange.service.TradeService;
 
 import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.TextMessage;
-import java.util.Map;
+import java.util.List;
 
 @Component
 public class Listener {
 
-    @JmsListener(destination = "inbound.topic")
-    @SendTo("outbound.topic")
-    public String receiveMessage(final Message jsonMessage) throws JMSException {
-        String messageData = null;
-        System.out.println("Received message " + jsonMessage);
-        String response = null;
-        if(jsonMessage instanceof TextMessage) {
-            TextMessage textMessage = (TextMessage)jsonMessage;
-            messageData = textMessage.getText();
-            Map map = new Gson().fromJson(messageData, Map.class);
-            response  = "Hello " + map.get("name");
-        }
-        return response;
+
+    private TradeService tradeService = new TradeService();
+
+    private final Logger log = LoggerFactory.getLogger(Listener.class);
+
+    @JmsListener(destination = "inbound.order.topic")
+    @SendTo("outbound.order.topic")
+    public List<Trade> receiveMessage(final Order order) throws JMSException {
+        log.debug("Process order {} in match engine", order);
+        List<Trade> tradeList = this.tradeService.Process(order);
+        log.debug("Send trade list {} to outbound.order.topic", tradeList.toString());
+        return tradeList;
     }
 }

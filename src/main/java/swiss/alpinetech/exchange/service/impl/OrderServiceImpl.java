@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -63,6 +64,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private SecurityTokenRepository securityTokenRepository;
 
+    @Autowired
+    JmsTemplate jmsTemplate;
+
     public OrderServiceImpl(OrderRepository orderRepository, OrderSearchRepository orderSearchRepository) {
         this.orderRepository = orderRepository;
         this.orderSearchRepository = orderSearchRepository;
@@ -114,6 +118,7 @@ public class OrderServiceImpl implements OrderService {
         Order result = orderRepository.save(order);
         orderSearchRepository.save(result);
         this.messagingTemplate.convertAndSend("/topic/tracker", result);
+        this.jmsTemplate.convertAndSend("inbound.order.topic", result);
         return result;
     }
 
