@@ -1,6 +1,8 @@
 package swiss.alpinetech.exchange.web.rest;
 
 import swiss.alpinetech.exchange.ExchangeApp;
+import swiss.alpinetech.exchange.domain.SecurityToken;
+import swiss.alpinetech.exchange.domain.User;
 import swiss.alpinetech.exchange.domain.WhiteListing;
 import swiss.alpinetech.exchange.repository.WhiteListingRepository;
 import swiss.alpinetech.exchange.repository.search.WhiteListingSearchRepository;
@@ -71,6 +73,9 @@ public class WhiteListingResourceIT {
     private static final Double DEFAULT_BALANCE = 1D;
     private static final Double UPDATED_BALANCE = 2D;
 
+    private static final SecurityToken DEFAULT_SECURITY_TOKEN = new SecurityToken();
+    private static final User DEFAULT_USER = new User();
+
     @Autowired
     private WhiteListingRepository whiteListingRepository;
 
@@ -100,6 +105,8 @@ public class WhiteListingResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static WhiteListing createEntity(EntityManager em) {
+        DEFAULT_SECURITY_TOKEN.setId(4L);
+        DEFAULT_USER.setId(4L);
         WhiteListing whiteListing = new WhiteListing()
             .dateEvent(DEFAULT_DATE_EVENT)
             .status(DEFAULT_STATUS)
@@ -109,6 +116,8 @@ public class WhiteListingResourceIT {
             .stName(DEFAULT_ST_NAME)
             .customerName(DEFAULT_CUSTOMER_NAME)
             .balance(DEFAULT_BALANCE);
+//            .securitytoken(DEFAULT_SECURITY_TOKEN)
+//            .user(DEFAULT_USER);
         return whiteListing;
     }
     /**
@@ -126,7 +135,9 @@ public class WhiteListingResourceIT {
             .dateSynchBlk(UPDATED_DATE_SYNCH_BLK)
             .stName(UPDATED_ST_NAME)
             .customerName(UPDATED_CUSTOMER_NAME)
-            .balance(UPDATED_BALANCE);
+            .balance(UPDATED_BALANCE)
+            .user(DEFAULT_USER)
+            .securitytoken(DEFAULT_SECURITY_TOKEN);
         return whiteListing;
     }
 
@@ -306,6 +317,8 @@ public class WhiteListingResourceIT {
     @Transactional
     public void deleteWhiteListing() throws Exception {
         // Initialize the database
+//        whiteListing.getUser().setId(4L);
+//        whiteListing.getSecuritytoken().setId(5L);
         whiteListingService.save(whiteListing);
 
         int databaseSizeBeforeDelete = whiteListingRepository.findAll().size();
