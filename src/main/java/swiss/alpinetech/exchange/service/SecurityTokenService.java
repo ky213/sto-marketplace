@@ -5,6 +5,7 @@ import swiss.alpinetech.exchange.domain.SecurityToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -60,4 +61,14 @@ public interface SecurityTokenService {
      * @return the list of entities.
      */
     Page<SecurityToken> search(String query, Pageable pageable);
+
+    /**
+     * Search for the securityToken corresponding to the query and permited for user to create whitelisting.
+     *
+     * @param query the query of the search.
+     *
+     * @param userId the user Id.
+     * @return the list of entities.
+     */
+    List<SecurityToken> searchForWhiteListing(String query, Long userId);
 }

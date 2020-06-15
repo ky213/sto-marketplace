@@ -174,4 +174,19 @@ public class SecurityTokenResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
+
+    /**
+     * {@code SEARCH  /_search/security-tokens?query=:query} : search for the securityToken corresponding
+     * to the query.
+     *
+     * @param query the query of the securityToken search.
+     * @param userId the user Id.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search-autocomplete/security-tokens")
+    public ResponseEntity<List<SecurityToken>> searchPermittedSecurityTokens(@RequestParam String query, @RequestParam Long userId) {
+        log.debug("REST request to search security tokens for query {} for whiteListing autocomplete", query);
+        List<SecurityToken> securityTokenList = securityTokenService.searchForWhiteListing(query, userId);
+        return ResponseEntity.ok().body(securityTokenList);
+    }
 }

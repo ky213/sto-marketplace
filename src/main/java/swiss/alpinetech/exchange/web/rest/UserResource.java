@@ -210,4 +210,12 @@ public class UserResource {
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
+
+    @GetMapping("/_search-autocomplete/users")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
+    public ResponseEntity<List<UserDTO>> searchPermittedUsers(@RequestParam String query, @RequestParam Long securityTokenId) {
+        log.debug("REST request to search users for query {} for whiteListing autocomplete {}", query);
+        List<UserDTO> usersList = userService.searchForWhiteListing(query, securityTokenId);
+        return ResponseEntity.ok().body(usersList);
+    }
 }
