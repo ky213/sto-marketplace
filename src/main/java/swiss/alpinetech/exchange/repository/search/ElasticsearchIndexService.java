@@ -147,11 +147,6 @@ public class ElasticsearchIndexService {
 
         if (jpaRepository.count() > 0 ) {
 
-            if(entityClass.getName().equals("swiss.alpinetech.exchange.domain.User")) {
-                log.debug("###################################"+entityClass.getName());
-            }
-
-
             // if a entity field is the owner side of a many-to-many relationship, it should be loaded manually
             List<Method> relationshipGetters = Arrays.stream(entityClass.getDeclaredFields())
                 .filter(field -> field.getType().equals(Set.class))
