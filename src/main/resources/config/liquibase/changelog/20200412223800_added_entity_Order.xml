@@ -60,6 +60,9 @@
             <column name="active" type="boolean">
                 <constraints nullable="true" />
             </column>
+            <column name="update_by" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
             <column name="securitytoken_id" type="bigint">
                 <constraints nullable="true" />
             </column>
@@ -109,6 +112,7 @@
             <column name="total_amount" type="numeric"/>
             <column name="category_token" type="string"/>
             <column name="status" type="string"/>
+            <column name="update_by" type="string"/>
             <column name="active" type="boolean"/>
             <column name="user_id" type="numeric"/>
             <column name="securitytoken_id" type="numeric"/>

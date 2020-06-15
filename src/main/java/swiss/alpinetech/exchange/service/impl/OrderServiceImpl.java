@@ -81,6 +81,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order save(Order order) {
         log.debug("Request to save Order : {}", order);
+        authentication = SecurityContextHolder.getContext().getAuthentication();
+        order.setUpdateBy(authentication.getName());
         Order result = orderRepository.save(order);
         String changedStatus[] = new String[] {
             STATUS.SUCCESS.name(), STATUS.FAIL.name(), STATUS.REMOVE.name()
@@ -115,6 +117,7 @@ public class OrderServiceImpl implements OrderService {
         order.setUpdateDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
         order.setStatus(STATUS.INIT);
         order.setRefOrder(Long.parseLong(formattedString));
+        order.setUpdateBy(authentication.getName());
         Order result = orderRepository.save(order);
         orderSearchRepository.save(result);
         this.messagingTemplate.convertAndSend("/topic/tracker", result);
@@ -130,9 +133,11 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public Order cancel(Long orderId) {
+        authentication = SecurityContextHolder.getContext().getAuthentication();
         log.debug("Request to cancel Order by orderId : {}", orderId);
         Order orderToCancel = orderRepository.findById(orderId).get();
         orderToCancel.setStatus(STATUS.REMOVE);
+        orderToCancel.setUpdateBy(authentication.getName());
         Order result = orderRepository.save(orderToCancel);
         return result;
     }

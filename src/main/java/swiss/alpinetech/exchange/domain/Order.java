@@ -90,6 +90,9 @@ public class Order implements Serializable {
     @Column(name = "status")
     private STATUS status;
 
+    @Column(name = "update_by")
+    private String updateBy;
+
     @Column(name = "active")
     private Boolean active;
 
@@ -205,6 +208,19 @@ public class Order implements Serializable {
 
     public void setSymbol(String symbol) {
         this.symbol = symbol;
+    }
+
+    public String getUpdateBy() {
+        return updateBy;
+    }
+
+    public Order updateBy(String updateBy) {
+        this.updateBy = updateBy;
+        return this;
+    }
+
+    public void setUpdateBy(String updateBy) {
+        this.updateBy = updateBy;
     }
 
     public ACTIONTYPE getType() {
