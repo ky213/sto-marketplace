@@ -1,6 +1,11 @@
 package swiss.alpinetech.exchange.service.impl;
 
+import org.apache.commons.collections4.IteratorUtils;
+import org.elasticsearch.common.unit.Fuzziness;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.springframework.beans.factory.annotation.Autowired;
 import swiss.alpinetech.exchange.domain.enumeration.STSTATUS;
+import swiss.alpinetech.exchange.repository.search.WhiteListingSearchRepository;
 import swiss.alpinetech.exchange.service.SecurityTokenService;
 import swiss.alpinetech.exchange.domain.SecurityToken;
 import swiss.alpinetech.exchange.repository.SecurityTokenRepository;
@@ -13,7 +18,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -29,6 +36,9 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     private final SecurityTokenRepository securityTokenRepository;
 
     private final SecurityTokenSearchRepository securityTokenSearchRepository;
+
+    @Autowired
+    private WhiteListingSearchRepository whiteListingSearchRepository;
 
     public SecurityTokenServiceImpl(SecurityTokenRepository securityTokenRepository, SecurityTokenSearchRepository securityTokenSearchRepository) {
         this.securityTokenRepository = securityTokenRepository;
@@ -113,5 +123,27 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     @Transactional(readOnly = true)
     public Page<SecurityToken> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of SecurityTokens for query {}", query);
-        return securityTokenSearchRepository.search(queryStringQuery(query), pageable);    }
+        return securityTokenSearchRepository.search(queryStringQuery(query), pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SecurityToken> searchForWhiteListing(String query, Long userId) {
+        log.debug("Request to search security tokens for query {} for whiteListing autocomplete", query);
+        List<Long> securityTokensPermitted = IteratorUtils.toList(this.whiteListingSearchRepository.search(QueryBuilders.boolQuery()
+            .must(matchQuery("user.id", userId))).iterator())
+            .stream()
+            .map(wl -> wl.getSecuritytoken().getId())
+            .collect(Collectors.toList());
+
+        List<SecurityToken> securityTokenList = IteratorUtils.toList(securityTokenSearchRepository.search(queryStringQuery(query)
+            .fuzziness(Fuzziness.ONE)
+            .fuzzyPrefixLength(2))
+            .iterator())
+            .stream()
+            .filter(st -> !securityTokensPermitted.contains(st.getId()))
+            .collect(Collectors.toList());
+
+        return securityTokenList;
+    }
 }

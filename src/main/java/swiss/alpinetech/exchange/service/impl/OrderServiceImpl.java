@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -63,6 +64,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private SecurityTokenRepository securityTokenRepository;
 
+    @Autowired
+    JmsTemplate jmsTemplate;
+
     public OrderServiceImpl(OrderRepository orderRepository, OrderSearchRepository orderSearchRepository) {
         this.orderRepository = orderRepository;
         this.orderSearchRepository = orderSearchRepository;
@@ -77,6 +81,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order save(Order order) {
         log.debug("Request to save Order : {}", order);
+        authentication = SecurityContextHolder.getContext().getAuthentication();
+        order.setUpdateBy(authentication.getName());
         Order result = orderRepository.save(order);
         String changedStatus[] = new String[] {
             STATUS.SUCCESS.name(), STATUS.FAIL.name(), STATUS.REMOVE.name()
@@ -111,9 +117,11 @@ public class OrderServiceImpl implements OrderService {
         order.setUpdateDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
         order.setStatus(STATUS.INIT);
         order.setRefOrder(Long.parseLong(formattedString));
+        order.setUpdateBy(authentication.getName());
         Order result = orderRepository.save(order);
         orderSearchRepository.save(result);
         this.messagingTemplate.convertAndSend("/topic/tracker", result);
+        this.jmsTemplate.convertAndSend("inbound.order.topic", result);
         return result;
     }
 
@@ -125,9 +133,11 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public Order cancel(Long orderId) {
+        authentication = SecurityContextHolder.getContext().getAuthentication();
         log.debug("Request to cancel Order by orderId : {}", orderId);
         Order orderToCancel = orderRepository.findById(orderId).get();
         orderToCancel.setStatus(STATUS.REMOVE);
+        orderToCancel.setUpdateBy(authentication.getName());
         Order result = orderRepository.save(orderToCancel);
         return result;
     }

@@ -1,6 +1,9 @@
 package swiss.alpinetech.exchange.service;
 
 import org.apache.commons.collections4.IteratorUtils;
+import org.elasticsearch.common.unit.Fuzziness;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
@@ -12,6 +15,7 @@ import swiss.alpinetech.exchange.domain.User;
 import swiss.alpinetech.exchange.repository.AuthorityRepository;
 import swiss.alpinetech.exchange.repository.UserRepository;
 import swiss.alpinetech.exchange.repository.search.UserSearchRepository;
+import swiss.alpinetech.exchange.repository.search.WhiteListingSearchRepository;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.security.SecurityUtils;
 import swiss.alpinetech.exchange.service.dto.UserDTO;
@@ -33,6 +37,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 /**
@@ -53,6 +58,9 @@ public class UserService {
     private final AuthorityRepository authorityRepository;
 
     private final CacheManager cacheManager;
+
+    @Autowired
+    private WhiteListingSearchRepository whiteListingSearchRepository;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserSearchRepository userSearchRepository, AuthorityRepository authorityRepository, CacheManager cacheManager) {
         this.userRepository = userRepository;
@@ -361,7 +369,47 @@ public class UserService {
         return usersPage;
     }
 
+    public List<UserDTO> searchForWhiteListing(String query, Long securityTokenId) {
+        log.debug("Request to search users for query {} for whiteListing autocomplete", query);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        List<Long> usersPermitted = IteratorUtils.toList(this.whiteListingSearchRepository.search(QueryBuilders.boolQuery()
+            .must(matchQuery("securitytoken.id", securityTokenId))).iterator())
+            .stream()
+            .map(wl -> wl.getUser().getId())
+            .collect(Collectors.toList());
+
+        List<UserDTO> usersList = IteratorUtils.toList(userSearchRepository.search(queryStringQuery(query)
+            .fuzziness(Fuzziness.ONE)
+            .fuzzyPrefixLength(2))
+            .iterator())
+            .stream()
+            .filter(us -> !usersPermitted.contains(us.getId()))
+            .map(UserDTO::new)
+            .collect(Collectors.toList());
+
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN)) {
+                return usersList;
+            }
+        }
+
+        return usersList
+            .stream()
+            .filter(user -> !this.userIsAdmin(user))
+            .collect(Collectors.toList());
+    }
+
     private boolean userIsAdmin(User user) {
+        Set<Authority> userAuthorities =  this.getUserWithAuthorities(user.getId()).get().getAuthorities();
+        for (Authority userAuthority : userAuthorities) {
+            if(userAuthority.getName().equals(AuthoritiesConstants.ADMIN)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean userIsAdmin(UserDTO user) {
         Set<Authority> userAuthorities =  this.getUserWithAuthorities(user.getId()).get().getAuthorities();
         for (Authority userAuthority : userAuthorities) {
             if(userAuthority.getName().equals(AuthoritiesConstants.ADMIN)) {

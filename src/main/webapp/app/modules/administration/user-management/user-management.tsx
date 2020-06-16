@@ -69,7 +69,7 @@ export const UserManagement = (props: IUserManagementProps) => {
       <h2 id="user-management-page-heading">
         Users
         <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity">
-          <FontAwesomeIcon icon="plus" /> Create a new user
+          <FontAwesomeIcon icon="plus" /> Add User
         </Link>
       </h2>
 

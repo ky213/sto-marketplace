@@ -7,7 +7,7 @@
         Added the constraints for entity WhiteListing.
     -->
     <changeSet id="20200412224000-2" author="jhipster">
-        
+
         <addForeignKeyConstraint baseColumnNames="user_id"
                                  baseTableName="white_listing"
                                  constraintName="fk_white_listing_user_id"
@@ -19,6 +19,12 @@
                                  constraintName="fk_white_listing_securitytoken_id"
                                  referencedColumnNames="id"
                                  referencedTableName="security_token"/>
+
+        <addUniqueConstraint
+            columnNames="securitytoken_id, user_id"
+            constraintName="pk_white_listing_user_securitytoken"
+            tableName="white_listing"
+        />
 
     </changeSet>
 </databaseChangeLog>
