@@ -132,6 +132,12 @@ export const OrderDetail = (props: IOrderDetailProps) => {
                 <p>{`${orderEntity.user?.firstName}  ${orderEntity.user?.lastName}`}</p>
               </Col>
             </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Canceled by</small>
+                <p>{orderEntity.updateBy}</p>
+              </Col>
+            </Row>
             <Button tag={Link} to="/order" replace color="info">
               <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
             </Button>

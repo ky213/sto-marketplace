@@ -27,6 +27,7 @@ export interface IOrder {
   user?: IUser;
   transaction?: ITransaction;
   securityToken?: ISecurityToken;
+  updateBy?: string;
 }
 
 export const defaultValue: Readonly<IOrder> = {
