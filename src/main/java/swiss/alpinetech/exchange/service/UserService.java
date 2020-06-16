@@ -351,11 +351,8 @@ public class UserService {
     }
 
     public Page<UserDTO> search(String query, Pageable pageable) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        for (GrantedAuthority authority : authentication.getAuthorities()) {
-            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN)) {
-                return userSearchRepository.search(queryStringQuery(query), pageable).map(UserDTO::new);
-            }
+        if (this.currentUserIsAdmin()) {
+            return userSearchRepository.search(queryStringQuery(query), pageable).map(UserDTO::new);
         }
         List<UserDTO> userList = IteratorUtils.toList(userSearchRepository.search(queryStringQuery(query)).iterator())
             .stream()
@@ -369,9 +366,26 @@ public class UserService {
         return usersPage;
     }
 
+    public List<UserDTO> standardSearch(String query) {
+        if (this.currentUserIsAdmin()) {
+            return IteratorUtils.toList(userSearchRepository.search(queryStringQuery(query)).iterator())
+                .stream()
+                .map(UserDTO::new)
+                .collect(Collectors.toList());
+        }
+        return IteratorUtils.toList(userSearchRepository.search(queryStringQuery(query)).iterator())
+            .stream()
+            .filter(user -> !this.userIsAdmin(user))
+            .map(UserDTO::new)
+            .collect(Collectors.toList());
+    }
+
     public List<UserDTO> searchForWhiteListing(String query, Long securityTokenId) {
         log.debug("Request to search users for query {} for whiteListing autocomplete", query);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (securityTokenId == null)  {
+            return this.standardSearch(query);
+        }
         List<Long> usersPermitted = IteratorUtils.toList(this.whiteListingSearchRepository.search(QueryBuilders.boolQuery()
             .must(matchQuery("securitytoken.id", securityTokenId))).iterator())
             .stream()
@@ -413,6 +427,16 @@ public class UserService {
         Set<Authority> userAuthorities =  this.getUserWithAuthorities(user.getId()).get().getAuthorities();
         for (Authority userAuthority : userAuthorities) {
             if(userAuthority.getName().equals(AuthoritiesConstants.ADMIN)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean currentUserIsAdmin() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN)) {
                 return true;
             }
         }

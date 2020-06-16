@@ -4,8 +4,15 @@ import org.apache.commons.collections4.IteratorUtils;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import swiss.alpinetech.exchange.domain.enumeration.STSTATUS;
+import swiss.alpinetech.exchange.repository.WhiteListingRepository;
 import swiss.alpinetech.exchange.repository.search.WhiteListingSearchRepository;
+import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.SecurityTokenService;
 import swiss.alpinetech.exchange.domain.SecurityToken;
 import swiss.alpinetech.exchange.repository.SecurityTokenRepository;
@@ -39,6 +46,9 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
 
     @Autowired
     private WhiteListingSearchRepository whiteListingSearchRepository;
+
+    @Autowired
+    private WhiteListingRepository whiteListingRepository;
 
     public SecurityTokenServiceImpl(SecurityTokenRepository securityTokenRepository, SecurityTokenSearchRepository securityTokenSearchRepository) {
         this.securityTokenRepository = securityTokenRepository;
@@ -84,7 +94,27 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     @Transactional(readOnly = true)
     public Page<SecurityToken> findAll(Pageable pageable) {
         log.debug("Request to get all SecurityTokens");
-        return securityTokenRepository.findAll(pageable);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN)) {
+                return securityTokenRepository.findAll(pageable);
+            }
+        }
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.BANK)) {
+                return securityTokenRepository.findAllByStatusACTIVE(pageable);
+            }
+        }
+        List<SecurityToken> securityTokenList = IteratorUtils.toList(this.whiteListingRepository.findByUserIsCurrentUser(pageable).iterator())
+            .stream()
+            .filter(wl -> wl.getSecuritytoken().getStatus().equals(STSTATUS.ACTIVE))
+            .map(wl -> wl.getSecuritytoken())
+            .collect(Collectors.toList());
+        Page<SecurityToken> securityTokensPage = new PageImpl<SecurityToken>(
+            securityTokenList,
+            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
+            securityTokenList.size());
+        return securityTokensPage;
     }
 
     /**
@@ -130,6 +160,13 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     @Transactional(readOnly = true)
     public List<SecurityToken> searchForWhiteListing(String query, Long userId) {
         log.debug("Request to search security tokens for query {} for whiteListing autocomplete", query);
+        if (userId == null) {
+            List<SecurityToken> securityTokenList = IteratorUtils.toList(securityTokenSearchRepository.search(queryStringQuery(query)
+                .fuzziness(Fuzziness.ONE)
+                .fuzzyPrefixLength(2))
+                .iterator());
+            return securityTokenList;
+        }
         List<Long> securityTokensPermitted = IteratorUtils.toList(this.whiteListingSearchRepository.search(QueryBuilders.boolQuery()
             .must(matchQuery("user.id", userId))).iterator())
             .stream()
