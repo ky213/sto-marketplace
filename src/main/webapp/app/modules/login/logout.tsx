@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 
 import { IRootState } from 'app/shared/reducers';
 import { logout } from 'app/shared/reducers/authentication';
+import { RouteComponentProps } from 'react-router-dom';
 
-export interface ILogoutProps extends StateProps, DispatchProps {
+export interface ILogoutProps extends StateProps, DispatchProps, RouteComponentProps {
   idToken: string;
   logoutUrl: string;
 }
@@ -12,7 +13,10 @@ export interface ILogoutProps extends StateProps, DispatchProps {
 export const Logout = (props: ILogoutProps) => {
   useLayoutEffect(() => {
     props.logout();
+    props.history.push('/');
+
     const logoutUrl = props.logoutUrl;
+
     if (logoutUrl) {
       // if Keycloak, logoutUrl has protocol/openid-connect in it
       window.location.href = logoutUrl.includes('/protocol')
