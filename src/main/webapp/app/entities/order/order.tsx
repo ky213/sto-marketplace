@@ -31,6 +31,7 @@ export const Order = (props: IOrderProps) => {
   const [exportOrders, setExportOrders] = useState(false);
   const isAdmin = props.account.authorities.includes(AUTHORITIES.ADMIN);
   const isBank = props.account.authorities.includes(AUTHORITIES.BANK);
+  const isUser = props.account.authorities.includes(AUTHORITIES.USER);
   const userId = !(isAdmin || isBank) ? props.account.id : null;
 
   const getAllEntities = () => {
@@ -151,10 +152,12 @@ export const Order = (props: IOrderProps) => {
             <FontAwesomeIcon icon="download" />
             &nbsp; Export orders
           </Button>
-          <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
-            <FontAwesomeIcon icon="plus" />
-            &nbsp; Create new Order
-          </Link>
+          {isUser && (
+            <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
+              <FontAwesomeIcon icon="plus" />
+              &nbsp; Create new Order
+            </Link>
+          )}
         </h2>
         <Row>
           <Col sm="12">
