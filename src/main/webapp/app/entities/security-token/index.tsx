@@ -21,12 +21,7 @@ const Routes = ({ match }) => (
         component={SecurityTokenUpdate}
         hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
       />
-      <PrivateRoute
-        exact
-        path={`${match.url}/:id`}
-        component={SecurityTokenDetail}
-        hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
-      />
+      <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={SecurityTokenDetail} />
       <ErrorBoundaryRoute path={match.url} component={SecurityToken} />
     </Switch>
   </>

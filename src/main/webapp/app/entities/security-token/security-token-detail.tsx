@@ -8,12 +8,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './security-token.reducer';
 import { ISecurityToken } from 'app/shared/model/security-token.model';
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import moment from 'moment';
 
 export interface ISecurityTokenDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
+  const isAdmin = props.account.authorities.includes(AUTHORITIES.ADMIN);
+  const isBank = props.account.authorities.includes(AUTHORITIES.BANK);
+
   useEffect(() => {
     props.getEntity(props.match.params.id);
   }, []);
@@ -215,9 +218,11 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
               <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
             </Button>
             &nbsp;
-            <Button tag={Link} to={`/security-token/${securityTokenEntity.id}/edit`} replace color="primary">
-              <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
-            </Button>
+            {(isAdmin || isBank) && (
+              <Button tag={Link} to={`/security-token/${securityTokenEntity.id}/edit`} replace color="primary">
+                <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
+              </Button>
+            )}
           </CardBody>
         </Card>
       </Col>
@@ -225,8 +230,9 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
   );
 };
 
-const mapStateToProps = ({ securityToken }: IRootState) => ({
-  securityTokenEntity: securityToken.entity
+const mapStateToProps = ({ securityToken, authentication }: IRootState) => ({
+  securityTokenEntity: securityToken.entity,
+  account: authentication.account
 });
 
 const mapDispatchToProps = { getEntity };
