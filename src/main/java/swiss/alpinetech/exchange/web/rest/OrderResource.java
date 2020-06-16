@@ -58,6 +58,7 @@ public class OrderResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new order, or with status {@code 400 (Bad Request)} if the order has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.USER+"\")")
     @PostMapping("/orders")
     public ResponseEntity<Order> createOrder(@Valid @RequestBody Order order) throws URISyntaxException {
         log.debug("REST request to save Order : {}", order);
@@ -77,6 +78,7 @@ public class OrderResource {
      * @return the {@link ResponseEntity} with status {@code 201 (Created)} and with body the new order, or with status {@code 400 (Bad Request)} if the order has already an ID.
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.USER+"\")")
     @PostMapping("/create-order")
     public ResponseEntity<Order> customCreateOrder(@Valid @RequestBody Order order) throws URISyntaxException {
         log.debug("REST request to create Order : {}", order);
