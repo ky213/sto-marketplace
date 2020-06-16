@@ -24,29 +24,6 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
   const { securityTokenEntity } = props;
   return (
     <Row className="mx-auto">
-      <Col md="4" className=" p-0">
-        <Card className="p-0">
-          <CardBody className="p-3">
-            <h6>{securityTokenEntity.name}</h6>
-            <Row>
-              <Col xs="6">
-                <small className="text-muted">
-                  {securityTokenEntity.restrictionCounty} <br />
-                  {moment().format('LLL')}
-                </small>
-              </Col>
-              <Col>
-                <img
-                  className="bg-secondary d-block ml-auto"
-                  src={`data:image/png;base64,${securityTokenEntity.logo}`}
-                  alt="security_token_logo"
-                  style={{ maxHeight: '100px', maxWidth: '100px' }}
-                />
-              </Col>
-            </Row>
-          </CardBody>
-        </Card>
-      </Col>
       <Col className="p-0 ml-2">
         <Card className="p-0">
           <CardHeader>
