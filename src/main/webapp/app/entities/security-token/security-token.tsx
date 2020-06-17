@@ -313,7 +313,7 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
                     <Alert color="danger" className="py-2 pl-4 w-75 m-auto">
                       <Link to={isUser ? `order/new/${securityToken.id}/SELL` : '#'} style={{ textDecoration: 'none' }}>
                         <div className="d-flex justify-content-center align-items-center ">
-                          <h5 className="mr-3">{securityToken.lastSellingprice.toLocaleString()}</h5>
+                          <h5 className="mr-3">{securityToken.lastSellingprice?.toLocaleString()}</h5>
                           <div className="d-flex flex-column">
                             <small>
                               <b>SELL</b>
@@ -328,7 +328,7 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
                     <Alert color="success" className="py-2 px-4 w-75 m-auto">
                       <Link to={isUser ? `order/new/${securityToken.id}/BUY` : '#'} style={{ textDecoration: 'none' }}>
                         <div className="d-flex justify-content-center align-items-center">
-                          <h5 className="mr-3">{securityToken.lastBuyingPrice.toLocaleString()}</h5>
+                          <h5 className="mr-3">{securityToken.lastBuyingPrice?.toLocaleString()}</h5>
                           <span className="d-flex flex-column">
                             <small>
                               <b>BUY</b>

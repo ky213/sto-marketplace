@@ -3,16 +3,15 @@ import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, Label, Card } from 'reactstrap';
 import { AvForm, AvGroup, AvInput, AvField, AvRadioGroup, AvRadio } from 'availity-reactstrap-validation';
-import { ICrudGetAction, ICrudGetAllAction, setFileData, openFile, byteSize, ICrudPutAction } from 'react-jhipster';
+import { setFileData, openFile, byteSize } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IRootState } from 'app/shared/reducers';
 
-import { getEntity, updateEntity, createEntity, setBlob, reset } from './security-token.reducer';
-import { ISecurityToken } from 'app/shared/model/security-token.model';
+import { IRootState } from 'app/shared/reducers';
 import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
+import { APP_TIMESTAMP_FORMAT } from 'app/config/constants';
+import { DatePicker } from 'app/shared/components/DatePicker';
+import { getEntity, updateEntity, createEntity, setBlob, reset } from './security-token.reducer';
 import './style.scss';
-import { APP_LOCAL_DATETIME_FORMAT, APP_TIMESTAMP_FORMAT } from 'app/config/constants';
 
 export interface ISecurityTokenUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -135,6 +134,7 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                     type="text"
                     name="idRed"
                     validate={{
+                      required: { value: true, errorMessage: 'This field is required.' },
                       minLength: { value: 2, errorMessage: 'This field is required to be at least 2 characters.' },
                       maxLength: { value: 15, errorMessage: 'This field cannot be longer than 15 characters.' }
                     }}
@@ -274,12 +274,10 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
               </Row>
               <AvGroup>
                 <Label id="laucheDateLabel" for="security-token-laucheDate">
-                  Lauche Date
+                  Lauch Date
                 </Label>
-                <AvInput
+                <DatePicker
                   id="security-token-laucheDate"
-                  type="text"
-                  className="form-control"
                   name="laucheDate"
                   value={
                     isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.securityTokenEntity.laucheDate, APP_TIMESTAMP_FORMAT)
@@ -381,40 +379,12 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                   <option value="REMOVE">REMOVE</option>
                 </AvInput>
               </AvGroup>
-              <Row>
-                <AvGroup className="col-md-6">
-                  <Label id="registrationDateLabel" for="security-token-registrationDate">
-                    Registration Date
-                  </Label>
-                  <AvInput
-                    id="security-token-registrationDate"
-                    type="text"
-                    className="form-control"
-                    name="registrationDate"
-                    value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.securityTokenEntity.registrationDate)}
-                  />
-                </AvGroup>
-                <AvGroup className="col-md-6">
-                  <Label id="updateDateLabel" for="security-token-updateDate">
-                    Update Date
-                  </Label>
-                  <AvInput
-                    id="security-token-updateDate"
-                    type="text"
-                    className="form-control"
-                    name="updateDate"
-                    value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.securityTokenEntity.updateDate)}
-                  />
-                </AvGroup>
-              </Row>
               <AvGroup>
                 <Label id="dueDiligenceDateLabel" for="security-token-dueDiligenceDate">
                   Due Diligence Date
                 </Label>
-                <AvInput
+                <DatePicker
                   id="security-token-dueDiligenceDate"
-                  type="text"
-                  className="form-control"
                   name="dueDiligenceDate"
                   value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.securityTokenEntity.dueDiligenceDate)}
                 />
@@ -430,6 +400,7 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                     className="form-control"
                     name="lastSellingprice"
                     validate={{
+                      required: { value: true, errorMessage: 'This field is required.' },
                       min: { value: 0, errorMessage: 'This field should be at least 0.' },
                       number: { value: true, errorMessage: 'This field should be a number.' }
                     }}
@@ -445,6 +416,7 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
                     className="form-control"
                     name="lastBuyingPrice"
                     validate={{
+                      required: { value: true, errorMessage: 'This field is required.' },
                       min: { value: 0, errorMessage: 'This field should be at least 0.' },
                       number: { value: true, errorMessage: 'This field should be a number.' }
                     }}

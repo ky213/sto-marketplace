@@ -1,18 +1,25 @@
 import React, { useEffect } from 'react';
 import { AvInput } from 'availity-reactstrap-validation';
 import Pikaday from 'pikaday';
+import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 
-// import './style.scss';
+import './style.scss';
 
-const DatePicker = props => {
+interface DatePickerProps {
+  id: string;
+  name: string;
+  value: string;
+}
+
+export const DatePicker = (props: DatePickerProps) => {
   useEffect(() => {
-    const field = document.getElementById('user-setting-dateOfBirth');
+    const field = document.getElementById(props.id);
     const picker = new Pikaday({
       field,
       yearRange: 100,
-      format: 'YYYY-MM-DD',
+      format: APP_LOCAL_DATE_FORMAT,
       keyboardInput: false,
-      onSelect(date) {
+      onSelect(date: Date) {
         field.nodeValue = date.toString();
       }
     });
@@ -20,19 +27,17 @@ const DatePicker = props => {
   }, []);
 
   return (
-    <>
+    <div className="p-0 m-0 position-relative">
       <AvInput
-        id="user-setting-dateOfBirth"
+        id={props.id}
         type="text"
-        className="form-control position-relative"
-        name="setting.dateOfBirth"
+        className="form-control "
+        name={props.name}
         value={props.value}
         validate={{
           required: { value: true, errorMessage: 'This field is required.' }
         }}
       />
-    </>
+    </div>
   );
 };
-
-export default DatePicker;
