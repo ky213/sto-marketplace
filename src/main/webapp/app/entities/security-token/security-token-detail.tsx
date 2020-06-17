@@ -130,7 +130,7 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
                 </p>
               </Col>
               <Col>
-                <small className="text-muted ">Lauche Date</small>
+                <small className="text-muted ">Launch Date</small>
                 <p>
                   <TextFormat value={securityTokenEntity.laucheDate} type="date" format={APP_DATE_FORMAT} />
                 </p>

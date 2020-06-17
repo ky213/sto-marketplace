@@ -152,7 +152,7 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
                 {isAdmin && (
                   <>
                     <th className="hand text-nowrap" onClick={sort('laucheDate')}>
-                      Lauche Date <FontAwesomeIcon icon="sort" />
+                      Launch Date <FontAwesomeIcon icon="sort" />
                     </th>
                     <th className="hand text-nowrap" onClick={sort('juridiction')}>
                       Juridiction <FontAwesomeIcon icon="sort" />

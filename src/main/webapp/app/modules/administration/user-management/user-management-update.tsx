@@ -8,11 +8,9 @@ import moment from 'moment';
 
 import { getUser, getRoles, updateUser, createUser, reset } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
-import { convertDateTimeToServer } from 'app/shared/util/date-utils';
 import SelectRole from './components/SelectRole';
 import { AUTHORITIES } from 'app/config/constants';
-import DatePicker from './components/DatePicker';
-import value from '*.json';
+import { DatePicker } from 'app/shared/components/DatePicker';
 
 export interface IUserManagementUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ login: string }> {}
 
@@ -201,7 +199,11 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                       <Label id="dateOfBirthLabel" for="user-setting-dateOfBirth">
                         Date Of Birth
                       </Label>
-                      <DatePicker value={isNew ? moment().format('YYYY-MM-DD') : moment(user?.setting?.dateOfBirth).format('YYYY-MM-DD')} />
+                      <DatePicker
+                        id="user-setting-dateOfBirth"
+                        name="setting.dateOfBirth"
+                        value={isNew ? moment().format('YYYY-MM-DD') : moment(user?.setting?.dateOfBirth).format('YYYY-MM-DD')}
+                      />
                     </AvGroup>
                     <AvGroup className="col-md-6">
                       <Label id="nationalityLabel" for="user-setting-nationality">
