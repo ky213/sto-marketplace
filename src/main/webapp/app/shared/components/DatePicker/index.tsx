@@ -9,6 +9,7 @@ interface DatePickerProps {
   id: string;
   name: string;
   value: string;
+  setDate?: (date: Date) => any;
 }
 
 export const DatePicker = (props: DatePickerProps) => {
@@ -21,6 +22,7 @@ export const DatePicker = (props: DatePickerProps) => {
       keyboardInput: false,
       onSelect(date: Date) {
         field.nodeValue = date.toString();
+        props.setDate(date);
       }
     });
     field.parentNode.insertBefore(picker.el, field.nextSibling);
@@ -34,9 +36,9 @@ export const DatePicker = (props: DatePickerProps) => {
         className="form-control "
         name={props.name}
         value={props.value}
-        validate={{
-          required: { value: true, errorMessage: 'This field is required.' }
-        }}
+        // validate={{
+        //   required: { value: true, errorMessage: 'This field is required.' }
+        // }}
       />
     </div>
   );

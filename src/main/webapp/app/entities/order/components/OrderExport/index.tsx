@@ -1,13 +1,14 @@
 import React, { createRef, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Row, Col, Input, Label } from 'reactstrap';
+import { Modal, ModalHeader, ModalBody, ModalFooter, Button, Row, Label } from 'reactstrap';
+import { AvForm, AvGroup } from 'availity-reactstrap-validation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Pikaday from 'pikaday';
+import moment from 'moment';
 
 import { IRootState } from 'app/shared/reducers';
 import { exportOrder } from '../../order.reducer';
-import moment from 'moment';
 import { AUTHORITIES } from 'app/config/constants';
+import { DatePicker } from 'app/shared/components/DatePicker';
 
 export interface IOrderExportProps extends StateProps, DispatchProps {
   open: boolean;
@@ -38,54 +39,22 @@ export const OrderExportDialog = (props: IOrderExportProps) => {
     }
   }, [props.ordersSheet]);
 
-  useEffect(() => {
-    const settings = {
-      yearRange: 100,
-      format: 'YYYY-MM-DD',
-      keyboardInput: false
-    };
-
-    if (props.open) {
-      const fromDateField = document.getElementById('fromDate');
-      const toDateField = document.getElementById('toDate');
-
-      const fromDatePicker = new Pikaday({
-        field: fromDateField,
-        onSelect(date) {
-          fromDateField.nodeValue = date.toString();
-          setFromDate(date);
-        },
-        ...settings
-      });
-
-      const toDatePicker = new Pikaday({
-        field: toDateField,
-        onSelect(date) {
-          toDateField.nodeValue = date.toString();
-          setToDate(date);
-        },
-        ...settings
-      });
-
-      fromDateField.parentNode.insertBefore(fromDatePicker.el, fromDateField.nextSibling);
-      toDateField.parentNode.insertBefore(toDatePicker.el, toDateField.nextSibling);
-    }
-  }, [props.open]);
-
   return (
     <Modal isOpen={props.open}>
       <ModalHeader>Select dates, please</ModalHeader>
       <ModalBody id="">
-        <Row>
-          <Col>
-            <Label for="fromDate">From</Label>
-            <Input id="fromDate" type="text" className="form-control position-relative" value={moment(fromDate).format('LL')} />
-          </Col>
-          <Col>
-            <Label for="toDate">To</Label>
-            <Input id="toDate" type="text" className="form-control position-relative" value={moment(toDate).format('LL')} />
-          </Col>
-        </Row>
+        <AvForm>
+          <Row>
+            <AvGroup className="col-md-6">
+              <Label for="fromDate">From</Label>
+              <DatePicker id="fromDate" name="fromDate" value={moment(fromDate).format('LL')} setDate={(date: Date) => setFromDate(date)} />
+            </AvGroup>
+            <AvGroup className="col-md-6">
+              <Label for="toDate">To</Label>
+              <DatePicker id="toDate" name="toDate" value={moment(toDate).format('LL')} setDate={(date: Date) => setToDate(date)} />
+            </AvGroup>
+          </Row>
+        </AvForm>
       </ModalBody>
       <ModalFooter>
         <Button color="secondary" onClick={() => props.setExportdialog(false)}>
