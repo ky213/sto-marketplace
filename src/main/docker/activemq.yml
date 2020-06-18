@@ -16,5 +16,5 @@ services:
       # jms
       - "61616:61616"
     volumes:
-      - ./volumes/activemq-data/conf:/opt/activemq/conf/
+      - ./activemq/conf:/opt/activemq/conf/
       - ./volumes/activemq-data/data:/opt/activemq/data/
