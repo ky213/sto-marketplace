@@ -14,9 +14,7 @@ const Menu = ({ account, totalBankItems, getBanks, banks }) => {
   const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
   const isBank = account.authorities.includes(AUTHORITIES.BANK);
   const homeLink = isAdmin || isBank ? '/home-bank' : '/home-customer';
-  const bankInfoLink = bank
-    ? `/bank-info/${bank.id}${isAdmin || isBank ? '/edit' : ''}`
-    : `/bank-info/${isAdmin || isBank ? 'new' : bank?.id}`;
+  const bankInfoLink = bank ? `/bank-info/${bank.id}` : `/bank-info/${isAdmin || isBank ? 'new' : bank?.id}`;
 
   useEffect(() => {
     getBanks();
