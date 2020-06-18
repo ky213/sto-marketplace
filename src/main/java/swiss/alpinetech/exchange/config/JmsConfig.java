@@ -1,23 +1,35 @@
 package swiss.alpinetech.exchange.config;
 
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
+import org.springframework.jms.config.JmsListenerContainerFactory;
+import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
+import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.jms.support.converter.MessageType;
+
+import javax.jms.ConnectionFactory;
 
 @Configuration
 public class JmsConfig {
 
-//    @Value("${spring.activemq.broker-url}")
-    String BROKER_URL = "tcp://localhost:61616";
 
-//    @Value("${spring.activemq.user}")
+
+    @Value("${spring.activemq.broker-url}")
+    private String BROKER_URL;
+
+    @Value("${spring.activemq.user}")
     String BROKER_USERNAME = "admin";
 
-//    @Value("${spring.activemq.password}")
+    @Value("${spring.activemq.password}")
     String BROKER_PASSWORD = "admin";
+
 
     @Bean
     public ActiveMQConnectionFactory connectionFactory(){

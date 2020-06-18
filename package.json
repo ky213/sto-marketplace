@@ -151,6 +151,8 @@
     "test:watch": "npm test -- --watch",
     "maildev:start": "docker-compose  -f src/main/docker/maildev.yml up -d",
     "maildev:stop": "docker-compose  -f src/main/docker/maildev.yml down",
+    "activemq:start": "docker-compose  -f src/main/docker/activemq.yml up -d",
+    "activemq:stop": "docker-compose  -f src/main/docker/activemq.yml down",
     "mysql:start": "docker-compose  -f src/main/docker/mysql.yml up -d",
     "mysql:stop": "docker-compose  -f src/main/docker/mysql.yml down",
     "sonar:start": "docker-compose  -f src/main/docker/sonar.yml up -d",

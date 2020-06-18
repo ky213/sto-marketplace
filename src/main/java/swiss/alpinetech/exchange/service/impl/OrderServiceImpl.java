@@ -45,9 +45,7 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
  */
 @Service
 @Transactional
-public class OrderServiceImpl implements OrderService {
-
-    private final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
+public class OrderServiceImpl implements OrderService {private final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     private final OrderRepository orderRepository;
 
@@ -253,4 +251,5 @@ public class OrderServiceImpl implements OrderService {
             orderList.size());
         return ordersPage;
     }
+
 }

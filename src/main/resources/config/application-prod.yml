@@ -64,6 +64,13 @@ spring:
   thymeleaf:
     cache: true
 
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
+    pool:
+      enabled: true
+      max-connections: 50
 # ===================================================================
 # To enable TLS in production, generate a certificate using:
 # keytool -genkey -alias exchange -storetype PKCS12 -keyalg RSA -keysize 2048 -keystore keystore.p12 -validity 3650

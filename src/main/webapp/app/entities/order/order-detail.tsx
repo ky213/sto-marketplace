@@ -134,7 +134,7 @@ export const OrderDetail = (props: IOrderDetailProps) => {
             </Row>
             <Row>
               <Col>
-                <small className="text-muted ">Canceled by</small>
+                <small className="text-muted ">Uodated by</small>
                 <p>{orderEntity.updateBy}</p>
               </Col>
             </Row>
