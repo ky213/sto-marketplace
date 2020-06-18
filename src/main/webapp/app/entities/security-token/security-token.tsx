@@ -131,14 +131,9 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
             <thead>
               <tr>
                 {isAdmin && (
-                  <>
-                    <th className="hand text-nowrap" onClick={sort('id')}>
-                      ID <FontAwesomeIcon icon="sort" />
-                    </th>
-                    <th className="hand text-nowrap" onClick={sort('idRed')}>
-                      Id Red <FontAwesomeIcon icon="sort" />
-                    </th>
-                  </>
+                  <th className="hand text-nowrap" onClick={sort('idRed')}>
+                    Id Red <FontAwesomeIcon icon="sort" />
+                  </th>
                 )}
                 <th className="hand text-nowrap" onClick={sort('name')}>
                   Name <FontAwesomeIcon icon="sort" />
@@ -151,63 +146,11 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
                 </th>
                 {isAdmin && (
                   <>
-                    <th className="hand text-nowrap" onClick={sort('laucheDate')}>
-                      Launch Date <FontAwesomeIcon icon="sort" />
-                    </th>
-                    <th className="hand text-nowrap" onClick={sort('juridiction')}>
-                      Juridiction <FontAwesomeIcon icon="sort" />
-                    </th>
                     <th className="hand text-nowrap" onClick={sort('issuerName')}>
                       Issuer Name <FontAwesomeIcon icon="sort" />
                     </th>
-                    <th className="hand text-nowrap" onClick={sort('issuerCounty')}>
-                      Issuer County <FontAwesomeIcon icon="sort" />
-                    </th>
-                    <th className="hand text-nowrap" onClick={sort('tokenizationFirmName')}>
-                      Tokenization Firm Name <FontAwesomeIcon icon="sort" />
-                    </th>
-                    <th className="hand text-nowrap" onClick={sort('tokenizationFirmCountry')}>
-                      Tokenization Firm Country <FontAwesomeIcon icon="sort" />
-                    </th>
-                    <th className="hand text-nowrap" onClick={sort('kycProviderName')}>
-                      Kyc Provider Name <FontAwesomeIcon icon="sort" />
-                    </th>
-                    <th className="hand text-nowrap" onClick={sort('kycProviderCountry')}>
-                      Kyc Provider Country <FontAwesomeIcon icon="sort" />
-                    </th>
-                    <th className="hand text-nowrap" onClick={sort('stoPrice')}>
-                      Sto Price <FontAwesomeIcon icon="sort" />
-                    </th>
-                    <th className="hand text-nowrap" onClick={sort('amountRaised')}>
-                      Amount Raised <FontAwesomeIcon icon="sort" />
-                    </th>
-
-                    <th className="hand text-nowrap" onClick={sort('summary')}>
-                      Summary <FontAwesomeIcon icon="sort" />
-                    </th>
-                    <th className="hand text-nowrap" onClick={sort('description')}>
-                      Description <FontAwesomeIcon icon="sort" />
-                    </th>
-                    <th className="hand text-nowrap" onClick={sort('restrictionCounty')}>
-                      Restriction County <FontAwesomeIcon icon="sort" />
-                    </th>
-                    <th className="hand text-nowrap" onClick={sort('restrictionNationality')}>
-                      Restriction Nationality <FontAwesomeIcon icon="sort" />
-                    </th>
-                    <th className="hand text-nowrap" onClick={sort('prospectus')}>
-                      Prospectus <FontAwesomeIcon icon="sort" />
-                    </th>
                     <th className="hand text-nowrap" onClick={sort('status')}>
                       Status <FontAwesomeIcon icon="sort" />
-                    </th>
-                    <th className="hand text-nowrap" onClick={sort('registrationDate')}>
-                      Registration Date <FontAwesomeIcon icon="sort" />
-                    </th>
-                    <th className="hand text-nowrap" onClick={sort('updateDate')}>
-                      Update Date <FontAwesomeIcon icon="sort" />
-                    </th>
-                    <th className="hand text-nowrap" onClick={sort('dueDiligenceDate')}>
-                      Due Diligence Date <FontAwesomeIcon icon="sort" />
                     </th>
                   </>
                 )}
@@ -221,79 +164,20 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
                 <th className="hand text-nowrap" onClick={sort('lastBuyingPrice')}>
                   Last Buying Price <FontAwesomeIcon icon="sort" />
                 </th>
-                {isAdmin && (
-                  <>
-                    <th className="hand text-nowrap" onClick={sort('smartcontractAddress')}>
-                      Smartcontract Address <FontAwesomeIcon icon="sort" />
-                    </th>
-                    <th className="hand text-nowrap" onClick={sort('kycAddress')}>
-                      Kyc Address <FontAwesomeIcon icon="sort" />
-                    </th>
-                    <th className="hand text-nowrap" onClick={sort('website')}>
-                      Website <FontAwesomeIcon icon="sort" />
-                    </th>
-                  </>
-                )}
                 <th />
               </tr>
             </thead>
             <tbody>
               {securityTokenList.map((securityToken, i) => (
                 <tr key={`entity-${i}`}>
-                  {isAdmin && (
-                    <>
-                      <td>
-                        <Button tag={Link} to={`${match.url}/${securityToken.id}`} color="link" size="sm">
-                          {securityToken.id}
-                        </Button>
-                      </td>
-                      <td>{securityToken.idRed}</td>
-                    </>
-                  )}
+                  {isAdmin && <td>{securityToken.idRed}</td>}
                   <td>{securityToken.name}</td>
                   <td>{securityToken.symbol}</td>
                   <td>{securityToken.category}</td>
                   {isAdmin && (
-                    <td>
-                      <TextFormat type="date" value={securityToken.laucheDate} format={APP_DATE_FORMAT} />
-                    </td>
-                  )}
-
-                  {isAdmin && (
                     <>
-                      <td>{securityToken.juridiction}</td>
                       <td>{securityToken.issuerName}</td>
-                      <td>{securityToken.issuerCounty}</td>
-                      <td>{securityToken.tokenizationFirmName}</td>
-                      <td>{securityToken.tokenizationFirmCountry}</td>
-                      <td>{securityToken.kycProviderName}</td>
-                      <td>{securityToken.kycProviderCountry}</td>
-                      <td>{securityToken.stoPrice}</td>
-                      <td>{securityToken.amountRaised}</td>
-                      <td>{securityToken.summary}</td>
-                      <td>{securityToken.description}</td>
-                      <td>{securityToken.restrictionCounty}</td>
-                      <td>{securityToken.restrictionNationality}</td>
-                      <td>
-                        {securityToken.prospectus ? (
-                          <div>
-                            <a onClick={openFile(securityToken.prospectusContentType, securityToken.prospectus)}>Open &nbsp;</a>
-                            <span>
-                              {securityToken.prospectusContentType}, {byteSize(securityToken.prospectus)}
-                            </span>
-                          </div>
-                        ) : null}
-                      </td>
                       <td>{securityToken.status}</td>
-                      <td>
-                        <TextFormat type="date" value={securityToken.registrationDate} format={APP_DATE_FORMAT} />
-                      </td>
-                      <td>
-                        <TextFormat type="date" value={securityToken.updateDate} format={APP_DATE_FORMAT} />
-                      </td>
-                      <td>
-                        <TextFormat type="date" value={securityToken.dueDiligenceDate} format={APP_DATE_FORMAT} />
-                      </td>
                     </>
                   )}
                   <td>
@@ -309,41 +193,38 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
                       </div>
                     ) : null}
                   </td>
-                  <td>
-                    <Alert color="danger" className="py-2 pl-4 w-75 m-auto">
-                      <Link to={isUser ? `order/new/${securityToken.id}/SELL` : '#'} style={{ textDecoration: 'none' }}>
-                        <div className="d-flex justify-content-center align-items-center ">
-                          <h5 className="mr-3">{securityToken.lastSellingprice?.toLocaleString()}</h5>
-                          <div className="d-flex flex-column">
-                            <small>
-                              <b>SELL</b>
-                            </small>
-                            <small>CHF</small>
-                          </div>
-                        </div>
-                      </Link>
-                    </Alert>
-                  </td>
-                  <td>
-                    <Alert color="success" className="py-2 px-4 w-75 m-auto">
-                      <Link to={isUser ? `order/new/${securityToken.id}/BUY` : '#'} style={{ textDecoration: 'none' }}>
-                        <div className="d-flex justify-content-center align-items-center">
-                          <h5 className="mr-3">{securityToken.lastBuyingPrice?.toLocaleString()}</h5>
-                          <span className="d-flex flex-column">
-                            <small>
-                              <b>BUY</b>
-                            </small>
-                            <small>CHF</small>
-                          </span>
-                        </div>
-                      </Link>
-                    </Alert>
-                  </td>
-                  {isAdmin && (
+                  {(isUser || isBank) && (
                     <>
-                      <td>{securityToken.smartcontractAddress}</td>
-                      <td>{securityToken.kycAddress}</td>
-                      <td>{securityToken.website}</td>{' '}
+                      <td>
+                        <Alert color="danger" className="py-2 pl-4 w-75 m-auto">
+                          <Link to={isUser ? `order/new/${securityToken.id}/SELL` : '#'} style={{ textDecoration: 'none' }}>
+                            <div className="d-flex justify-content-center align-items-center ">
+                              <h5 className="mr-3">{securityToken.lastSellingprice?.toLocaleString()}</h5>
+                              <div className="d-flex flex-column">
+                                <small>
+                                  <b>SELL</b>
+                                </small>
+                                <small>CHF</small>
+                              </div>
+                            </div>
+                          </Link>
+                        </Alert>
+                      </td>
+                      <td>
+                        <Alert color="success" className="py-2 px-4 w-75 m-auto">
+                          <Link to={isUser ? `order/new/${securityToken.id}/BUY` : '#'} style={{ textDecoration: 'none' }}>
+                            <div className="d-flex justify-content-center align-items-center">
+                              <h5 className="mr-3">{securityToken.lastBuyingPrice?.toLocaleString()}</h5>
+                              <span className="d-flex flex-column">
+                                <small>
+                                  <b>BUY</b>
+                                </small>
+                                <small>CHF</small>
+                              </span>
+                            </div>
+                          </Link>
+                        </Alert>
+                      </td>
                     </>
                   )}
                   <td className="text-right">
