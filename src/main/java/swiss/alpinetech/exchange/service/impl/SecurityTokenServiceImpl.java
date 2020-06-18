@@ -107,7 +107,7 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
         }
         List<SecurityToken> securityTokenList = IteratorUtils.toList(this.whiteListingRepository.findByUserIsCurrentUser(pageable).iterator())
             .stream()
-            .filter(wl -> wl.getSecuritytoken().getStatus().equals(STSTATUS.ACTIVE))
+            .filter(wl -> wl.getSecuritytoken().getStatus().equals(STSTATUS.ACTIVE) && wl.isActive())
             .map(wl -> wl.getSecuritytoken())
             .collect(Collectors.toList());
         Page<SecurityToken> securityTokensPage = new PageImpl<SecurityToken>(
