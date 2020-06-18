@@ -73,6 +73,17 @@ spring:
         size: 1
   thymeleaf:
     mode: HTML
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin
+    pool:
+      enabled: true
+      max-connections: 50
+
+  jms:
+    pub-sub-domain: true
+
 
 server:
   port: 10344

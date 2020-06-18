@@ -25,10 +25,10 @@ public class JmsConfig {
     private String BROKER_URL;
 
     @Value("${spring.activemq.user}")
-    String BROKER_USERNAME = "admin";
+    String BROKER_USERNAME ;
 
     @Value("${spring.activemq.password}")
-    String BROKER_PASSWORD = "admin";
+    String BROKER_PASSWORD ;
 
 
     @Bean
