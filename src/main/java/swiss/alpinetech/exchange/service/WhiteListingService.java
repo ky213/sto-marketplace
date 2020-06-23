@@ -22,6 +22,14 @@ public interface WhiteListingService {
     WhiteListing save(WhiteListing whiteListing);
 
     /**
+     * Update a whiteListing.
+     *
+     * @param whiteListing the entity to update.
+     * @return the persisted entity.
+     */
+    WhiteListing update(WhiteListing whiteListing);
+
+    /**
      * Create a whiteListing.
      *
      * @param whiteListing the entity to save.
