@@ -18,12 +18,12 @@ public class TradeService {
     OrderBook orderBook = orderBookService.initOrderBook();
 
     /**
-     * Process an order.
+     * process an order.
      *
      * @param order to process.
      * @return list of trades.
      */
-    public List<Trade> Process(Order order) {
+    public List<Trade> process(Order order) {
         if (order.getType().equals(ACTIONTYPE.SELL)) {
             return this.processLimitSell(order);
         }
