@@ -12,6 +12,7 @@ import { getEntity, updateEntity, createEntity, suggestUsers, suggestSecurityTok
 import { AutoComplete } from 'app/shared/components/AutoComplete';
 import { IUser } from 'app/shared/model/user.model';
 import { ISecurityToken } from 'app/shared/model/security-token.model';
+import { A11yStatusMessageOptions } from 'downshift';
 
 export interface IWhiteListingUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -57,6 +58,8 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
 
     setSecurityToken(selectedSecurityToken);
   };
+
+  const handleStatusChange = ({ selectedItem, inputValue }) => {};
 
   const saveEntity = (event, errors, values) => {
     if (user.id && securityToken.id) {
@@ -106,21 +109,23 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                 <AvGroup className="col-md-6">
                   <Label for="white-listing-user">User</Label>
                   <AutoComplete
-                    name="user.id"
-                    value={whiteListingEntity?.user?.login}
+                    initialValue={whiteListingEntity?.user?.login}
+                    initialItem={{ value: user?.login }}
                     items={suggestedUsers.map((usr: IUser) => ({ value: usr.login }))}
                     selectItem={handleSelectUser}
                     suggestItems={value => props.suggestUsers(value, securityToken.id)}
+                    status={handleStatusChange}
                   />
                 </AvGroup>
                 <AvGroup className="col-md-6">
                   <Label for="white-listing-securitytoken">Security token</Label>
                   <AutoComplete
-                    name="securityToken.id"
-                    value={whiteListingEntity?.securitytoken?.idRed}
+                    initialItem={{ value: securityToken?.idRed }}
+                    initialValue={whiteListingEntity?.securitytoken?.idRed}
                     items={suggestedSecurityTokens.map((st: ISecurityToken) => ({ value: st.idRed }))}
                     selectItem={handleSelectSecurityToken}
                     suggestItems={value => props.suggestSecurityTokens(value, user.id)}
+                    status={handleStatusChange}
                   />
                 </AvGroup>
               </Row>

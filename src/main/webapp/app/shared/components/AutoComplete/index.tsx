@@ -1,23 +1,26 @@
 import React from 'react';
-import Downshift from 'downshift';
+import Downshift, { A11yStatusMessageOptions } from 'downshift';
 import { Alert } from 'reactstrap';
 import { AvForm, AvInput } from 'availity-reactstrap-validation';
 
 export interface AutoCompleteProps {
-  name: string;
-  value: string;
+  initialValue: string;
+  initialItem: { [value: string]: string };
   items: { [value: string]: string }[];
   selectItem: (value: any) => any;
   suggestItems: (value: string) => any;
+  status: (value: A11yStatusMessageOptions<any>) => any;
 }
 
-export const AutoComplete = ({ value, items, selectItem, suggestItems }: AutoCompleteProps) => {
+export const AutoComplete = ({ initialValue, items, initialItem, selectItem, suggestItems, status }: AutoCompleteProps) => {
   return (
     <Downshift
-      initialInputValue={value}
+      initialInputValue={initialValue}
+      initialSelectedItem={initialItem}
       onChange={selectItem}
       itemToString={item => (item ? item.value : '')}
       onInputValueChange={suggestItems}
+      getA11yStatusMessage={status}
     >
       {({ getInputProps, getItemProps, getMenuProps, isOpen, inputValue, highlightedIndex, selectedItem, getRootProps }) => (
         <AvForm className="position-relative">
