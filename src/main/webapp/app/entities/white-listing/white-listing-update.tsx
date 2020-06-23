@@ -9,7 +9,6 @@ import { IRootState } from 'app/shared/reducers';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 import { getEntities as getSecurityTokens } from 'app/entities/security-token/security-token.reducer';
 import { getEntity, updateEntity, createEntity, suggestUsers, suggestSecurityTokens, reset } from './white-listing.reducer';
-import { convertDateTimeToServer } from 'app/shared/util/date-utils';
 import { AutoComplete } from 'app/shared/components/AutoComplete';
 import { IUser } from 'app/shared/model/user.model';
 import { ISecurityToken } from 'app/shared/model/security-token.model';
@@ -17,13 +16,10 @@ import { ISecurityToken } from 'app/shared/model/security-token.model';
 export interface IWhiteListingUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
+  const { whiteListingEntity, loading, suggestedUsers, suggestedSecurityTokens } = props;
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
-
-  const { whiteListingEntity, loading, updating, suggestedUsers, suggestedSecurityTokens } = props;
-
-  const handleClose = () => {
-    props.history.push('/white-listing' + props.location.search);
-  };
+  const [user, setUser] = useState<IUser>({});
+  const [securityToken, setSecurityToken] = useState<ISecurityToken>({});
 
   useEffect(() => {
     if (isNew) {
@@ -34,20 +30,40 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
   }, []);
 
   useEffect(() => {
+    if (!isNew) {
+      setUser(whiteListingEntity.user);
+      setSecurityToken(whiteListingEntity.securitytoken);
+    }
+  }, [whiteListingEntity]);
+
+  const handleClose = () => {
+    props.history.push('/white-listing' + props.location.search);
+  };
+
+  useEffect(() => {
     if (props.updateSuccess) {
       handleClose();
     }
   }, [props.updateSuccess]);
 
-  const saveEntity = (event, errors, values) => {
-    values.dateEvent = convertDateTimeToServer(values.dateEvent);
-    values.dateSynchBlk = convertDateTimeToServer(values.dateSynchBlk);
+  const handleSelectUser = (login: { [value: string]: string }) => {
+    const selectedUser = suggestedUsers.find((suggestedUser: IUser) => suggestedUser.login === login.value);
 
-    if (errors.length === 0) {
+    setUser(selectedUser);
+  };
+
+  const handleSelectSecurityToken = (idRed: { [value: string]: string }) => {
+    const selectedSecurityToken = suggestedSecurityTokens.find((st: ISecurityToken) => st.idRed === idRed.value);
+
+    setSecurityToken(selectedSecurityToken);
+  };
+
+  const saveEntity = (event, errors, values) => {
+    if (user.id && securityToken.id) {
       const entity = {
         ...whiteListingEntity,
-        user: { id: +values.user.id },
-        securitytoken: {},
+        user: { id: +user.id },
+        securitytoken: securityToken,
         active: values.active
       };
 
@@ -68,14 +84,22 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
       </Row>
       <Row className="justify-content-center">
         <Col md="8">
-          {loading ? (
+          {loading && !isNew ? (
             <p>Loading...</p>
           ) : (
-            <AvForm model={isNew ? {} : whiteListingEntity} onSubmit={saveEntity}>
+            <AvForm onSubmit={saveEntity}>
               {!isNew ? (
                 <AvGroup>
                   <Label for="white-listing-id">ID</Label>
-                  <AvInput id="white-listing-id" type="text" className="form-control" name="id" required readOnly />
+                  <AvInput
+                    id="white-listing-id"
+                    type="text"
+                    className="form-control"
+                    name="id"
+                    value={whiteListingEntity.id}
+                    required
+                    readOnly
+                  />
                 </AvGroup>
               ) : null}
               <Row>
@@ -83,20 +107,20 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                   <Label for="white-listing-user">User</Label>
                   <AutoComplete
                     name="user.id"
-                    value={whiteListingEntity?.user?.id}
-                    items={suggestedUsers.map((user: IUser) => ({ value: user.login }))}
-                    selectItem={() => ''}
-                    suggestItems={value => props.suggestUsers(value)}
+                    value={whiteListingEntity?.user?.login}
+                    items={suggestedUsers.map((usr: IUser) => ({ value: usr.login }))}
+                    selectItem={handleSelectUser}
+                    suggestItems={value => props.suggestUsers(value, securityToken.id)}
                   />
                 </AvGroup>
                 <AvGroup className="col-md-6">
                   <Label for="white-listing-securitytoken">Security token</Label>
                   <AutoComplete
-                    name="user.id"
-                    value={whiteListingEntity?.securitytoken?.id}
+                    name="securityToken.id"
+                    value={whiteListingEntity?.securitytoken?.idRed}
                     items={suggestedSecurityTokens.map((st: ISecurityToken) => ({ value: st.idRed }))}
-                    selectItem={() => ''}
-                    suggestItems={value => props.suggestSecurityTokens(value)}
+                    selectItem={handleSelectSecurityToken}
+                    suggestItems={value => props.suggestSecurityTokens(value, user.id)}
                   />
                 </AvGroup>
               </Row>
@@ -120,7 +144,7 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                 <span className="d-none d-md-inline">Back</span>
               </Button>
               &nbsp;
-              <Button color="primary" id="save-entity" type="submit" disabled={updating}>
+              <Button color="primary" id="save-entity" type="submit">
                 <FontAwesomeIcon icon="save" />
                 &nbsp; Save
               </Button>

@@ -1,22 +1,35 @@
 import React from 'react';
 import Downshift from 'downshift';
 import { Alert } from 'reactstrap';
+import { AvForm, AvInput } from 'availity-reactstrap-validation';
 
 export interface AutoCompleteProps {
   name: string;
-  value: number;
-  items: [];
-  selectItem: () => any;
+  value: string;
+  items: { [value: string]: string }[];
+  selectItem: (value: any) => any;
   suggestItems: (value: string) => any;
 }
 
-export const AutoComplete = ({ name, value, items, selectItem, suggestItems }: AutoCompleteProps) => {
+export const AutoComplete = ({ value, items, selectItem, suggestItems }: AutoCompleteProps) => {
   return (
-    <Downshift onChange={selectItem} itemToString={item => (item ? item.value : '')} onInputValueChange={suggestItems}>
+    <Downshift
+      initialInputValue={value}
+      onChange={selectItem}
+      itemToString={item => (item ? item.value : '')}
+      onInputValueChange={suggestItems}
+    >
       {({ getInputProps, getItemProps, getMenuProps, isOpen, inputValue, highlightedIndex, selectedItem, getRootProps }) => (
-        <div className="position-relative">
-          <div {...getRootProps({}, { suppressRefError: true })}>
-            <input name={name} className="form-control" {...getInputProps({ value })} required />
+        <AvForm className="position-relative">
+          <div {...getRootProps({ refKey: '' }, { suppressRefError: true })}>
+            <AvInput
+              name="any"
+              {...getInputProps()}
+              required
+              validate={{
+                required: { value: true, errorMessage: 'This field is required.' }
+              }}
+            />
           </div>
           <div {...getMenuProps()} className="position-absolute w-100" style={{ zIndex: 1 }}>
             {isOpen ? (
@@ -25,6 +38,7 @@ export const AutoComplete = ({ name, value, items, selectItem, suggestItems }: A
                   .filter(item => !inputValue || item.value?.includes(inputValue))
                   .map((item, index) => (
                     <div
+                      className="border border-top-0 p-2"
                       key={index}
                       {...getItemProps({
                         index,
@@ -45,7 +59,7 @@ export const AutoComplete = ({ name, value, items, selectItem, suggestItems }: A
               )
             ) : null}
           </div>
-        </div>
+        </AvForm>
       )}
     </Downshift>
   );

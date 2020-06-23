@@ -17,6 +17,8 @@ import reducer, {
 } from 'app/entities/white-listing/white-listing.reducer';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 import { IWhiteListing, defaultValue } from 'app/shared/model/white-listing.model';
+import { IUser } from 'app/shared/model/user.model';
+import { ISecurityToken } from 'app/shared/model/security-token.model';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {
@@ -34,7 +36,9 @@ describe('Entities reducer tests', () => {
     entity: defaultValue,
     totalItems: 0,
     updating: false,
-    updateSuccess: false
+    updateSuccess: false,
+    suggestedUsers: [] as Array<IUser>,
+    suggestedSecurityTokens: [] as Array<ISecurityToken>
   };
 
   function testInitialState(state) {
@@ -141,6 +145,7 @@ describe('Entities reducer tests', () => {
       ).toEqual({
         ...initialState,
         loading: false,
+        entity: {},
         totalItems: payload.headers['x-total-count'],
         entities: payload.data
       });
@@ -155,6 +160,7 @@ describe('Entities reducer tests', () => {
       ).toEqual({
         ...initialState,
         loading: false,
+        entity: {},
         totalItems: payload.headers['x-total-count'],
         entities: payload.data
       });
@@ -185,7 +191,7 @@ describe('Entities reducer tests', () => {
         ...initialState,
         updating: false,
         updateSuccess: true,
-        entity: payload.data
+        entity: {}
       });
     });
 
