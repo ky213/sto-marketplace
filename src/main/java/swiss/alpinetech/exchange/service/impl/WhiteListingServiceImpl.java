@@ -61,6 +61,8 @@ public class WhiteListingServiceImpl implements WhiteListingService {
     @Override
     public WhiteListing save(WhiteListing whiteListing) {
         log.debug("Request to save WhiteListing : {}", whiteListing);
+        User user = this.userRepository.findById(whiteListing.getUser().getId()).get();
+        whiteListing.setCustomerName(""+ user.getFirstName() +" "+ user.getLastName()+"");
         WhiteListing result = whiteListingRepository.save(whiteListing);
         whiteListingSearchRepository.save(result);
         return result;
