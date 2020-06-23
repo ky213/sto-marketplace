@@ -113,6 +113,28 @@ public class WhiteListingResource {
     }
 
     /**
+     * {@code PUT  /white-listings} : Updates an existing whiteListing.
+     *
+     * @param whiteListing the whiteListing to update.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the updated whiteListing,
+     * or with status {@code 400 (Bad Request)} if the whiteListing is not valid,
+     * or with status {@code 500 (Internal Server Error)} if the whiteListing couldn't be updated.
+     * @throws URISyntaxException if the Location URI syntax is incorrect.
+     */
+    @PutMapping("/update-white-listings")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
+    public ResponseEntity<WhiteListing> updateWhiteListings(@Valid @RequestBody WhiteListing whiteListing) throws URISyntaxException {
+        log.debug("REST request to update WhiteListing : {}", whiteListing);
+        if (whiteListing.getId() == null) {
+            throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        WhiteListing result = whiteListingService.update(whiteListing);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityUpdateAlert(applicationName, false, ENTITY_NAME, whiteListing.getId().toString()))
+            .body(result);
+    }
+
+    /**
      * {@code GET  /white-listings} : get all the whiteListings.
      *
      * @param pageable the pagination information.
