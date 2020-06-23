@@ -5,6 +5,10 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IWhiteListing, defaultValue } from 'app/shared/model/white-listing.model';
+import { IUser } from 'app/shared/model/user.model.model';
+import { ISecurityToken } from 'app/shared/model/security-token.model.model.model';
+import { IUser, IUser } from 'app/shared/model/user.model';
+import { ISecurityToken, ISecurityToken } from 'app/shared/model/security-token.model';
 
 export const ACTION_TYPES = {
   SEARCH_WHITELISTINGS: 'whiteListing/SEARCH_WHITELISTINGS',
@@ -13,6 +17,8 @@ export const ACTION_TYPES = {
   CREATE_WHITELISTING: 'whiteListing/CREATE_WHITELISTING',
   UPDATE_WHITELISTING: 'whiteListing/UPDATE_WHITELISTING',
   DELETE_WHITELISTING: 'whiteListing/DELETE_WHITELISTING',
+  SUGGEST_USERS: 'whiteListing/SUGGEST_USERS',
+  SUGGEST_SECURITY_TOKENS: 'whiteListing/SUGGEST_SECURITY_TOKENS',
   RESET: 'whiteListing/RESET'
 };
 
@@ -23,7 +29,9 @@ const initialState = {
   entity: defaultValue,
   updating: false,
   totalItems: 0,
-  updateSuccess: false
+  updateSuccess: false,
+  suggestedUsers: [] as IUser,
+  suggestedSecurityTokens: [] as ISecurityToken
 };
 
 export type WhiteListingState = Readonly<typeof initialState>;
@@ -35,6 +43,8 @@ export default (state: WhiteListingState = initialState, action): WhiteListingSt
     case REQUEST(ACTION_TYPES.SEARCH_WHITELISTINGS):
     case REQUEST(ACTION_TYPES.FETCH_WHITELISTING_LIST):
     case REQUEST(ACTION_TYPES.FETCH_WHITELISTING):
+    case REQUEST(ACTION_TYPES.SUGGEST_USERS):
+    case REQUEST(ACTION_TYPES.SUGGEST_SECURITY_TOKENS):
       return {
         ...state,
         errorMessage: null,
@@ -56,6 +66,8 @@ export default (state: WhiteListingState = initialState, action): WhiteListingSt
     case FAILURE(ACTION_TYPES.CREATE_WHITELISTING):
     case FAILURE(ACTION_TYPES.UPDATE_WHITELISTING):
     case FAILURE(ACTION_TYPES.DELETE_WHITELISTING):
+    case FAILURE(ACTION_TYPES.SUGGEST_USERS):
+    case FAILURE(ACTION_TYPES.SUGGEST_SECURITY_TOKENS):
       return {
         ...state,
         loading: false,
@@ -76,6 +88,18 @@ export default (state: WhiteListingState = initialState, action): WhiteListingSt
         ...state,
         loading: false,
         entity: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.SUGGEST_USERS):
+      return {
+        ...state,
+        loading: false,
+        suggestedUsers: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.SUGGEST_SECURITY_TOKENS):
+      return {
+        ...state,
+        loading: false,
+        suggestedSecurityTokens: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.CREATE_WHITELISTING):
     case SUCCESS(ACTION_TYPES.UPDATE_WHITELISTING):
@@ -112,6 +136,24 @@ export const getSearchEntities: any = (query, page, size, sort, userId) => {
   return {
     type: ACTION_TYPES.SEARCH_WHITELISTINGS,
     payload: axios.get<IWhiteListing>(`${url}?query=${query}&userId=${userId}${sort ? `&page=${page}&size=${size}` : ''}`)
+  };
+};
+
+export const suggestUsers: any = (query: string, securityTokenId: number) => {
+  const url = `/api/_search-autocomplete/users`;
+
+  return {
+    type: ACTION_TYPES.SUGGEST_USERS,
+    payload: axios.get<IUser>(`${url}?query=${query}&securityTokenId=${securityTokenId || ''}`)
+  };
+};
+
+export const suggestSecurityTokens: any = (query: string, userId: number) => {
+  const url = `/api/_search-autocomplete/security-tokens`;
+
+  return {
+    type: ACTION_TYPES.SUGGEST_SECURITY_TOKENS,
+    payload: axios.get<ISecurityToken>(`${url}?query=${query}&userId=${userId || ''}`)
   };
 };
 

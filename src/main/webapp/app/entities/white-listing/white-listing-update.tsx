@@ -8,16 +8,18 @@ import { IRootState } from 'app/shared/reducers';
 
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
 import { getEntities as getSecurityTokens } from 'app/entities/security-token/security-token.reducer';
-import { getEntity, updateEntity, createEntity, reset } from './white-listing.reducer';
+import { getEntity, updateEntity, createEntity, suggestUsers, suggestSecurityTokens, reset } from './white-listing.reducer';
 import { convertDateTimeToServer } from 'app/shared/util/date-utils';
 import { AutoComplete } from 'app/shared/components/AutoComplete';
+import { IUser } from 'app/shared/model/user.model';
+import { ISecurityToken } from 'app/shared/model/security-token.model';
 
 export interface IWhiteListingUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
 
-  const { whiteListingEntity, users, securityTokens, loading, updating } = props;
+  const { whiteListingEntity, loading, updating, suggestedUsers, suggestedSecurityTokens } = props;
 
   const handleClose = () => {
     props.history.push('/white-listing' + props.location.search);
@@ -29,9 +31,6 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
     } else {
       props.getEntity(props.match.params.id);
     }
-
-    props.getUsers();
-    props.getSecurityTokens();
   }, []);
 
   useEffect(() => {
@@ -48,7 +47,7 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
       const entity = {
         ...whiteListingEntity,
         user: { id: +values.user.id },
-        securitytoken: { ...securityTokens.find(st => st.id === +values.securityToken.id) },
+        securitytoken: {},
         active: values.active
       };
 
@@ -85,9 +84,9 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                   <AutoComplete
                     name="user.id"
                     value={whiteListingEntity?.user?.id}
-                    items={[]}
+                    items={suggestedUsers.map((user: IUser) => ({ value: user.login }))}
                     selectItem={() => ''}
-                    suggestItems={() => ''}
+                    suggestItems={value => props.suggestUsers(value)}
                   />
                 </AvGroup>
                 <AvGroup className="col-md-6">
@@ -95,9 +94,9 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                   <AutoComplete
                     name="user.id"
                     value={whiteListingEntity?.securitytoken?.id}
-                    items={[]}
+                    items={suggestedSecurityTokens.map((st: ISecurityToken) => ({ value: st.idRed }))}
                     selectItem={() => ''}
-                    suggestItems={() => ''}
+                    suggestItems={value => props.suggestSecurityTokens(value)}
                   />
                 </AvGroup>
               </Row>
@@ -139,7 +138,9 @@ const mapStateToProps = (storeState: IRootState) => ({
   whiteListingEntity: storeState.whiteListing.entity,
   loading: storeState.whiteListing.loading,
   updating: storeState.whiteListing.updating,
-  updateSuccess: storeState.whiteListing.updateSuccess
+  updateSuccess: storeState.whiteListing.updateSuccess,
+  suggestedUsers: storeState.whiteListing.suggestedUsers,
+  suggestedSecurityTokens: storeState.whiteListing.suggestedSecurityTokens
 });
 
 const mapDispatchToProps = {
@@ -148,6 +149,8 @@ const mapDispatchToProps = {
   getEntity,
   updateEntity,
   createEntity,
+  suggestUsers,
+  suggestSecurityTokens,
   reset
 };
 

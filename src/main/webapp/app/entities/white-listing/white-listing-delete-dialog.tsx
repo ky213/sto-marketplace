@@ -27,7 +27,7 @@ export const WhiteListingDeleteDialog = (props: IWhiteListingDeleteDialogProps) 
   }, [props.updateSuccess]);
 
   const confirmDelete = () => {
-    props.deleteEntity(props.whiteListingEntity.id);
+    props.deleteEntity(+props.match.params.id);
   };
 
   const { whiteListingEntity } = props;
