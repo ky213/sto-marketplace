@@ -1,19 +1,23 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
-import { Row, Col, Card, CardHeader, CardBody } from 'reactstrap';
+import { RouteComponentProps, Link } from 'react-router-dom';
+import { Row, Col, Card, Button, CardBody } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntities } from './bank-info.reducer';
 import moment from 'moment';
+import { AUTHORITIES } from 'app/config/constants';
 
 export interface IBankInfoDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
-export const BankInfoDetail = ({ getBanks, bankInfoEntities, loading, match }: IBankInfoDetailProps) => {
+export const BankInfoDetail = ({ getBanks, bankInfoEntities, loading, account }: IBankInfoDetailProps) => {
   const bank = bankInfoEntities[0];
+  const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
+  const isBank = account.authorities.includes(AUTHORITIES.BANK);
 
   useEffect(() => {
-    getBanks();
+    if (!bank) getBanks();
   }, []);
 
   return (
@@ -65,6 +69,11 @@ export const BankInfoDetail = ({ getBanks, bankInfoEntities, loading, match }: I
                   </Row>
                 </>
               )}
+              {(isAdmin || isBank) && (
+                <Button tag={Link} to={`/bank-info/${bank?.id}/edit`} replace color="primary">
+                  <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
+                </Button>
+              )}
             </CardBody>
           </Card>
         </Col>
@@ -73,9 +82,10 @@ export const BankInfoDetail = ({ getBanks, bankInfoEntities, loading, match }: I
   );
 };
 
-const mapStateToProps = ({ bankInfo }: IRootState) => ({
+const mapStateToProps = ({ bankInfo, authentication }: IRootState) => ({
   bankInfoEntities: bankInfo.entities,
-  loading: bankInfo.loading
+  loading: bankInfo.loading,
+  account: authentication.account
 });
 
 const mapDispatchToProps = { getBanks: getEntities };

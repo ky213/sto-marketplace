@@ -9,7 +9,7 @@ export interface AutoCompleteProps {
   items: { [value: string]: string }[];
   selectItem: (value: any) => any;
   suggestItems: (value: string) => any;
-  status: (value: A11yStatusMessageOptions<any>) => any;
+  status?: (value: A11yStatusMessageOptions<any>) => any;
 }
 
 export const AutoComplete = ({ initialValue, items, initialItem, selectItem, suggestItems, status }: AutoCompleteProps) => {

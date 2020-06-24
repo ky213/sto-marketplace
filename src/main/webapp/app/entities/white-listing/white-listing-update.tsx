@@ -59,8 +59,6 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
     setSecurityToken(selectedSecurityToken);
   };
 
-  const handleStatusChange = ({ selectedItem, inputValue }) => {};
-
   const saveEntity = (event, errors, values) => {
     if (user.id && securityToken.id) {
       const entity = {
@@ -114,7 +112,6 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                     items={suggestedUsers.map((usr: IUser) => ({ value: usr.login }))}
                     selectItem={handleSelectUser}
                     suggestItems={value => props.suggestUsers(value, securityToken.id)}
-                    status={handleStatusChange}
                   />
                 </AvGroup>
                 <AvGroup className="col-md-6">
@@ -125,7 +122,6 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                     items={suggestedSecurityTokens.map((st: ISecurityToken) => ({ value: st.idRed }))}
                     selectItem={handleSelectSecurityToken}
                     suggestItems={value => props.suggestSecurityTokens(value, user.id)}
-                    status={handleStatusChange}
                   />
                 </AvGroup>
               </Row>
