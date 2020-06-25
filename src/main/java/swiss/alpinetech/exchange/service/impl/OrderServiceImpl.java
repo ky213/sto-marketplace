@@ -2,6 +2,7 @@ package swiss.alpinetech.exchange.service.impl;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.PageImpl;
@@ -13,6 +14,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import swiss.alpinetech.exchange.domain.SecurityToken;
 import swiss.alpinetech.exchange.domain.User;
+import swiss.alpinetech.exchange.domain.enumeration.ACTIONTYPE;
 import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 import swiss.alpinetech.exchange.repository.SecurityTokenRepository;
 import swiss.alpinetech.exchange.repository.UserRepository;
@@ -28,6 +30,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import swiss.alpinetech.exchange.service.SecurityTokenService;
 import swiss.alpinetech.exchange.util.ExcelGenerator;
 
 import java.io.*;
@@ -61,6 +64,9 @@ public class OrderServiceImpl implements OrderService {private final Logger log 
 
     @Autowired
     private SecurityTokenRepository securityTokenRepository;
+
+    @Autowired
+    private SecurityTokenService securityTokenService;
 
     @Autowired
     JmsTemplate jmsTemplate;
@@ -106,6 +112,13 @@ public class OrderServiceImpl implements OrderService {private final Logger log 
         String formattedString = ZonedDateTime.now().format(formatter);
         User user = this.userRepository.findOneByLogin(authentication.getName()).get();
         SecurityToken securityToken = this.securityTokenRepository.findById(order.getSecurityToken().getId()).get();
+        if(order.getType().name().equals(ACTIONTYPE.BUY)) {
+            securityToken.setLastBuyingPrice(order.getPrice());
+        }
+        if(order.getType().name().equals(ACTIONTYPE.SELL)) {
+            securityToken.setLastSellingprice(order.getPrice());
+        }
+        SecurityToken newSecurityToken = this.securityTokenService.save(securityToken);
         order.setUser(user);
         order.setSecurityToken(securityToken);
         order.setCategoryToken(order.getSecurityToken().getCategory());
@@ -118,7 +131,14 @@ public class OrderServiceImpl implements OrderService {private final Logger log 
         order.setUpdateBy(authentication.getName());
         Order result = orderRepository.save(order);
         orderSearchRepository.save(result);
-        this.messagingTemplate.convertAndSend("/topic/tracker", result);
+        JSONObject orderJSON = new JSONObject();
+        JSONObject securityTokenJSON = new JSONObject();
+        orderJSON.put("type", "Order");
+        orderJSON.put("id_order", result.getId());
+        securityTokenJSON.put("type", "SecurityToken");
+        securityTokenJSON.put("id_securityToken", newSecurityToken.getId());
+        this.messagingTemplate.convertAndSend("/topic/tracker", orderJSON.toString());
+        this.messagingTemplate.convertAndSend("/topic/tracker", securityTokenJSON.toString());
         this.jmsTemplate.convertAndSend("inbound.order.topic", result);
         return result;
     }
