@@ -161,9 +161,7 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     public List<SecurityToken> searchForWhiteListing(String query, Long userId) {
         log.debug("Request to search security tokens for query {} for whiteListing autocomplete", query);
         if (userId == null) {
-            List<SecurityToken> securityTokenList = IteratorUtils.toList(securityTokenSearchRepository.search(queryStringQuery(query)
-                .fuzziness(Fuzziness.ONE)
-                .fuzzyPrefixLength(2))
+            List<SecurityToken> securityTokenList = IteratorUtils.toList(securityTokenSearchRepository.search(queryStringQuery(query+"*").field("name"))
                 .iterator());
             return securityTokenList;
         }
@@ -173,9 +171,7 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
             .map(wl -> wl.getSecuritytoken().getId())
             .collect(Collectors.toList());
 
-        List<SecurityToken> securityTokenList = IteratorUtils.toList(securityTokenSearchRepository.search(queryStringQuery(query)
-            .fuzziness(Fuzziness.ONE)
-            .fuzzyPrefixLength(2))
+        List<SecurityToken> securityTokenList = IteratorUtils.toList(securityTokenSearchRepository.search(queryStringQuery(query+"*").field("name"))
             .iterator())
             .stream()
             .filter(st -> !securityTokensPermitted.contains(st.getId()))
