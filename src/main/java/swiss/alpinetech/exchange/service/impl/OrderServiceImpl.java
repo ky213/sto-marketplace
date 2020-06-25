@@ -2,7 +2,6 @@ package swiss.alpinetech.exchange.service.impl;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.PageImpl;
@@ -112,15 +111,15 @@ public class OrderServiceImpl implements OrderService {private final Logger log 
         String formattedString = ZonedDateTime.now().format(formatter);
         User user = this.userRepository.findOneByLogin(authentication.getName()).get();
         SecurityToken securityToken = this.securityTokenRepository.findById(order.getSecurityToken().getId()).get();
-        if(order.getType().name().equals(ACTIONTYPE.BUY)) {
+        if(order.getType().name().equals(ACTIONTYPE.BUY.name())) {
             securityToken.setLastBuyingPrice(order.getPrice());
         }
-        if(order.getType().name().equals(ACTIONTYPE.SELL)) {
+        if(order.getType().name().equals(ACTIONTYPE.SELL.name())) {
             securityToken.setLastSellingprice(order.getPrice());
         }
         SecurityToken newSecurityToken = this.securityTokenService.save(securityToken);
         order.setUser(user);
-        order.setSecurityToken(securityToken);
+        order.setSecurityToken(newSecurityToken);
         order.setCategoryToken(order.getSecurityToken().getCategory());
         order.setActive(true);
         order.setIdOrder(""+order.getSecurityToken().getSymbol()+""+formattedString);
@@ -131,14 +130,7 @@ public class OrderServiceImpl implements OrderService {private final Logger log 
         order.setUpdateBy(authentication.getName());
         Order result = orderRepository.save(order);
         orderSearchRepository.save(result);
-        JSONObject orderJSON = new JSONObject();
-        JSONObject securityTokenJSON = new JSONObject();
-        orderJSON.put("type", "Order");
-        orderJSON.put("id_order", result.getId());
-        securityTokenJSON.put("type", "SecurityToken");
-        securityTokenJSON.put("id_securityToken", newSecurityToken.getId());
-        this.messagingTemplate.convertAndSend("/topic/tracker", orderJSON.toString());
-        this.messagingTemplate.convertAndSend("/topic/tracker", securityTokenJSON.toString());
+        this.messagingTemplate.convertAndSend("/topic/tracker", result);
         this.jmsTemplate.convertAndSend("inbound.order.topic", result);
         return result;
     }
