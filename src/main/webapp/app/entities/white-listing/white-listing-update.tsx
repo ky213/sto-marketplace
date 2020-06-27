@@ -48,19 +48,19 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
   }, [props.updateSuccess]);
 
   const handleSelectUser = (login: { [value: string]: string }) => {
-    const selectedUser = suggestedUsers.find((suggestedUser: IUser) => suggestedUser.login === login.value);
+    const selectedUser = suggestedUsers.find((suggestedUser: IUser) => suggestedUser.login === login?.value?.trim());
 
     setUser(selectedUser);
   };
 
   const handleSelectSecurityToken = (idRed: { [value: string]: string }) => {
-    const selectedSecurityToken = suggestedSecurityTokens.find((st: ISecurityToken) => st.idRed === idRed.value);
+    const selectedSecurityToken = suggestedSecurityTokens.find((st: ISecurityToken) => st.idRed === idRed?.value?.trim());
 
     setSecurityToken(selectedSecurityToken);
   };
 
   const saveEntity = (event, errors, values) => {
-    if (user.id && securityToken.id) {
+    if (user?.id && securityToken?.id) {
       const entity = {
         ...whiteListingEntity,
         user: { id: +user.id },
@@ -107,11 +107,11 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                 <AvGroup className="col-md-6">
                   <Label for="white-listing-user">User</Label>
                   <AutoComplete
-                    initialValue={whiteListingEntity?.user?.login}
                     initialItem={{ value: user?.login }}
+                    initialValue={whiteListingEntity?.user?.login}
                     items={suggestedUsers.map((usr: IUser) => ({ value: usr.login }))}
                     selectItem={handleSelectUser}
-                    suggestItems={value => props.suggestUsers(value, securityToken.id)}
+                    suggestItems={value => props.suggestUsers(value, securityToken?.id)}
                   />
                 </AvGroup>
                 <AvGroup className="col-md-6">
@@ -121,7 +121,7 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                     initialValue={whiteListingEntity?.securitytoken?.idRed}
                     items={suggestedSecurityTokens.map((st: ISecurityToken) => ({ value: st.idRed }))}
                     selectItem={handleSelectSecurityToken}
-                    suggestItems={value => props.suggestSecurityTokens(value, user.id)}
+                    suggestItems={value => props.suggestSecurityTokens(value, user?.id)}
                   />
                 </AvGroup>
               </Row>

@@ -26,15 +26,15 @@ export const AutoComplete = ({ initialValue, items, initialItem, selectItem, sug
         <AvForm className="position-relative">
           <div {...getRootProps({ refKey: '' }, { suppressRefError: true })}>
             <AvInput
-              name="any"
               {...getInputProps()}
+              name="any"
               required
               validate={{
                 required: { value: true, errorMessage: 'This field is required.' }
               }}
             />
           </div>
-          <div {...getMenuProps()} className="position-absolute w-100" style={{ zIndex: 1 }}>
+          <div {...getMenuProps()} className="position-absolute w-100" style={{ zIndex: 1, maxHeight: '200px', overflow: 'scroll' }}>
             {isOpen ? (
               items.length ? (
                 items
