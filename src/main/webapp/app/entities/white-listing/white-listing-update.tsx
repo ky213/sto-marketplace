@@ -48,13 +48,13 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
   }, [props.updateSuccess]);
 
   const handleSelectUser = (login: { [value: string]: string }) => {
-    const selectedUser = suggestedUsers.find((suggestedUser: IUser) => suggestedUser.login === login?.value?.trim());
+    const selectedUser = suggestedUsers.find((suggestedUser: IUser) => suggestedUser.login.trim() === login?.value?.trim());
 
     setUser(selectedUser);
   };
 
   const handleSelectSecurityToken = (idRed: { [value: string]: string }) => {
-    const selectedSecurityToken = suggestedSecurityTokens.find((st: ISecurityToken) => st.idRed === idRed?.value?.trim());
+    const selectedSecurityToken = suggestedSecurityTokens.find((st: ISecurityToken) => st.idRed.trim() === idRed?.value?.trim());
 
     setSecurityToken(selectedSecurityToken);
   };
