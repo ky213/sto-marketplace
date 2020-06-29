@@ -2,32 +2,25 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, Label, Card } from 'reactstrap';
-import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
-import { ICrudGetAction, ICrudGetAllAction, ICrudPutAction } from 'react-jhipster';
+import { AvForm, AvGroup, AvInput } from 'availity-reactstrap-validation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
-import { IUser } from 'app/shared/model/user.model';
 import { getUsers } from 'app/modules/administration/user-management/user-management.reducer';
-import { ISecurityToken } from 'app/shared/model/security-token.model';
 import { getEntities as getSecurityTokens } from 'app/entities/security-token/security-token.reducer';
-import { getEntity, updateEntity, createEntity, reset } from './white-listing.reducer';
-import { IWhiteListing } from 'app/shared/model/white-listing.model';
-import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
+import { getEntity, updateEntity, createEntity, suggestUsers, suggestSecurityTokens, reset } from './white-listing.reducer';
+import { AutoComplete } from 'app/shared/components/AutoComplete';
+import { IUser } from 'app/shared/model/user.model';
+import { ISecurityToken } from 'app/shared/model/security-token.model';
+import { A11yStatusMessageOptions } from 'downshift';
 
 export interface IWhiteListingUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
-  const [userId, setUserId] = useState('0');
-  const [securitytokenId, setSecuritytokenId] = useState('0');
+  const { whiteListingEntity, loading, suggestedUsers, suggestedSecurityTokens } = props;
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
-
-  const { whiteListingEntity, users, securityTokens, loading, updating } = props;
-
-  const handleClose = () => {
-    props.history.push('/white-listing' + props.location.search);
-  };
+  const [user, setUser] = useState<IUser>({});
+  const [securityToken, setSecurityToken] = useState<ISecurityToken>({});
 
   useEffect(() => {
     if (isNew) {
@@ -35,10 +28,18 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
     } else {
       props.getEntity(props.match.params.id);
     }
-
-    props.getUsers();
-    props.getSecurityTokens();
   }, []);
+
+  useEffect(() => {
+    if (!isNew) {
+      setUser(whiteListingEntity.user);
+      setSecurityToken(whiteListingEntity.securitytoken);
+    }
+  }, [whiteListingEntity]);
+
+  const handleClose = () => {
+    props.history.push('/white-listing' + props.location.search);
+  };
 
   useEffect(() => {
     if (props.updateSuccess) {
@@ -46,15 +47,24 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
     }
   }, [props.updateSuccess]);
 
-  const saveEntity = (event, errors, values) => {
-    values.dateEvent = convertDateTimeToServer(values.dateEvent);
-    values.dateSynchBlk = convertDateTimeToServer(values.dateSynchBlk);
+  const handleSelectUser = (login: { [value: string]: string }) => {
+    const selectedUser = suggestedUsers.find((suggestedUser: IUser) => suggestedUser.login.trim() === login?.value?.trim());
 
-    if (errors.length === 0) {
+    setUser(selectedUser);
+  };
+
+  const handleSelectSecurityToken = (idRed: { [value: string]: string }) => {
+    const selectedSecurityToken = suggestedSecurityTokens.find((st: ISecurityToken) => st.idRed.trim() === idRed?.value?.trim());
+
+    setSecurityToken(selectedSecurityToken);
+  };
+
+  const saveEntity = (event, errors, values) => {
+    if (user?.id && securityToken?.id) {
       const entity = {
         ...whiteListingEntity,
-        user: { id: +values.user.id },
-        securitytoken: { ...securityTokens.find(st => st.id === +values.securityToken.id) },
+        user: { id: +user.id },
+        securitytoken: securityToken,
         active: values.active
       };
 
@@ -75,152 +85,44 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
       </Row>
       <Row className="justify-content-center">
         <Col md="8">
-          {loading ? (
+          {loading && !isNew ? (
             <p>Loading...</p>
           ) : (
-            <AvForm model={isNew ? {} : whiteListingEntity} onSubmit={saveEntity}>
+            <AvForm onSubmit={saveEntity}>
               {!isNew ? (
                 <AvGroup>
                   <Label for="white-listing-id">ID</Label>
-                  <AvInput id="white-listing-id" type="text" className="form-control" name="id" required readOnly />
+                  <AvInput
+                    id="white-listing-id"
+                    type="text"
+                    className="form-control"
+                    name="id"
+                    value={whiteListingEntity.id}
+                    required
+                    readOnly
+                  />
                 </AvGroup>
               ) : null}
-              {/* <Row>
-                <AvGroup className="col-md-6">
-                  <Label id="statusLabel" for="white-listing-status">
-                    Status
-                  </Label>
-                  <AvInput
-                    id="white-listing-status"
-                    type="select"
-                    className="form-control"
-                    name="status"
-                    value={(!isNew && whiteListingEntity.status) || 'NONE'}
-                  >
-                    <option value="NONE">NONE</option>
-                    <option value="INIT">INIT</option>
-                    <option value="PENDING">PENDING</option>
-                    <option value="SUCCESS">SUCCESS</option>
-                    <option value="FAIL">FAIL</option>
-                    <option value="REMOVE">REMOVE</option>
-                  </AvInput>
-                </AvGroup>
-              </Row>
-              <Row>
-                <AvGroup className="col-md-6">
-                  <Label id="dateEventLabel" for="white-listing-dateEvent">
-                    Date Event
-                  </Label>
-                  <AvInput
-                    id="white-listing-dateEvent"
-                    type="datetime-local"
-                    className="form-control"
-                    name="dateEvent"
-                    placeholder={'YYYY-MM-DD HH:mm'}
-                    value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.whiteListingEntity.dateEvent)}
-                    validate={{
-                      required: { value: true, errorMessage: 'This field is required.' }
-                    }}
-                  />
-                </AvGroup>
-                <AvGroup className="col-md-6">
-                  <Label id="dateSynchBlkLabel" for="white-listing-dateSynchBlk">
-                    Date Synch Blk
-                  </Label>
-                  <AvInput
-                    id="white-listing-dateSynchBlk"
-                    type="datetime-local"
-                    className="form-control"
-                    name="dateSynchBlk"
-                    placeholder={'YYYY-MM-DD HH:mm'}
-                    value={isNew ? displayDefaultDateTime() : convertDateTimeFromServer(props.whiteListingEntity.dateSynchBlk)}
-                  />
-                </AvGroup>
-              </Row>
-              <Row>
-                <AvGroup className="col-md-6">
-                  <Label id="stNameLabel" for="white-listing-stName">
-                    St Name
-                  </Label>
-                  <AvField
-                    id="white-listing-stName"
-                    type="text"
-                    name="stName"
-                    validate={{
-                      required: { value: true, errorMessage: 'This field is required.' }
-                    }}
-                  />
-                </AvGroup>
-                <AvGroup className="col-md-6">
-                  <Label id="ethAddressLabel" for="white-listing-ethAddress">
-                    Eth Address
-                  </Label>
-                  <AvField id="white-listing-ethAddress" type="text" name="ethAddress" />
-                </AvGroup>
-              </Row>
-              <Row>
-                <AvGroup className="col-md-6">
-                  <Label id="customerNameLabel" for="white-listing-customerName">
-                    Customer Name
-                  </Label>
-                  <AvField
-                    id="white-listing-customerName"
-                    type="text"
-                    name="customerName"
-                    validate={{
-                      required: { value: true, errorMessage: 'This field is required.' }
-                    }}
-                  />
-                </AvGroup>
-                <AvGroup className="col-md-6">
-                  <Label id="balanceLabel" for="white-listing-balance">
-                    Balance
-                  </Label>
-                  <AvField id="white-listing-balance" type="string" className="form-control" name="balance" />
-                </AvGroup>
-              </Row> */}
               <Row>
                 <AvGroup className="col-md-6">
                   <Label for="white-listing-user">User</Label>
-                  <AvInput
-                    value={whiteListingEntity?.user?.id}
-                    id="white-listing-user"
-                    type="select"
-                    className="form-control"
-                    name="user.id"
-                    validate={{
-                      required: { value: true, errorMessage: 'This field is required.' }
-                    }}
-                  >
-                    {users
-                      ? users.map((otherEntity, index) => (
-                          <option key={index} value={otherEntity.id}>
-                            {otherEntity.id}
-                          </option>
-                        ))
-                      : null}
-                  </AvInput>
+                  <AutoComplete
+                    initialItem={{ value: user?.login }}
+                    initialValue={whiteListingEntity?.user?.login}
+                    items={suggestedUsers.map((usr: IUser) => ({ value: usr.login }))}
+                    selectItem={handleSelectUser}
+                    suggestItems={value => props.suggestUsers(value, securityToken?.id)}
+                  />
                 </AvGroup>
                 <AvGroup className="col-md-6">
                   <Label for="white-listing-securitytoken">Security token</Label>
-                  <AvInput
-                    value={whiteListingEntity?.securitytoken?.id}
-                    id="white-listing-securitytoken"
-                    type="select"
-                    className="form-control"
-                    name="securityToken.id"
-                    validate={{
-                      required: { value: true, errorMessage: 'This field is required.' }
-                    }}
-                  >
-                    {securityTokens
-                      ? securityTokens.map(otherEntity => (
-                          <option value={otherEntity.id} key={otherEntity.id}>
-                            {otherEntity.id}
-                          </option>
-                        ))
-                      : null}
-                  </AvInput>
+                  <AutoComplete
+                    initialItem={{ value: securityToken?.idRed }}
+                    initialValue={whiteListingEntity?.securitytoken?.idRed}
+                    items={suggestedSecurityTokens.map((st: ISecurityToken) => ({ value: st.idRed }))}
+                    selectItem={handleSelectSecurityToken}
+                    suggestItems={value => props.suggestSecurityTokens(value, user?.id)}
+                  />
                 </AvGroup>
               </Row>
               <Row>
@@ -243,7 +145,7 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                 <span className="d-none d-md-inline">Back</span>
               </Button>
               &nbsp;
-              <Button color="primary" id="save-entity" type="submit" disabled={updating}>
+              <Button color="primary" id="save-entity" type="submit">
                 <FontAwesomeIcon icon="save" />
                 &nbsp; Save
               </Button>
@@ -261,7 +163,9 @@ const mapStateToProps = (storeState: IRootState) => ({
   whiteListingEntity: storeState.whiteListing.entity,
   loading: storeState.whiteListing.loading,
   updating: storeState.whiteListing.updating,
-  updateSuccess: storeState.whiteListing.updateSuccess
+  updateSuccess: storeState.whiteListing.updateSuccess,
+  suggestedUsers: storeState.whiteListing.suggestedUsers,
+  suggestedSecurityTokens: storeState.whiteListing.suggestedSecurityTokens
 });
 
 const mapDispatchToProps = {
@@ -270,6 +174,8 @@ const mapDispatchToProps = {
   getEntity,
   updateEntity,
   createEntity,
+  suggestUsers,
+  suggestSecurityTokens,
   reset
 };
 

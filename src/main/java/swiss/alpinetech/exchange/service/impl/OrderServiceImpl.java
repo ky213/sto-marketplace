@@ -13,6 +13,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import swiss.alpinetech.exchange.domain.SecurityToken;
 import swiss.alpinetech.exchange.domain.User;
+import swiss.alpinetech.exchange.domain.enumeration.ACTIONTYPE;
 import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 import swiss.alpinetech.exchange.repository.SecurityTokenRepository;
 import swiss.alpinetech.exchange.repository.UserRepository;
@@ -28,6 +29,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import swiss.alpinetech.exchange.service.SecurityTokenService;
 import swiss.alpinetech.exchange.util.ExcelGenerator;
 
 import java.io.*;
@@ -61,6 +63,9 @@ public class OrderServiceImpl implements OrderService {private final Logger log 
 
     @Autowired
     private SecurityTokenRepository securityTokenRepository;
+
+    @Autowired
+    private SecurityTokenService securityTokenService;
 
     @Autowired
     JmsTemplate jmsTemplate;
@@ -106,8 +111,15 @@ public class OrderServiceImpl implements OrderService {private final Logger log 
         String formattedString = ZonedDateTime.now().format(formatter);
         User user = this.userRepository.findOneByLogin(authentication.getName()).get();
         SecurityToken securityToken = this.securityTokenRepository.findById(order.getSecurityToken().getId()).get();
+        if(order.getType().name().equals(ACTIONTYPE.BUY.name())) {
+            securityToken.setLastBuyingPrice(order.getPrice());
+        }
+        if(order.getType().name().equals(ACTIONTYPE.SELL.name())) {
+            securityToken.setLastSellingprice(order.getPrice());
+        }
+        SecurityToken newSecurityToken = this.securityTokenService.save(securityToken);
         order.setUser(user);
-        order.setSecurityToken(securityToken);
+        order.setSecurityToken(newSecurityToken);
         order.setCategoryToken(order.getSecurityToken().getCategory());
         order.setActive(true);
         order.setIdOrder(""+order.getSecurityToken().getSymbol()+""+formattedString);

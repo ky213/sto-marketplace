@@ -66,6 +66,22 @@ public class WhiteListingServiceImpl implements WhiteListingService {
         return result;
     }
 
+    /**
+     * Save a whiteListing.
+     *
+     * @param whiteListing the entity to save.
+     * @return the persisted entity.
+     */
+    @Override
+    public WhiteListing update(WhiteListing whiteListing) {
+        log.debug("Request to update WhiteListing : {}", whiteListing);
+        User user = this.userRepository.findById(whiteListing.getUser().getId()).get();
+        whiteListing.setCustomerName(""+ user.getFirstName() +" "+ user.getLastName()+"");
+        WhiteListing result = whiteListingRepository.save(whiteListing);
+        whiteListingSearchRepository.save(result);
+        return result;
+    }
+
     @Override
     public WhiteListing create(WhiteListing whiteListing) {
         log.debug("Request to create WhiteListing : {}", whiteListing);

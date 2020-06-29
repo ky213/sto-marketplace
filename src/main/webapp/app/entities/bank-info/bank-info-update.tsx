@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, Row, Col, Label, Card, CardHeader, CardBody, CardFooter, NavLink } from 'reactstrap';
-import { AvFeedback, AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
-import { ICrudGetAction, ICrudGetAllAction, setFileData, openFile, byteSize, ICrudPutAction } from 'react-jhipster';
+import { RouteComponentProps } from 'react-router-dom';
+import { Button, Row, Col, Label, Card, CardHeader, CardBody } from 'reactstrap';
+import { AvForm, AvGroup, AvInput, AvField } from 'availity-reactstrap-validation';
+import { setFileData, openFile, byteSize } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 
-import { getEntity, updateEntity, createEntity, setBlob, reset } from './bank-info.reducer';
-import { IBankInfo } from 'app/shared/model/bank-info.model';
-import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
-import { mapIdList } from 'app/shared/util/entity-utils';
-import moment from 'moment';
+import { getEntity, getEntities, updateEntity, createEntity, setBlob, reset } from './bank-info.reducer';
 
 export interface IBankInfoUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -20,7 +16,7 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
   const { bank, loading, updating, match } = props;
 
   const handleClose = () => {
-    if (bank && bank.id) props.history.replace(`/bank-info/${bank.id}/edit`);
+    if (bank && bank.id) props.history.push(`/bank-info/${bank.id}`);
   };
 
   useEffect(() => {
@@ -41,6 +37,7 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
 
   useEffect(() => {
     if (props.updateSuccess) {
+      props.getEntities();
       handleClose();
     }
   }, [props.updateSuccess]);
@@ -232,6 +229,7 @@ const mapStateToProps = (storeState: IRootState) => ({
 
 const mapDispatchToProps = {
   getEntity,
+  getEntities,
   updateEntity,
   setBlob,
   createEntity,

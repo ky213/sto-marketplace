@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { ISecurityToken, defaultValue } from 'app/shared/model/security-token.model';
+import { stat } from 'fs';
 
 export const ACTION_TYPES = {
   SEARCH_SECURITYTOKENS: 'securityToken/SEARCH_SECURITYTOKENS',
@@ -12,6 +13,7 @@ export const ACTION_TYPES = {
   FETCH_SECURITYTOKEN: 'securityToken/FETCH_SECURITYTOKEN',
   CREATE_SECURITYTOKEN: 'securityToken/CREATE_SECURITYTOKEN',
   UPDATE_SECURITYTOKEN: 'securityToken/UPDATE_SECURITYTOKEN',
+  UPDATE_SECURITYTOKEN_PRICE: 'securityToken/UPDATE_SECURITYTOKEN_PRICE',
   DELETE_SECURITYTOKEN: 'securityToken/DELETE_SECURITYTOKEN',
   SET_BLOB: 'securityToken/SET_BLOB',
   RESET: 'securityToken/RESET'
@@ -103,6 +105,20 @@ export default (state: SecurityTokenState = initialState, action): SecurityToken
           [name + 'ContentType']: contentType
         }
       };
+    }
+    case ACTION_TYPES.UPDATE_SECURITYTOKEN_PRICE: {
+      const newEntities = [...state.entities];
+      const newST = action.payload.securityToken;
+      const stIndex = state.entities.findIndex(st => st.id === newST.id);
+
+      if (stIndex !== -1) {
+        newEntities[stIndex].lastBuyingPrice = newST.lastBuyingPrice;
+        newEntities[stIndex].lastSellingprice = newST.lastSellingprice;
+
+        return { ...state, entities: newEntities };
+      }
+
+      return { ...state };
     }
     case ACTION_TYPES.RESET:
       return {

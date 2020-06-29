@@ -368,12 +368,12 @@ public class UserService {
 
     public List<UserDTO> standardSearch(String query) {
         if (this.currentUserIsAdmin()) {
-            return IteratorUtils.toList(userSearchRepository.search(queryStringQuery(query)).iterator())
+            return IteratorUtils.toList(userSearchRepository.search(queryStringQuery(query+"*").field("login")).iterator())
                 .stream()
                 .map(UserDTO::new)
                 .collect(Collectors.toList());
         }
-        return IteratorUtils.toList(userSearchRepository.search(queryStringQuery(query)).iterator())
+        return IteratorUtils.toList(userSearchRepository.search(queryStringQuery(query+"*").field("login")).iterator())
             .stream()
             .filter(user -> !this.userIsAdmin(user))
             .map(UserDTO::new)
@@ -392,10 +392,7 @@ public class UserService {
             .map(wl -> wl.getUser().getId())
             .collect(Collectors.toList());
 
-        List<UserDTO> usersList = IteratorUtils.toList(userSearchRepository.search(queryStringQuery(query)
-            .fuzziness(Fuzziness.ONE)
-            .fuzzyPrefixLength(2))
-            .iterator())
+        List<UserDTO> usersList = IteratorUtils.toList(userSearchRepository.search(queryStringQuery(query+"*").field("login")).iterator())
             .stream()
             .filter(us -> !usersPermitted.contains(us.getId()))
             .map(UserDTO::new)
