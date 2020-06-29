@@ -34,7 +34,7 @@ public interface TransactionService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<Transaction> findOne(Long id);
+    Optional<Transaction> findOne(Long id) throws Exception;
 
     /**
      * Delete the "id" transaction.
@@ -47,7 +47,7 @@ public interface TransactionService {
      * Search for the transaction corresponding to the query.
      *
      * @param query the query of the search.
-     * 
+     *
      * @param pageable the pagination information.
      * @return the list of entities.
      */

@@ -1,5 +1,12 @@
 package swiss.alpinetech.exchange.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import swiss.alpinetech.exchange.domain.User;
+import swiss.alpinetech.exchange.repository.UserRepository;
+import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.TransactionService;
 import swiss.alpinetech.exchange.domain.Transaction;
 import swiss.alpinetech.exchange.repository.TransactionRepository;
@@ -26,6 +33,9 @@ public class TransactionServiceImpl implements TransactionService {
     private final Logger log = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
     private final TransactionRepository transactionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private final TransactionSearchRepository transactionSearchRepository;
 
@@ -58,7 +68,14 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional(readOnly = true)
     public Page<Transaction> findAll(Pageable pageable) {
         log.debug("Request to get all Transactions");
-        return transactionRepository.findAll(pageable);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN) || authority.getAuthority().equals(AuthoritiesConstants.BANK)) {
+                return transactionRepository.findAll(pageable);
+            }
+        }
+        User user = this.userRepository.findOneByLogin(authentication.getName()).get();
+        return transactionRepository.findAllByUser(user.getId(), pageable);
     }
 
     /**
@@ -69,9 +86,23 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<Transaction> findOne(Long id) {
+    public Optional<Transaction> findOne(Long id) throws Exception {
         log.debug("Request to get Transaction : {}", id);
-        return transactionRepository.findById(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN) || authority.getAuthority().equals(AuthoritiesConstants.BANK)) {
+                return transactionRepository.findById(id);
+            }
+        }
+        Optional<Transaction> transaction = transactionRepository.findById(id);
+        Optional<User> user = this.userRepository.findOneByLogin(authentication.getName());
+        if (!user.isPresent() || !transaction.isPresent()) {
+            throw new Exception("current User or Transaction could not be found");
+        }
+        if (transaction.get().getBuyerid().equals(user.get().getId()) || transaction.get().getSellerid().equals(user.get().getId())) {
+            return transaction;
+        }
+        return Optional.empty();
     }
 
     /**

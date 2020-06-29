@@ -108,7 +108,7 @@ public class TransactionResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the transaction, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/transactions/{id}")
-    public ResponseEntity<Transaction> getTransaction(@PathVariable Long id) {
+    public ResponseEntity<Transaction> getTransaction(@PathVariable Long id) throws Exception {
         log.debug("REST request to get Transaction : {}", id);
         Optional<Transaction> transaction = transactionService.findOne(id);
         return ResponseUtil.wrapOrNotFound(transaction);

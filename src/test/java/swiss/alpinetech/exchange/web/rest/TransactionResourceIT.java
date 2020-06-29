@@ -4,6 +4,7 @@ import swiss.alpinetech.exchange.ExchangeApp;
 import swiss.alpinetech.exchange.domain.Transaction;
 import swiss.alpinetech.exchange.repository.TransactionRepository;
 import swiss.alpinetech.exchange.repository.search.TransactionSearchRepository;
+import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.TransactionService;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -45,7 +46,7 @@ import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 @SpringBootTest(classes = ExchangeApp.class)
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
-@WithMockUser
+@WithMockUser(authorities = {AuthoritiesConstants.ADMIN, AuthoritiesConstants.USER, AuthoritiesConstants.BANK})
 public class TransactionResourceIT {
 
     private static final String DEFAULT_ID_TX = "AAAAAAAAAA";
@@ -409,7 +410,7 @@ public class TransactionResourceIT {
             .andExpect(jsonPath("$.[*].buyerid").value(hasItem(DEFAULT_BUYERID.intValue())))
             .andExpect(jsonPath("$.[*].sellerid").value(hasItem(DEFAULT_SELLERID.intValue())));
     }
-    
+
     @Test
     @Transactional
     public void getTransaction() throws Exception {
