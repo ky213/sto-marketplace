@@ -106,10 +106,6 @@ public class Order implements Serializable {
     @JsonIgnoreProperties("orders")
     private User user;
 
-    @ManyToOne
-    @JsonIgnoreProperties("orders")
-    private Transaction transaction;
-
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
@@ -351,18 +347,6 @@ public class Order implements Serializable {
         this.user = user;
     }
 
-    public Transaction getTransaction() {
-        return transaction;
-    }
-
-    public Order transaction(Transaction transaction) {
-        this.transaction = transaction;
-        return this;
-    }
-
-    public void setTransaction(Transaction transaction) {
-        this.transaction = transaction;
-    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
