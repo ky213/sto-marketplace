@@ -117,6 +117,18 @@ public class Transaction implements Serializable {
     @Column(name = "sellerid")
     private Long sellerid;
 
+    @Column(name = "buy_order_id")
+    private Long buyOrderId;
+
+    @Column(name = "sell_order_id")
+    private Long sellOrderId;
+
+    @Column(name = "buyer_name")
+    private String buyerName;
+
+    @Column(name = "seller_name")
+    private String sellerName;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public Long getId() {
         return id;
@@ -437,6 +449,58 @@ public class Transaction implements Serializable {
     public void setSellerid(Long sellerid) {
         this.sellerid = sellerid;
     }
+
+    public void setSellOrderId(Long sellOrderId) {
+        this.sellOrderId = sellOrderId;
+    }
+
+    public Long getSellOrderId() {
+        return sellOrderId;
+    }
+
+    public Transaction sellOrderId(Long sellOrderId) {
+        this.sellOrderId = sellOrderId;
+        return this;
+    }
+
+    public void setBuyOrderId(Long buyOrderId) {
+        this.buyOrderId = buyOrderId;
+    }
+
+    public Long getBuyOrderId() {
+        return buyOrderId;
+    }
+
+    public Transaction buyOrderId(Long buyOrderId) {
+        this.buyOrderId = buyOrderId;
+        return this;
+    }
+
+    public void setBuyerName(String buyerName) {
+        this.buyerName = buyerName;
+    }
+
+    public String getBuyerName() {
+        return buyerName;
+    }
+
+    public Transaction buyerName(String buyerName) {
+        this.buyerName = buyerName;
+        return this;
+    }
+
+    public void setSellerName(String sellerName) {
+        this.sellerName = sellerName;
+    }
+
+    public String getSellerName() {
+        return sellerName;
+    }
+
+    public Transaction sellerName(String sellerName) {
+        this.sellerName = sellerName;
+        return this;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -483,6 +547,10 @@ public class Transaction implements Serializable {
             ", sellerIban='" + getSellerIban() + "'" +
             ", buyerid=" + getBuyerid() +
             ", sellerid=" + getSellerid() +
+            ", buyOrderId=" + getBuyOrderId() +
+            ", sellOrderId=" + getSellOrderId() +
+            ", buyerName=" + getBuyerName() +
+            ", sellerName=" + getSellerName() +
             "}";
     }
 }

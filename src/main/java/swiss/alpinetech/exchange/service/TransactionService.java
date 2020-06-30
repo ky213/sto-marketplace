@@ -1,5 +1,6 @@
 package swiss.alpinetech.exchange.service;
 
+import swiss.alpinetech.exchange.domain.Order;
 import swiss.alpinetech.exchange.domain.Transaction;
 
 import org.springframework.data.domain.Page;
@@ -19,6 +20,22 @@ public interface TransactionService {
      * @return the persisted entity.
      */
     Transaction save(Transaction transaction);
+
+    /**
+     * Create a transaction.
+     *
+     * @param transaction the entity to create.
+     * @return the persisted entity.
+     */
+    Transaction createBuyTransaction(Transaction transaction, Order buyOrder, Order sellOrder);
+
+    /**
+     * Create a transaction.
+     *
+     * @param transaction the entity to create.
+     * @return the persisted entity.
+     */
+    Transaction createSellTransaction(Transaction transaction, Order buyOrder, Order sellOrder);
 
     /**
      * Get all the transactions.
