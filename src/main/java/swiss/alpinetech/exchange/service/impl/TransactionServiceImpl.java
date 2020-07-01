@@ -1,5 +1,15 @@
 package swiss.alpinetech.exchange.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import swiss.alpinetech.exchange.domain.Order;
+import swiss.alpinetech.exchange.domain.User;
+import swiss.alpinetech.exchange.domain.enumeration.STATUS;
+import swiss.alpinetech.exchange.repository.UserRepository;
+import swiss.alpinetech.exchange.security.AuthoritiesConstants;
+import swiss.alpinetech.exchange.service.BankInfoService;
 import swiss.alpinetech.exchange.service.TransactionService;
 import swiss.alpinetech.exchange.domain.Transaction;
 import swiss.alpinetech.exchange.repository.TransactionRepository;
@@ -12,6 +22,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -26,6 +39,12 @@ public class TransactionServiceImpl implements TransactionService {
     private final Logger log = LoggerFactory.getLogger(TransactionServiceImpl.class);
 
     private final TransactionRepository transactionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private BankInfoService bankInfoService;
 
     private final TransactionSearchRepository transactionSearchRepository;
 
@@ -48,6 +67,87 @@ public class TransactionServiceImpl implements TransactionService {
         return result;
     }
 
+    @Override
+    public Transaction createBuyTransaction(Transaction transaction, Order buyOrder, Order sellOrder) {
+        log.debug("Request to create buy Transaction : {}", transaction);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        String formattedString = ZonedDateTime.now().format(formatter);
+        transaction.setIdTx(formattedString);
+        transaction.setCreateDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
+        transaction.setUpdateDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
+        transaction.setCloseDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
+        transaction.setSecurityTokenName(buyOrder.getSecurityToken().getName());
+        transaction.setSymbol(buyOrder.getSecurityToken().getSymbol());
+        transaction.setLimitOrMarket(buyOrder.getLimitOrMarket());
+        transaction.setVolume(buyOrder.getVolume());
+        transaction.setPrice(buyOrder.getPrice());
+        transaction.setTotalAmount(buyOrder.getTotalAmount());
+        transaction.setCategoryToken(buyOrder.getCategoryToken());
+        transaction.setStatus(STATUS.SUCCESS);
+        transaction.setActive(true);
+        transaction.setConfBlkDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
+        transaction.setConfBankDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
+        transaction.setBuyerBlkAddress(buyOrder.getUser().getSetting().getEthAddress());
+        transaction.setSellerBlkAddress(sellOrder.getUser().getSetting().getEthAddress());
+        transaction.setBuyerIban(buyOrder.getUser().getSetting().getIban());
+        transaction.setSellerIban(sellOrder.getUser().getSetting().getIban());
+        transaction.setBuyerid(buyOrder.getUser().getId());
+        transaction.setSellerid(sellOrder.getUser().getId());
+        transaction.setBuyOrderId(buyOrder.getId());
+        transaction.setSellOrderId(sellOrder.getId());
+        transaction.setBuyerName(buyOrder.getUser().getLastName()+" "+buyOrder.getUser().getFirstName());
+        transaction.setSellerName(sellOrder.getUser().getLastName()+" "+sellOrder.getUser().getFirstName());
+        transaction.setFeeTransaction(this.calculateFeeTransaction(transaction));
+        transaction.setNumBankTx("XXXXXXXXXX");
+        transaction.setNumBlockchainTx("XXXXXXXXXX");
+        Transaction result = transactionRepository.save(transaction);
+        transactionSearchRepository.save(result);
+        return result;
+    }
+
+    @Override
+    public Transaction createSellTransaction(Transaction transaction, Order buyOrder, Order sellOrder) {
+        log.debug("Request to create sell Transaction : {}", transaction);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        String formattedString = ZonedDateTime.now().format(formatter);
+        transaction.setIdTx(formattedString);
+        transaction.setCreateDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
+        transaction.setUpdateDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
+        transaction.setCloseDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
+        transaction.setSecurityTokenName(sellOrder.getSecurityToken().getName());
+        transaction.setSymbol(sellOrder.getSecurityToken().getSymbol());
+        transaction.setLimitOrMarket(sellOrder.getLimitOrMarket());
+        transaction.setVolume(sellOrder.getVolume());
+        transaction.setPrice(sellOrder.getPrice());
+        transaction.setTotalAmount(sellOrder.getTotalAmount());
+        transaction.setCategoryToken(sellOrder.getCategoryToken());
+        transaction.setStatus(STATUS.SUCCESS);
+        transaction.setActive(true);
+        transaction.setConfBlkDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
+        transaction.setConfBankDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
+        transaction.setBuyerBlkAddress(buyOrder.getUser().getSetting().getEthAddress());
+        transaction.setSellerBlkAddress(sellOrder.getUser().getSetting().getEthAddress());
+        transaction.setBuyerIban(buyOrder.getUser().getSetting().getIban());
+        transaction.setSellerIban(sellOrder.getUser().getSetting().getIban());
+        transaction.setBuyerid(buyOrder.getUser().getId());
+        transaction.setSellerid(sellOrder.getUser().getId());
+        transaction.setBuyOrderId(buyOrder.getId());
+        transaction.setSellOrderId(sellOrder.getId());
+        transaction.setBuyerName(buyOrder.getUser().getLastName()+" "+buyOrder.getUser().getFirstName());
+        transaction.setSellerName(sellOrder.getUser().getLastName()+" "+sellOrder.getUser().getFirstName());
+        transaction.setFeeTransaction(this.calculateFeeTransaction(transaction));
+        transaction.setNumBankTx("XXXXXXXXXX");
+        transaction.setNumBlockchainTx("XXXXXXXXXX");
+        Transaction result = transactionRepository.save(transaction);
+        transactionSearchRepository.save(result);
+        return result;
+    }
+
+    private Long calculateFeeTransaction(Transaction transaction) {
+        return Double.valueOf(this.bankInfoService.getFirstBankInfo().get().getFixedFee()
+            + this.bankInfoService.getFirstBankInfo().get().getPercentFee() * transaction.getTotalAmount()).longValue();
+    }
+
     /**
      * Get all the transactions.
      *
@@ -58,7 +158,14 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional(readOnly = true)
     public Page<Transaction> findAll(Pageable pageable) {
         log.debug("Request to get all Transactions");
-        return transactionRepository.findAll(pageable);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN) || authority.getAuthority().equals(AuthoritiesConstants.BANK)) {
+                return transactionRepository.findAll(pageable);
+            }
+        }
+        User user = this.userRepository.findOneByLogin(authentication.getName()).get();
+        return transactionRepository.findAllByUser(user.getId(), pageable);
     }
 
     /**
@@ -69,9 +176,23 @@ public class TransactionServiceImpl implements TransactionService {
      */
     @Override
     @Transactional(readOnly = true)
-    public Optional<Transaction> findOne(Long id) {
+    public Optional<Transaction> findOne(Long id) throws Exception {
         log.debug("Request to get Transaction : {}", id);
-        return transactionRepository.findById(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN) || authority.getAuthority().equals(AuthoritiesConstants.BANK)) {
+                return transactionRepository.findById(id);
+            }
+        }
+        Optional<Transaction> transaction = transactionRepository.findById(id);
+        Optional<User> user = this.userRepository.findOneByLogin(authentication.getName());
+        if (!user.isPresent() || !transaction.isPresent()) {
+            throw new Exception("current User or Transaction could not be found");
+        }
+        if (transaction.get().getBuyerid().equals(user.get().getId()) || transaction.get().getSellerid().equals(user.get().getId())) {
+            return transaction;
+        }
+        return Optional.empty();
     }
 
     /**
