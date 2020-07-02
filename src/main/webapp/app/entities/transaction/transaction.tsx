@@ -21,7 +21,6 @@ export const Transaction = (props: ITransactionProps) => {
   const [sorting, setSorting] = useState(false);
   const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
   const isBank = account.authorities.includes(AUTHORITIES.BANK);
-  const isUser = account.authorities.includes(AUTHORITIES.USER);
 
   const getAllEntities = () => {
     if (search) {
@@ -147,11 +146,6 @@ export const Transaction = (props: ITransactionProps) => {
               <Table responsive>
                 <thead>
                   <tr>
-                    {(isAdmin || isBank) && (
-                      <th className="hand text-nowrap" onClick={sort('id')}>
-                        ID <FontAwesomeIcon icon="sort" />
-                      </th>
-                    )}
                     <th className="hand text-nowrap" onClick={sort('idTx')}>
                       Id Tx <FontAwesomeIcon icon="sort" />
                     </th>
@@ -176,7 +170,7 @@ export const Transaction = (props: ITransactionProps) => {
                     <th className="hand text-nowrap" onClick={sort('totalAmount')}>
                       Total Amount <FontAwesomeIcon icon="sort" />
                     </th>
-                    {isUser && (
+                    {(isAdmin || isBank) && (
                       <>
                         <th className="hand text-nowrap" onClick={sort('buyerid')}>
                           Buyer Name <FontAwesomeIcon icon="sort" />
@@ -192,13 +186,6 @@ export const Transaction = (props: ITransactionProps) => {
                 <tbody>
                   {transactionList.map((transaction, i) => (
                     <tr key={`entity-${i}`}>
-                      {(isAdmin || isBank) && (
-                        <td>
-                          <Button tag={Link} to={`${match.url}/${transaction.id}`} color="link" size="sm">
-                            {transaction.id}
-                          </Button>
-                        </td>
-                      )}
                       <td>{transaction.idTx}</td>
                       <td>
                         <TextFormat type="date" value={transaction.createDate} format={APP_DATE_FORMAT} />
@@ -211,7 +198,7 @@ export const Transaction = (props: ITransactionProps) => {
                       <td>{transaction.volume}</td>
                       <td className="text-nowrap">CHF {transaction.price?.toLocaleString()}</td>
                       <td className="text-right">{transaction.totalAmount}</td>
-                      {isUser && (
+                      {(isAdmin || isBank) && (
                         <>
                           <td className="text-right">{transaction.buyerName}</td>
                           <td className="text-right">{transaction.sellerName}</td>
