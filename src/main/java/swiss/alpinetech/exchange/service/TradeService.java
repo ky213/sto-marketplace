@@ -8,6 +8,7 @@ import swiss.alpinetech.exchange.domain.SecurityTokenOrderBook;
 import swiss.alpinetech.exchange.domain.Trade;
 import swiss.alpinetech.exchange.domain.Transaction;
 import swiss.alpinetech.exchange.domain.enumeration.ACTIONTYPE;
+import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 
 import java.util.*;
 
@@ -54,14 +55,20 @@ public class TradeService {
                 resultListTrades.forEach(item -> {
                     Order buyOrder = orderService.findOneByIdOrder(item.getMakerOrderID()).get();
                     transactionService.createSellTransaction(new Transaction(), buyOrder ,order);
+                    buyOrder.setStatus(STATUS.PENDING);
+                    orderService.save(buyOrder);
                 });
             }
             if (order.getType().equals(ACTIONTYPE.BUY)) {
                 resultListTrades.forEach(item -> {
                     Order sellOrder = orderService.findOneByIdOrder(item.getMakerOrderID()).get();
                     transactionService.createBuyTransaction(new Transaction(), order, sellOrder);
+                    sellOrder.setStatus(STATUS.PENDING);
+                    orderService.save(sellOrder);
                 });
             }
+            order.setStatus(STATUS.PENDING);
+            orderService.save(order);
         }
     }
 
