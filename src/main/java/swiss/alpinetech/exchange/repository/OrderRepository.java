@@ -32,4 +32,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("select order from Order order where order.user.login = ?1 and order.id = ?2")
     Optional<Order> findOneForUser(String login, Long orderId);
+
+    Optional<Order> findByIdOrder(String idOrder);
 }

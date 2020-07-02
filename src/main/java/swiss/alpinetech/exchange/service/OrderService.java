@@ -5,6 +5,7 @@ import swiss.alpinetech.exchange.domain.Order;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import swiss.alpinetech.exchange.domain.Trade;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -41,6 +42,15 @@ public interface OrderService {
     Order cancel(Long orderId);
 
     /**
+     * Update order fillToken and fillAmount.
+     *
+     * @param resultListTrades the list of trades result of matching engine.
+     * @param order the order tu update.
+     * @return the updated entity.
+     */
+    Order UpdateOrderFillTokenAndFillAmount(List<Trade> resultListTrades, Order order);
+
+    /**
      * Get all the orders.
      *
      * @param pageable the pagination information.
@@ -55,6 +65,14 @@ public interface OrderService {
      * @return the entity.
      */
     Optional<Order> findOne(Long id);
+
+    /**
+     * Get one order by idOrder.
+     *
+     * @param idOrder the idOrder of the entity.
+     * @return the entity.
+     */
+    Optional<Order> findOneByIdOrder(String idOrder);
 
     /**
      * Get all user Orders.

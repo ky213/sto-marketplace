@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import swiss.alpinetech.exchange.domain.SecurityToken;
+import swiss.alpinetech.exchange.domain.Trade;
 import swiss.alpinetech.exchange.domain.User;
 import swiss.alpinetech.exchange.domain.enumeration.ACTIONTYPE;
 import swiss.alpinetech.exchange.domain.enumeration.STATUS;
@@ -111,11 +112,11 @@ public class OrderServiceImpl implements OrderService {private final Logger log 
         String formattedString = ZonedDateTime.now().format(formatter);
         User user = this.userRepository.findOneByLogin(authentication.getName()).get();
         SecurityToken securityToken = this.securityTokenRepository.findById(order.getSecurityToken().getId()).get();
-        if(order.getType().name().equals(ACTIONTYPE.BUY.name())) {
-            securityToken.setLastBuyingPrice(order.getPrice());
-        }
-        if(order.getType().name().equals(ACTIONTYPE.SELL.name())) {
+        if(order.getType().name().equals(ACTIONTYPE.BUY.name()) && securityToken.getLastSellingprice() > order.getPrice()) {
             securityToken.setLastSellingprice(order.getPrice());
+        }
+        if(order.getType().name().equals(ACTIONTYPE.SELL.name()) && securityToken.getLastBuyingPrice() < order.getPrice()) {
+            securityToken.setLastBuyingPrice(order.getPrice());
         }
         SecurityToken newSecurityToken = this.securityTokenService.save(securityToken);
         order.setUser(user);
@@ -153,6 +154,29 @@ public class OrderServiceImpl implements OrderService {private final Logger log 
     }
 
     /**
+     * Update order fillToken and fillAmount.
+     *
+     * @param resultListTrades the list of trades result of matching engine.
+     * @param order the order tu update.
+     * @return the updated entity.
+     */
+    @Override
+    public Order UpdateOrderFillTokenAndFillAmount(List<Trade> resultListTrades, Order order) {
+        Double fillToken = 0.0;
+        Double fillAmount = 0.0;
+        if (!resultListTrades.isEmpty()) {
+            for (Trade resultListTrade : resultListTrades) {
+                fillAmount += resultListTrade.getPrice();
+                fillToken += resultListTrade.getAmount();
+            }
+        }
+        order.setFillAmount(fillAmount);
+        order.setFillToken(fillToken);
+        Order result = orderRepository.save(order);
+        return result;
+    }
+
+    /**
      * Get all the orders.
      *
      * @param pageable the pagination information.
@@ -182,6 +206,19 @@ public class OrderServiceImpl implements OrderService {private final Logger log 
             }
         }
         return orderRepository.findOneForUser(authentication.getName(),id);
+    }
+
+    /**
+     * Get one order by idOrder.
+     *
+     * @param idOrder the idOrder of the entity.
+     * @return the entity.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<Order> findOneByIdOrder(String idOrder) {
+        log.debug("Request to get Order : {}", idOrder);
+        return orderRepository.findByIdOrder(idOrder);
     }
 
     /**
