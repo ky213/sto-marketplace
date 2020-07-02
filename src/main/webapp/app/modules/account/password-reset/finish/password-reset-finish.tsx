@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Col, Row, Button } from 'reactstrap';
 import { AvForm, AvField } from 'availity-reactstrap-validation';
 import { getUrlParameter } from 'react-jhipster';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, Link } from 'react-router-dom';
 
 import { handlePasswordResetFinish, reset } from '../password-reset.reducer';
 import PasswordStrengthBar from 'app/shared/layout/password/password-strength-bar';
@@ -50,6 +50,9 @@ export const PasswordResetFinishPage = (props: IPasswordResetFinishProps) => {
         />
         <Button color="success" type="submit">
           Validate new password
+        </Button>
+        <Button tag={Link} to="/login" color="primary ml-2">
+          Login
         </Button>
       </AvForm>
     );
