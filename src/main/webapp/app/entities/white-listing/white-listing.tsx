@@ -150,11 +150,11 @@ export const WhiteListing = (props: IWhiteListingProps) => {
                 <th className="hand text-nowrap" onClick={sort('dateSynchBlk')}>
                   Synchronization Date <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand text-nowrap" onClick={sort('stName')}>
-                  ST Name <FontAwesomeIcon icon="sort" />
-                </th>
                 <th className="hand text-nowrap" onClick={sort('securitytoken.name')}>
                   ST Name (old) <FontAwesomeIcon icon="sort" />
+                </th>
+                <th className="hand text-nowrap" onClick={sort('stName')}>
+                  ST Name <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand text-nowrap" onClick={sort('balance')}>
                   Balance <FontAwesomeIcon icon="sort" />
