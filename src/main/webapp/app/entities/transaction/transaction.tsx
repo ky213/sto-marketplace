@@ -2,23 +2,24 @@ import React, { useState, useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
-import { Button, InputGroup, Col, Row, Table } from 'reactstrap';
+import { Button, InputGroup, Col, Row, Table, Card } from 'reactstrap';
 import { AvForm, AvGroup, AvInput } from 'availity-reactstrap-validation';
-import { ICrudSearchAction, ICrudGetAllAction, TextFormat, getSortState, IPaginationBaseState } from 'react-jhipster';
+import { TextFormat, getSortState, JhiItemCount, JhiPagination } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
 import { getSearchEntities, getEntities, reset } from './transaction.reducer';
-import { ITransaction } from 'app/shared/model/transaction.model';
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
+import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 
 export interface ITransactionProps extends StateProps, DispatchProps, RouteComponentProps<{ url: string }> {}
 
 export const Transaction = (props: ITransactionProps) => {
+  const { transactionList, match, loading, totalItems, account } = props;
   const [search, setSearch] = useState('');
   const [paginationState, setPaginationState] = useState(getSortState(props.location, ITEMS_PER_PAGE));
   const [sorting, setSorting] = useState(false);
+  const isUser = account.authorities.includes(AUTHORITIES.USER);
 
   const getAllEntities = () => {
     if (search) {
@@ -104,199 +105,167 @@ export const Transaction = (props: ITransactionProps) => {
     setSorting(true);
   };
 
-  const { transactionList, match, loading } = props;
+  const handlePagination = currentPage =>
+    setPaginationState({
+      ...paginationState,
+      activePage: currentPage
+    });
+
   return (
-    <div>
-      <h2 id="transaction-heading">
-        Transactions
-        <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
-          <FontAwesomeIcon icon="plus" />
-          &nbsp; Create new Transaction
-        </Link>
-      </h2>
-      <Row>
-        <Col sm="12">
-          <AvForm onSubmit={startSearching}>
-            <AvGroup>
-              <InputGroup>
-                <AvInput type="text" name="search" value={search} onChange={handleSearch} placeholder="Search" />
-                <Button className="input-group-addon">
-                  <FontAwesomeIcon icon="search" />
-                </Button>
-                <Button type="reset" className="input-group-addon" onClick={clear}>
-                  <FontAwesomeIcon icon="trash" />
-                </Button>
-              </InputGroup>
-            </AvGroup>
-          </AvForm>
-        </Col>
-      </Row>
-      <div className="table-responsive">
-        <InfiniteScroll
-          pageStart={paginationState.activePage}
-          loadMore={handleLoadMore}
-          hasMore={paginationState.activePage - 1 < props.links.next}
-          loader={<div className="loader">Loading ...</div>}
-          threshold={0}
-          initialLoad={false}
-        >
-          {transactionList && transactionList.length > 0 ? (
-            <Table responsive>
-              <thead>
-                <tr>
-                  <th className="hand" onClick={sort('id')}>
-                    ID <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('idTx')}>
-                    Id Tx <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('createDate')}>
-                    Create Date <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('updateDate')}>
-                    Update Date <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('closeDate')}>
-                    Close Date <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('securityTokenName')}>
-                    Security Token Name <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('symbol')}>
-                    Symbol <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('limitOrMarket')}>
-                    Limit Or Market <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('volume')}>
-                    Volume <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('price')}>
-                    Price <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('totalAmount')}>
-                    Total Amount <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('categoryToken')}>
-                    Category Token <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('status')}>
-                    Status <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('active')}>
-                    Active <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('feeTransaction')}>
-                    Fee Transaction <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('numBlockchainTx')}>
-                    Num Blockchain Tx <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('numBankTx')}>
-                    Num Bank Tx <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('confBlkDate')}>
-                    Conf Blk Date <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('confBankDate')}>
-                    Conf Bank Date <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('sellerBlkAddress')}>
-                    Seller Blk Address <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('buyerBlkAddress')}>
-                    Buyer Blk Address <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('buyerIban')}>
-                    Buyer Iban <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('sellerIban')}>
-                    Seller Iban <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('buyerid')}>
-                    Buyerid <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th className="hand" onClick={sort('sellerid')}>
-                    Sellerid <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {transactionList.map((transaction, i) => (
-                  <tr key={`entity-${i}`}>
-                    <td>
-                      <Button tag={Link} to={`${match.url}/${transaction.id}`} color="link" size="sm">
-                        {transaction.id}
-                      </Button>
-                    </td>
-                    <td>{transaction.idTx}</td>
-                    <td>
-                      <TextFormat type="date" value={transaction.createDate} format={APP_DATE_FORMAT} />
-                    </td>
-                    <td>
-                      <TextFormat type="date" value={transaction.updateDate} format={APP_DATE_FORMAT} />
-                    </td>
-                    <td>
-                      <TextFormat type="date" value={transaction.closeDate} format={APP_DATE_FORMAT} />
-                    </td>
-                    <td>{transaction.securityTokenName}</td>
-                    <td>{transaction.symbol}</td>
-                    <td>{transaction.limitOrMarket}</td>
-                    <td>{transaction.volume}</td>
-                    <td>{transaction.price}</td>
-                    <td>{transaction.totalAmount}</td>
-                    <td>{transaction.categoryToken}</td>
-                    <td>{transaction.status}</td>
-                    <td>{transaction.active ? 'true' : 'false'}</td>
-                    <td>{transaction.feeTransaction}</td>
-                    <td>{transaction.numBlockchainTx}</td>
-                    <td>{transaction.numBankTx}</td>
-                    <td>
-                      <TextFormat type="date" value={transaction.confBlkDate} format={APP_DATE_FORMAT} />
-                    </td>
-                    <td>
-                      <TextFormat type="date" value={transaction.confBankDate} format={APP_DATE_FORMAT} />
-                    </td>
-                    <td>{transaction.sellerBlkAddress}</td>
-                    <td>{transaction.buyerBlkAddress}</td>
-                    <td>{transaction.buyerIban}</td>
-                    <td>{transaction.sellerIban}</td>
-                    <td>{transaction.buyerid}</td>
-                    <td>{transaction.sellerid}</td>
-                    <td className="text-right">
-                      <div className="btn-group flex-btn-group-container">
-                        <Button tag={Link} to={`${match.url}/${transaction.id}`} color="info" size="sm">
-                          <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
-                        </Button>
-                        <Button tag={Link} to={`${match.url}/${transaction.id}/edit`} color="primary" size="sm">
-                          <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
-                        </Button>
-                        <Button tag={Link} to={`${match.url}/${transaction.id}/delete`} color="danger" size="sm">
-                          <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
-                        </Button>
-                      </div>
-                    </td>
+    <Card className="bg-white p-3 mb-2">
+      <div>
+        <h2 id="transaction-heading">
+          Transactions
+          {/* <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
+            <FontAwesomeIcon icon="plus" />
+            &nbsp; Create new Transaction
+          </Link> */}
+        </h2>
+        <Row>
+          <Col sm="12">
+            <AvForm onSubmit={startSearching}>
+              <AvGroup>
+                <InputGroup>
+                  <AvInput type="text" name="search" value={search} onChange={handleSearch} placeholder="Search" />
+                  <Button className="input-group-addon">
+                    <FontAwesomeIcon icon="search" />
+                  </Button>
+                  <Button type="reset" className="input-group-addon" onClick={clear}>
+                    <FontAwesomeIcon icon="trash" />
+                  </Button>
+                </InputGroup>
+              </AvGroup>
+            </AvForm>
+          </Col>
+        </Row>
+        <div className="table-responsive">
+          <InfiniteScroll
+            pageStart={paginationState.activePage}
+            loadMore={handleLoadMore}
+            hasMore={paginationState.activePage - 1 < props.links.next}
+            loader={<div className="loader">Loading ...</div>}
+            threshold={0}
+            initialLoad={false}
+          >
+            {transactionList && transactionList.length > 0 ? (
+              <Table responsive>
+                <thead>
+                  <tr>
+                    <th className="hand text-nowrap" onClick={sort('id')}>
+                      ID <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand text-nowrap" onClick={sort('idTx')}>
+                      Id Tx <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand text-nowrap" onClick={sort('createDate')}>
+                      Create Date <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand text-nowrap" onClick={sort('closeDate')}>
+                      Close Date <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand text-nowrap" onClick={sort('securityTokenName')}>
+                      Security Token Name <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand text-nowrap" onClick={sort('symbol')}>
+                      Symbol <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand text-nowrap" onClick={sort('volume')}>
+                      Volume <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand text-nowrap" onClick={sort('price')}>
+                      Price <FontAwesomeIcon icon="sort" />
+                    </th>
+                    <th className="hand text-nowrap" onClick={sort('totalAmount')}>
+                      Total Amount <FontAwesomeIcon icon="sort" />
+                    </th>
+                    {isUser && (
+                      <>
+                        <th className="hand text-nowrap" onClick={sort('buyerid')}>
+                          Buyer Name <FontAwesomeIcon icon="sort" />
+                        </th>
+                        <th className="hand text-nowrap" onClick={sort('sellerid')}>
+                          Seller Name <FontAwesomeIcon icon="sort" />
+                        </th>
+                      </>
+                    )}
+                    <th />
                   </tr>
-                ))}
-              </tbody>
-            </Table>
-          ) : (
-            !loading && <div className="alert alert-warning">No Transactions found</div>
-          )}
-        </InfiniteScroll>
+                </thead>
+                <tbody>
+                  {transactionList.map((transaction, i) => (
+                    <tr key={`entity-${i}`}>
+                      <td>
+                        <Button tag={Link} to={`${match.url}/${transaction.id}`} color="link" size="sm">
+                          {transaction.id}
+                        </Button>
+                      </td>
+                      <td>{transaction.idTx}</td>
+                      <td>
+                        <TextFormat type="date" value={transaction.createDate} format={APP_DATE_FORMAT} />
+                      </td>
+                      <td>
+                        <TextFormat type="date" value={transaction.closeDate} format={APP_DATE_FORMAT} />
+                      </td>
+                      <td>{transaction.securityTokenName}</td>
+                      <td>{transaction.symbol}</td>
+                      <td>{transaction.volume}</td>
+                      <td className="text-nowrap">CHF {transaction.price?.toLocaleString()}</td>
+                      <td className="text-right">{transaction.totalAmount}</td>
+                      {isUser && (
+                        <>
+                          <td className="text-right">{transaction.buyerName}</td>
+                          <td className="text-right">{transaction.sellerName}</td>
+                        </>
+                      )}
+                      <td className="text-right">
+                        <div className="btn-group flex-btn-group-container">
+                          <Button tag={Link} to={`${match.url}/${transaction.id}`} color="info" size="sm">
+                            <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
+                          </Button>
+                          <Button tag={Link} to={`${match.url}/${transaction.id}/edit`} color="primary" size="sm">
+                            <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
+                          </Button>
+                          <Button tag={Link} to={`${match.url}/${transaction.id}/delete`} color="danger" size="sm">
+                            <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            ) : (
+              !loading && <div className="alert alert-warning">No Transactions found</div>
+            )}
+          </InfiniteScroll>
+        </div>
       </div>
-    </div>
+      <div className={transactionList && transactionList.length > 0 ? '' : 'd-none'}>
+        <Row className="justify-content-center">
+          <JhiItemCount page={paginationState.activePage} total={totalItems} itemsPerPage={paginationState.itemsPerPage} />
+        </Row>
+        <Row className="justify-content-center">
+          <JhiPagination
+            activePage={paginationState.activePage}
+            onSelect={handlePagination}
+            maxButtons={5}
+            itemsPerPage={paginationState.itemsPerPage}
+            totalItems={props.totalItems}
+          />
+        </Row>
+      </div>
+    </Card>
   );
 };
 
-const mapStateToProps = ({ transaction }: IRootState) => ({
+const mapStateToProps = ({ transaction, authentication }: IRootState) => ({
   transactionList: transaction.entities,
   loading: transaction.loading,
   totalItems: transaction.totalItems,
   links: transaction.links,
   entity: transaction.entity,
-  updateSuccess: transaction.updateSuccess
+  updateSuccess: transaction.updateSuccess,
+  account: authentication.account
 });
 
 const mapDispatchToProps = {

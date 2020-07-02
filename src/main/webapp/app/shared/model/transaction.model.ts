@@ -29,6 +29,8 @@ export interface ITransaction {
   sellerIban?: string;
   buyerid?: number;
   sellerid?: number;
+  buyerName?: string;
+  sellerName?: string;
 }
 
 export const defaultValue: Readonly<ITransaction> = {
