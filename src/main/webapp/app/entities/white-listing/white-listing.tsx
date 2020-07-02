@@ -150,17 +150,12 @@ export const WhiteListing = (props: IWhiteListingProps) => {
                 <th className="hand text-nowrap" onClick={sort('dateSynchBlk')}>
                   Synchronization Date <FontAwesomeIcon icon="sort" />
                 </th>
-                <th className="hand text-nowrap" onClick={sort('securitytoken.name')}>
-                  ST Name (old) <FontAwesomeIcon icon="sort" />
-                </th>
+
                 <th className="hand text-nowrap" onClick={sort('stName')}>
                   ST Name <FontAwesomeIcon icon="sort" />
                 </th>
                 <th className="hand text-nowrap" onClick={sort('balance')}>
                   Balance <FontAwesomeIcon icon="sort" />
-                </th>
-                <th className="hand text-nowrap" onClick={sort('ethAddress')}>
-                  Eth Address <FontAwesomeIcon icon="sort" />
                 </th>
                 {(isAdmin || isBank) && (
                   <th className="hand text-nowrap" onClick={sort('customerName')}>
@@ -181,9 +176,7 @@ export const WhiteListing = (props: IWhiteListingProps) => {
                     <TextFormat type="date" value={whiteListing.dateSynchBlk} format={APP_DATE_FORMAT} />
                   </td>
                   <td>{whiteListing.stName}</td>
-                  <td>{whiteListing.securitytoken.name}</td>
-                  <td>{whiteListing.balance.toLocaleString()} CHF</td>
-                  <td>{whiteListing.ethAddress}</td>
+                  <td>CHF {whiteListing.balance.toLocaleString()} </td>
                   {(isAdmin || isBank) && <td>{whiteListing.customerName}</td>}
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
