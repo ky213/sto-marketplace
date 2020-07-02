@@ -96,6 +96,12 @@ public class Order implements Serializable {
     @Column(name = "active")
     private Boolean active;
 
+    @Column(name = "fill_token")
+    private Double fillToken;
+
+    @Column(name = "fill_amount")
+    private Double fillAmount;
+
     @ManyToOne
     @JoinColumn(name = "securitytoken_id", referencedColumnName = "id", updatable = false)
     @JsonIgnoreProperties("orders")
@@ -323,6 +329,32 @@ public class Order implements Serializable {
         this.active = active;
     }
 
+    public Double getFillToken() {
+        return fillToken;
+    }
+
+    public Order fillToken(Double fillToken) {
+        this.fillToken = fillToken;
+        return this;
+    }
+
+    public void setFillToken(Double fillToken) {
+        this.fillToken = fillToken;
+    }
+
+    public Double getFillAmount() {
+        return fillAmount;
+    }
+
+    public Order fillAmount(Double fillAmount) {
+        this.fillAmount = fillAmount;
+        return this;
+    }
+
+    public void setFillAmount(Double fillAmount) {
+        this.fillAmount = fillAmount;
+    }
+
     public SecurityToken getSecurityToken() { return securityToken; }
 
     public Order securityToken(SecurityToken securityToken) {
@@ -384,6 +416,8 @@ public class Order implements Serializable {
             ", categoryToken='" + getCategoryToken() + "'" +
             ", status='" + getStatus() + "'" +
             ", active='" + isActive() + "'" +
+            ", fillToken='" + getFillToken() + "'" +
+            ", fillAmount='" + getFillAmount() + "'" +
             "}";
     }
 }
