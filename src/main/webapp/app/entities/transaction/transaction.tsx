@@ -19,6 +19,8 @@ export const Transaction = (props: ITransactionProps) => {
   const [search, setSearch] = useState('');
   const [paginationState, setPaginationState] = useState(getSortState(props.location, ITEMS_PER_PAGE));
   const [sorting, setSorting] = useState(false);
+  const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
+  const isBank = account.authorities.includes(AUTHORITIES.BANK);
   const isUser = account.authorities.includes(AUTHORITIES.USER);
 
   const getAllEntities = () => {
@@ -114,13 +116,7 @@ export const Transaction = (props: ITransactionProps) => {
   return (
     <Card className="bg-white p-3 mb-2">
       <div>
-        <h2 id="transaction-heading">
-          Transactions
-          {/* <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
-            <FontAwesomeIcon icon="plus" />
-            &nbsp; Create new Transaction
-          </Link> */}
-        </h2>
+        <h2 id="transaction-heading">Transactions</h2>
         <Row>
           <Col sm="12">
             <AvForm onSubmit={startSearching}>
@@ -151,9 +147,11 @@ export const Transaction = (props: ITransactionProps) => {
               <Table responsive>
                 <thead>
                   <tr>
-                    <th className="hand text-nowrap" onClick={sort('id')}>
-                      ID <FontAwesomeIcon icon="sort" />
-                    </th>
+                    {(isAdmin || isBank) && (
+                      <th className="hand text-nowrap" onClick={sort('id')}>
+                        ID <FontAwesomeIcon icon="sort" />
+                      </th>
+                    )}
                     <th className="hand text-nowrap" onClick={sort('idTx')}>
                       Id Tx <FontAwesomeIcon icon="sort" />
                     </th>
@@ -194,11 +192,13 @@ export const Transaction = (props: ITransactionProps) => {
                 <tbody>
                   {transactionList.map((transaction, i) => (
                     <tr key={`entity-${i}`}>
-                      <td>
-                        <Button tag={Link} to={`${match.url}/${transaction.id}`} color="link" size="sm">
-                          {transaction.id}
-                        </Button>
-                      </td>
+                      {(isAdmin || isBank) && (
+                        <td>
+                          <Button tag={Link} to={`${match.url}/${transaction.id}`} color="link" size="sm">
+                            {transaction.id}
+                          </Button>
+                        </td>
+                      )}
                       <td>{transaction.idTx}</td>
                       <td>
                         <TextFormat type="date" value={transaction.createDate} format={APP_DATE_FORMAT} />
@@ -221,12 +221,6 @@ export const Transaction = (props: ITransactionProps) => {
                         <div className="btn-group flex-btn-group-container">
                           <Button tag={Link} to={`${match.url}/${transaction.id}`} color="info" size="sm">
                             <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
-                          </Button>
-                          <Button tag={Link} to={`${match.url}/${transaction.id}/edit`} color="primary" size="sm">
-                            <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
-                          </Button>
-                          <Button tag={Link} to={`${match.url}/${transaction.id}/delete`} color="danger" size="sm">
-                            <FontAwesomeIcon icon="trash" /> <span className="d-none d-md-inline">Delete</span>
                           </Button>
                         </div>
                       </td>
