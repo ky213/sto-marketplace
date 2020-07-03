@@ -1,6 +1,9 @@
 package swiss.alpinetech.exchange.service.impl;
 
+import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,7 +28,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -165,7 +170,15 @@ public class TransactionServiceImpl implements TransactionService {
             }
         }
         User user = this.userRepository.findOneByLogin(authentication.getName()).get();
-        return transactionRepository.findAllByUser(user.getId(), pageable);
+        List<Transaction> transactionList = IteratorUtils.toList(transactionRepository.findAllByUser(user.getId(), pageable).iterator())
+            .stream()
+            .map(item -> transactionByUserType(item, user))
+            .collect(Collectors.toList());
+        Page<Transaction> transactionsPage = new PageImpl<Transaction>(
+            transactionList,
+            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
+            transactionList.size());
+        return transactionsPage;
     }
 
     /**
@@ -190,9 +203,27 @@ public class TransactionServiceImpl implements TransactionService {
             throw new Exception("current User or Transaction could not be found");
         }
         if (transaction.get().getBuyerid().equals(user.get().getId()) || transaction.get().getSellerid().equals(user.get().getId())) {
-            return transaction;
+            return Optional.of(transactionByUserType(transaction.get(), user.get()));
         }
         return Optional.empty();
+    }
+
+    private Transaction transactionByUserType(Transaction transaction, User user) {
+        if (user.getId().equals(transaction.getSellerid())) {
+            transaction.setBuyerBlkAddress("not authorized");
+            transaction.setBuyerIban("not authorized");
+            transaction.setBuyerName("not authorized");
+            transaction.setBuyerid(null);
+            transaction.buyOrderId(null);
+        }
+        if (user.getId().equals(transaction.getBuyerid())) {
+            transaction.setSellerBlkAddress("not authorized");
+            transaction.setSellerIban("not authorized");
+            transaction.setSellerName("not authorized");
+            transaction.setSellerid(null);
+            transaction.sellOrderId(null);
+        }
+        return transaction;
     }
 
     /**
