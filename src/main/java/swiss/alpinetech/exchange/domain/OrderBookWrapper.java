@@ -1,22 +1,24 @@
 package swiss.alpinetech.exchange.domain;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.Set;
+import java.util.TreeSet;
 
-public class OrderBook implements Serializable {
+public class OrderBookWrapper implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Set<Order> buyOrders;
+    private Set<Order> buyOrders = new TreeSet<>(Comparator.comparing(Order::getPrice));
 
-    private Set<Order> sellOrders;
+    private Set<Order> sellOrders = new TreeSet<>(Comparator.comparing(Order::getPrice).reversed());
 
-    public OrderBook(Set<Order> buyOrders, Set<Order> sellOrders) {
+    public OrderBookWrapper(Set<Order> buyOrders, Set<Order> sellOrders) {
         this.buyOrders = buyOrders;
         this.sellOrders = sellOrders;
     }
 
-    public OrderBook() { }
+    public OrderBookWrapper() { }
 
     public Set<Order> getBuyOrders() {
         return this.buyOrders;
