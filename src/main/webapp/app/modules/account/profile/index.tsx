@@ -66,7 +66,7 @@ const Profile = ({ account }: IUserSettingsProps) => {
                 <>
                   <Col>
                     <small className="text-muted ">Date of Birth </small>
-                    <p>{moment(account.setting?.dateOfBirth).format('LLL')}</p>
+                    <p>{moment(account.setting?.dateOfBirth).format('LL')}</p>
                   </Col>
                   <Col>
                     <small className="text-muted">Nationality</small>

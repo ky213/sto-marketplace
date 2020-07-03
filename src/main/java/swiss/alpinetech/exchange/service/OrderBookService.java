@@ -1,70 +1,47 @@
 package swiss.alpinetech.exchange.service;
 
 import swiss.alpinetech.exchange.domain.Order;
-import swiss.alpinetech.exchange.domain.OrderBook;
+import swiss.alpinetech.exchange.domain.OrderBookWrapper;
+import swiss.alpinetech.exchange.domain.SecurityToken;
+import swiss.alpinetech.exchange.domain.SecurityTokenOrderBook;
 
-import java.util.Comparator;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class OrderBookService {
 
-    /**
-     * init an order book.
-     *
-     * @return the order book.
-     */
-    OrderBook initOrderBook() {
-        Set<Order> buyOrders = new TreeSet<>(Comparator.comparing(Order::getPrice));
-        Set<Order> sellOrders = new TreeSet<>(Comparator.comparing(Order::getPrice).reversed());
-        OrderBook orderBook = new OrderBook(buyOrders, sellOrders);
-        return orderBook;
+    SecurityTokenOrderBook initSecurityTokenOrderBook() {
+        Map<SecurityToken, OrderBookWrapper> securityTokenBuyOrders = new HashMap<>();
+        Map<SecurityToken, OrderBookWrapper> securityTokenSellOrders = new HashMap<>();
+        SecurityTokenOrderBook securityTokenOrderBook = new SecurityTokenOrderBook(securityTokenBuyOrders, securityTokenSellOrders);
+        return securityTokenOrderBook;
     };
 
+    Set<Order> getSellOrdersBySecurityToken(SecurityToken securityToken, SecurityTokenOrderBook securityTokenOrderBook) {
+        return securityTokenOrderBook.getSecurityTokenSellOrders().get(securityToken).getSellOrders();
+    }
 
+    Set<Order> getBuyOrdersBySecurityToken(SecurityToken securityToken, SecurityTokenOrderBook securityTokenOrderBook) {
+        return securityTokenOrderBook.getSecurityTokenBuyOrders().get(securityToken).getBuyOrders();
+    }
 
-    /**
-     * Add a buy order.
-     *
-     * @param order the entity to add to buy orders.
-     * @return the updated order book.
-     */
-    OrderBook addBuyOrder(Order order, OrderBook orderBook) {
-        orderBook.addToBuyOrders(order);
-        return orderBook;
-    };
+    public SecurityTokenOrderBook addToSecurityTokenSellOrders(SecurityToken securityToken, Order order, SecurityTokenOrderBook securityTokenOrderBook) {
+        securityTokenOrderBook.addToSellOrders(securityToken, order);
+        return securityTokenOrderBook;
+    }
 
-    /**
-     * Add a sell order.
-     *
-     * @param order the entity to add to sell orders.
-     * @return the updated order book.
-     */
-    OrderBook addSellOrder(Order order, OrderBook orderBook) {
-        orderBook.addToSellOrders(order);
-        return orderBook;
-    };
+    public SecurityTokenOrderBook addToSecurityTokenBuyOrders(SecurityToken securityToken, Order order, SecurityTokenOrderBook securityTokenOrderBook) {
+        securityTokenOrderBook.addToBuyOrders(securityToken, order);
+        return securityTokenOrderBook;
+    }
 
-    /**
-     * Remove a buy order.
-     *
-     * @param order the entity to remove from buy orders.
-     * @return the updated order book.
-     */
-    OrderBook removeBuyOrder(Order order, OrderBook orderBook) {
-        orderBook.removeFromBuyOrders(order);
-        return orderBook;
-    };
+    public SecurityTokenOrderBook removeFromSecurityTokenSellOrders(SecurityToken securityToken, Order order, SecurityTokenOrderBook securityTokenOrderBook) {
+        securityTokenOrderBook.removeFromSellOrders(securityToken, order);
+        return securityTokenOrderBook;
+    }
 
-    /**
-     * Remove a sell order.
-     *
-     * @param order to remove from sell orders.
-     * @return the updated order book.
-     */
-    OrderBook removeSellOrder(Order order, OrderBook orderBook) {
-        orderBook.removeFromSellOrders(order);
-        return orderBook;
-    };
+    public SecurityTokenOrderBook removeFromSecurityTokenBuyOrders(SecurityToken securityToken, Order order, SecurityTokenOrderBook securityTokenOrderBook) {
+        securityTokenOrderBook.removeFromBuyOrders(securityToken, order);
+        return securityTokenOrderBook;
+    }
 
 }

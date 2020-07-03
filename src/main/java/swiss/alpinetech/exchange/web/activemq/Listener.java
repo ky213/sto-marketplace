@@ -24,7 +24,7 @@ public class Listener {
     @SendTo("outbound.order.topic")
     public List<Trade> receiveMessage(final Order order) throws JMSException {
         log.debug("process order {} in match engine", order);
-        List<Trade> tradeList = this.tradeService.process(order);
+        List<Trade> tradeList = this.tradeService.Process(order);
         log.debug("Send trade list {} to outbound.order.topic", tradeList.toString());
         return tradeList;
     }
