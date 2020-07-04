@@ -48,7 +48,9 @@ import static org.elasticsearch.index.query.QueryBuilders.*;
  */
 @Service
 @Transactional
-public class OrderServiceImpl implements OrderService {private final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
+public class OrderServiceImpl implements OrderService {
+
+    private final Logger log = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     private final OrderRepository orderRepository;
 
@@ -85,7 +87,7 @@ public class OrderServiceImpl implements OrderService {private final Logger log 
     @Override
     public Order save(Order order) {
         log.debug("Request to save Order : {}", order);
-        authentication = SecurityContextHolder.getContext().getAuthentication();
+        authentication = this.getAuth();
         order.setUpdateBy(authentication.getName());
         Order result = orderRepository.save(order);
         String changedStatus[] = new String[] {
@@ -107,7 +109,7 @@ public class OrderServiceImpl implements OrderService {private final Logger log 
     @Override
     public Order create(Order order) {
         log.debug("Request to create Order : {}", order);
-        authentication = SecurityContextHolder.getContext().getAuthentication();
+        authentication = this.getAuth();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         String formattedString = ZonedDateTime.now().format(formatter);
         User user = this.userRepository.findOneByLogin(authentication.getName()).get();
@@ -144,7 +146,7 @@ public class OrderServiceImpl implements OrderService {private final Logger log 
      */
     @Override
     public Order cancel(Long orderId) {
-        authentication = SecurityContextHolder.getContext().getAuthentication();
+        authentication = this.getAuth();
         log.debug("Request to cancel Order by orderId : {}", orderId);
         Order orderToCancel = orderRepository.findById(orderId).get();
         orderToCancel.setStatus(STATUS.REMOVE);
@@ -157,23 +159,25 @@ public class OrderServiceImpl implements OrderService {private final Logger log 
      * Update order fillToken and fillAmount.
      *
      * @param resultListTrades the list of trades result of matching engine.
-     * @param order the order tu update.
+     * @param orderId the order to update.
      * @return the updated entity.
      */
     @Override
-    public Order UpdateOrderFillTokenAndFillAmount(List<Trade> resultListTrades, Order order) {
-        Double fillToken = 0.0;
-        Double fillAmount = 0.0;
-        if (!resultListTrades.isEmpty()) {
-            for (Trade resultListTrade : resultListTrades) {
-                fillAmount += resultListTrade.getPrice();
-                fillToken += resultListTrade.getAmount();
+    public void UpdateOrderFillTokenAndFillAmount(List<Trade> resultListTrades, Long orderId) {
+        log.debug("update order with Id {} fillToken and fillAmount", orderId);
+        orderRepository.findById(orderId).ifPresent(order -> {
+            Double fillToken = 0.0;
+            Double fillAmount = 0.0;
+            if (!resultListTrades.isEmpty()) {
+                for (Trade resultListTrade : resultListTrades) {
+                    fillAmount += resultListTrade.getPrice();
+                    fillToken += resultListTrade.getAmount();
+                }
             }
-        }
-        order.setFillAmount(fillAmount);
-        order.setFillToken(fillToken);
-        Order result = orderRepository.save(order);
-        return result;
+            order.setFillAmount(fillAmount);
+            order.setFillToken(fillToken);
+            orderRepository.save(order);
+        });
     }
 
     /**
@@ -199,7 +203,7 @@ public class OrderServiceImpl implements OrderService {private final Logger log 
     @Transactional(readOnly = true)
     public Optional<Order> findOne(Long id) {
         log.debug("Request to get Order : {}", id);
-        authentication = SecurityContextHolder.getContext().getAuthentication();
+        authentication = this.getAuth();
         for (GrantedAuthority authority : authentication.getAuthorities()) {
             if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN) || authority.getAuthority().equals(AuthoritiesConstants.BANK)) {
                 return orderRepository.findById(id);
@@ -299,6 +303,14 @@ public class OrderServiceImpl implements OrderService {private final Logger log 
             PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
             orderList.size());
         return ordersPage;
+    }
+
+    private Authentication getAuth() {
+        if (this.authentication != null) {
+            return this.authentication;
+        }
+        authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication;
     }
 
 }

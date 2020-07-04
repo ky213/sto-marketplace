@@ -45,10 +45,10 @@ public interface OrderService {
      * Update order fillToken and fillAmount.
      *
      * @param resultListTrades the list of trades result of matching engine.
-     * @param order the order tu update.
+     * @param orderId the id order tu update.
      * @return the updated entity.
      */
-    Order UpdateOrderFillTokenAndFillAmount(List<Trade> resultListTrades, Order order);
+    void UpdateOrderFillTokenAndFillAmount(List<Trade> resultListTrades, Long orderId);
 
     /**
      * Get all the orders.
