@@ -166,7 +166,7 @@ export const TransactionDetail = (props: ITransactionDetailProps) => {
                 </Row>
               </>
             )}
-            <Button tag={Link} to="/security-token" replace color="info">
+            <Button tag={Link} to="/transaction" replace color="info">
               <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
             </Button>
           </CardBody>

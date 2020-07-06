@@ -150,10 +150,15 @@ export const WhiteListing = (props: IWhiteListingProps) => {
                 <th className="hand text-nowrap" onClick={sort('dateSynchBlk')}>
                   Synchronization Date <FontAwesomeIcon icon="sort" />
                 </th>
-
-                <th className="hand text-nowrap" onClick={sort('stName')}>
-                  ST Name <FontAwesomeIcon icon="sort" />
+                <th className="hand text-nowrap" onClick={sort('securitytoken.name')}>
+                  ST Name
+                  <FontAwesomeIcon icon="sort" />
                 </th>
+                <th className="hand text-nowrap" onClick={sort('stName')}>
+                  ST Name (old)
+                  <FontAwesomeIcon icon="sort" />
+                </th>
+
                 <th className="hand text-nowrap" onClick={sort('balance')}>
                   Balance <FontAwesomeIcon icon="sort" />
                 </th>
@@ -175,6 +180,7 @@ export const WhiteListing = (props: IWhiteListingProps) => {
                   <td>
                     <TextFormat type="date" value={whiteListing.dateSynchBlk} format={APP_DATE_FORMAT} />
                   </td>
+                  <td>{whiteListing.securitytoken.name}</td>
                   <td>{whiteListing.stName}</td>
                   <td>CHF {whiteListing.balance.toLocaleString()} </td>
                   {(isAdmin || isBank) && <td>{whiteListing.customerName}</td>}
