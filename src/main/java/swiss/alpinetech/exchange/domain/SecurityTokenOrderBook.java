@@ -11,11 +11,11 @@ public class SecurityTokenOrderBook implements Serializable {
 
     private static final long serialVersionUID = -295422703255886286L;
 
-    private Map<SecurityToken, OrderBookWrapper> securityTokenOrderBook;
+    private Map<String, OrderBookWrapper> securityTokenOrderBook;
 
     private final Logger log = LoggerFactory.getLogger(SecurityTokenOrderBook.class);
 
-    public SecurityTokenOrderBook(Map<SecurityToken, OrderBookWrapper> securityTokenOrderBook) {
+    public SecurityTokenOrderBook(Map<String, OrderBookWrapper> securityTokenOrderBook) {
         this.securityTokenOrderBook = securityTokenOrderBook;
     }
 
@@ -26,25 +26,25 @@ public class SecurityTokenOrderBook implements Serializable {
         return serialVersionUID;
     }
 
-    public Map<SecurityToken, OrderBookWrapper> getSecurityTokenOrderBook() {
+    public Map<String, OrderBookWrapper> getSecurityTokenOrderBook() {
         return securityTokenOrderBook;
     }
 
-    public void setSecurityTokenOrderBook(Map<SecurityToken, OrderBookWrapper> securityTokenOrderBook) {
+    public void setSecurityTokenOrderBook(Map<String, OrderBookWrapper> securityTokenOrderBook) {
         this.securityTokenOrderBook = securityTokenOrderBook;
     }
 
-    public void addToSellOrders(SecurityToken securityToken, Order order) {
-        this.securityTokenOrderBook.computeIfAbsent(securityToken, k -> new OrderBookWrapper());
-        this.securityTokenOrderBook.compute(securityToken, (k, v) -> {
+    public void addToSellOrders(String securityTokenId, Order order) {
+        this.securityTokenOrderBook.computeIfAbsent(securityTokenId, k -> new OrderBookWrapper());
+        this.securityTokenOrderBook.compute(securityTokenId, (k, v) -> {
             v.addToSellOrders(order);
             return v;
         });
     }
 
-    public void addToBuyOrders(SecurityToken securityToken, Order order) {
-        this.securityTokenOrderBook.computeIfAbsent(securityToken, k -> new OrderBookWrapper());
-        this.securityTokenOrderBook.compute(securityToken, (k, v) -> {
+    public void addToBuyOrders(String securityTokenId, Order order) {
+        this.securityTokenOrderBook.computeIfAbsent(securityTokenId, k -> new OrderBookWrapper());
+        this.securityTokenOrderBook.compute(securityTokenId, (k, v) -> {
             v.addToBuyOrders(order);
             return v;
         });
@@ -64,15 +64,15 @@ public class SecurityTokenOrderBook implements Serializable {
         return Objects.hash(securityTokenOrderBook, log);
     }
 
-    public void removeFromSellOrders(SecurityToken securityToken, Order order) {
-        this.securityTokenOrderBook.computeIfPresent(securityToken, (k, v) -> {
+    public void removeFromSellOrders(String securityTokenId, Order order) {
+        this.securityTokenOrderBook.computeIfPresent(securityTokenId, (k, v) -> {
             v.removeFromSellOrders(order);
             return v;
         });
     }
 
-    public void removeFromBuyOrders(SecurityToken securityToken, Order order) {
-        this.securityTokenOrderBook.computeIfPresent(securityToken, (k, v) -> {
+    public void removeFromBuyOrders(String securityTokenId, Order order) {
+        this.securityTokenOrderBook.computeIfPresent(securityTokenId, (k, v) -> {
             v.removeFromBuyOrders(order);
             return v;
         });

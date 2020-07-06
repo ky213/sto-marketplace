@@ -11,8 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import swiss.alpinetech.exchange.domain.*;
 import swiss.alpinetech.exchange.service.TradeService;
 
-import javax.jms.JMSException;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class Listener {
@@ -25,7 +25,7 @@ public class Listener {
 
     @JmsListener(destination = "inbound.order.topic")
     @SendTo("outbound.order.topic")
-    public List<Trade> receiveMessage(final Order order) throws JMSException, JsonProcessingException {
+    public List<Trade> receiveMessage(final Order order) throws JsonProcessingException {
         log.debug("process order {} in match engine", order);
         List<Trade> tradeList = this.tradeService.Process(order);
         log.debug("Send trade list {} to outbound.order.topic", tradeList.toString());
@@ -35,9 +35,9 @@ public class Listener {
     @JmsListener(destination = "inbound.orderBook.topic")
     @SendTo("outbound.orderBook.topic")
     @Transactional
-    public String receiveOrderBookMessage(final String orderBook) throws JsonProcessingException {
+    public Object receiveOrderBookMessage(final Map<String, Map<String, List<String>>> orderBook) {
         log.debug("store orderBook {} in queue", orderBook);
-        log.debug("Send trade list {} to outbound.order.topic", orderBook.toString());
+        log.debug("send orderBook {} to outbound.order.topic", orderBook.toString());
         return orderBook;
     }
 }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import swiss.alpinetech.exchange.domain.*;
@@ -35,6 +36,13 @@ public class TradeService {
         this.jmsTemplate = jmsTemplate;
     }
 
+    @JmsListener(destination = "outbound.orderBook.topic")
+    void getSecurityTokenOrderBookFromQueue(Map<String, Map<String, List<String>>> message) throws JsonProcessingException {
+        log.debug("consume securityTokenOrderBook {} from queue", message);
+        securityTokenOrderBook = orderBookService.readAndConvertFromQueue(message);
+        log.debug("new securityTokenOrderBook {} from queue", securityTokenOrderBook.toString());
+    };
+
     /**
      * process an order.
      *
@@ -43,7 +51,6 @@ public class TradeService {
      */
 
     public List<Trade> Process(Order order) throws JsonProcessingException {
-        securityTokenOrderBook = orderBookService.initSecurityTokenOrderBook();
         log.debug("Security token order book :"+ securityTokenOrderBook.toString());
         List<Trade> resultListTrades;
         if (order.getType().equals(ACTIONTYPE.SELL)) {
@@ -87,11 +94,11 @@ public class TradeService {
     private List<Trade> processLimitBuy(Order order) throws JsonProcessingException {
         log.debug("process buy order {}", order);
         List<Trade> listTrades = new ArrayList<>();
-        int n = orderBookService.getSellOrdersBySecurityToken(order.getSecurityToken(), securityTokenOrderBook).size();
-        List<Order> sellOrdersList = new ArrayList<>(orderBookService.getSellOrdersBySecurityToken(order.getSecurityToken(), securityTokenOrderBook));
+        int n = orderBookService.getSellOrdersBySecurityToken(order.getSecurityToken().getId().toString(), securityTokenOrderBook).size();
+        List<Order> sellOrdersList = new ArrayList<>(orderBookService.getSellOrdersBySecurityToken(order.getSecurityToken().getId().toString(), securityTokenOrderBook));
         if (n == 0) {
-            securityTokenOrderBook = orderBookService.addToSecurityTokenBuyOrders(order.getSecurityToken(), order, securityTokenOrderBook);
-//            this.jmsTemplate.convertAndSend("inbound.orderBook.topic", securityTokenOrderBook.getSecurityTokenOrderBook());
+            securityTokenOrderBook = orderBookService.addToSecurityTokenBuyOrders(order.getSecurityToken().getId().toString(), order, securityTokenOrderBook);
+            orderBookService.convertAndSendToQueue(securityTokenOrderBook, jmsTemplate);
             return listTrades;
         }
         if (sellOrdersList.get(n-1).getPrice() <= order.getPrice()) {
@@ -104,21 +111,21 @@ public class TradeService {
                     listTrades.add(new Trade(order.getIdOrder(), sellOrder.getIdOrder(), order.getTotalAmount(), sellOrder.getPrice()));
                     sellOrder.setTotalAmount(sellOrder.getTotalAmount() - order.getTotalAmount());
                     if (sellOrder.getTotalAmount() == 0) {
-                        securityTokenOrderBook = orderBookService.removeFromSecurityTokenSellOrders(sellOrder.getSecurityToken(), sellOrder, securityTokenOrderBook);
-//                        this.jmsTemplate.convertAndSend("inbound.orderBook.topic", securityTokenOrderBook.getSecurityTokenOrderBook());
+                        securityTokenOrderBook = orderBookService.removeFromSecurityTokenSellOrders(sellOrder.getSecurityToken().getId().toString(), sellOrder, securityTokenOrderBook);
+                        orderBookService.convertAndSendToQueue(securityTokenOrderBook, jmsTemplate);
                     }
                     return listTrades;
                 }
                 if (sellOrder.getTotalAmount() < order.getTotalAmount()) {
                     listTrades.add(new Trade(order.getIdOrder(), sellOrder.getIdOrder(), sellOrder.getTotalAmount(), sellOrder.getPrice()));
                     order.setTotalAmount(order.getTotalAmount() - sellOrder.getTotalAmount());
-                    securityTokenOrderBook = orderBookService.removeFromSecurityTokenSellOrders(sellOrder.getSecurityToken(), sellOrder, securityTokenOrderBook);
+                    securityTokenOrderBook = orderBookService.removeFromSecurityTokenSellOrders(sellOrder.getSecurityToken().getId().toString(), sellOrder, securityTokenOrderBook);
                     continue;
                 }
             }
         }
-        securityTokenOrderBook = orderBookService.addToSecurityTokenBuyOrders(order.getSecurityToken(), order, securityTokenOrderBook);
-//        this.jmsTemplate.convertAndSend("inbound.orderBook.topic", securityTokenOrderBook.getSecurityTokenOrderBook());
+        securityTokenOrderBook = orderBookService.addToSecurityTokenBuyOrders(order.getSecurityToken().getId().toString(), order, securityTokenOrderBook);
+        orderBookService.convertAndSendToQueue(securityTokenOrderBook, jmsTemplate);
         return listTrades;
     }
 
@@ -126,11 +133,11 @@ public class TradeService {
     private List<Trade> processLimitSell(Order order) throws JsonProcessingException {
         log.debug("process sell order {}", order);
         List<Trade> listTrades = new ArrayList<>();
-        int n = orderBookService.getBuyOrdersBySecurityToken(order.getSecurityToken(), securityTokenOrderBook).size();
-        List<Order> buyOrdersList = new ArrayList<>(orderBookService.getBuyOrdersBySecurityToken(order.getSecurityToken(), securityTokenOrderBook));
+        int n = orderBookService.getBuyOrdersBySecurityToken(order.getSecurityToken().getId().toString(), securityTokenOrderBook).size();
+        List<Order> buyOrdersList = new ArrayList<>(orderBookService.getBuyOrdersBySecurityToken(order.getSecurityToken().getId().toString(), securityTokenOrderBook));
         if (n == 0) {
-            securityTokenOrderBook = orderBookService.addToSecurityTokenSellOrders(order.getSecurityToken(), order, securityTokenOrderBook);
-//            this.jmsTemplate.convertAndSend("inbound.orderBook.topic", securityTokenOrderBook.getSecurityTokenOrderBook());
+            securityTokenOrderBook = orderBookService.addToSecurityTokenSellOrders(order.getSecurityToken().getId().toString(), order, securityTokenOrderBook);
+            orderBookService.convertAndSendToQueue(securityTokenOrderBook, jmsTemplate);
             return listTrades;
         }
         if (buyOrdersList.get(n-1).getPrice() >= order.getPrice()) {
@@ -143,22 +150,22 @@ public class TradeService {
                     listTrades.add(new Trade(order.getIdOrder(), buyOrder.getIdOrder(), order.getTotalAmount(), buyOrder.getPrice()));
                     buyOrder.setTotalAmount(buyOrder.getTotalAmount() - order.getTotalAmount());
                     if (buyOrder.getTotalAmount() == 0) {
-                        securityTokenOrderBook = orderBookService.removeFromSecurityTokenBuyOrders(buyOrder.getSecurityToken(), buyOrder, securityTokenOrderBook);
-//                        this.jmsTemplate.convertAndSend("inbound.orderBook.topic", securityTokenOrderBook.getSecurityTokenOrderBook());
+                        securityTokenOrderBook = orderBookService.removeFromSecurityTokenBuyOrders(buyOrder.getSecurityToken().getId().toString(), buyOrder, securityTokenOrderBook);
+                        orderBookService.convertAndSendToQueue(securityTokenOrderBook, jmsTemplate);
                     }
                     return listTrades;
                 }
                 if (buyOrder.getTotalAmount() < order.getTotalAmount()) {
                     listTrades.add(new Trade(order.getIdOrder(), buyOrder.getIdOrder(), buyOrder.getTotalAmount(), buyOrder.getPrice()));
                     order.setTotalAmount(order.getTotalAmount() - buyOrder.getTotalAmount());
-                    securityTokenOrderBook = orderBookService.removeFromSecurityTokenBuyOrders(buyOrder.getSecurityToken(), buyOrder, securityTokenOrderBook);
+                    securityTokenOrderBook = orderBookService.removeFromSecurityTokenBuyOrders(buyOrder.getSecurityToken().getId().toString(), buyOrder, securityTokenOrderBook);
                     continue;
                 }
             }
 
         }
-        securityTokenOrderBook = orderBookService.addToSecurityTokenSellOrders(order.getSecurityToken(), order, securityTokenOrderBook);
-//        this.jmsTemplate.convertAndSend("inbound.orderBook.topic", securityTokenOrderBook.getSecurityTokenOrderBook());
+        securityTokenOrderBook = orderBookService.addToSecurityTokenSellOrders(order.getSecurityToken().getId().toString(), order, securityTokenOrderBook);
+        orderBookService.convertAndSendToQueue(securityTokenOrderBook, jmsTemplate);
         return listTrades;
     }
 }

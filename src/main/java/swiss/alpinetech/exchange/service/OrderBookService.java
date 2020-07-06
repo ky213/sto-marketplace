@@ -1,22 +1,27 @@
 package swiss.alpinetech.exchange.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import swiss.alpinetech.exchange.domain.Order;
 import swiss.alpinetech.exchange.domain.OrderBookWrapper;
-import swiss.alpinetech.exchange.domain.SecurityToken;
 import swiss.alpinetech.exchange.domain.SecurityTokenOrderBook;
+import swiss.alpinetech.exchange.service.dto.OrderDTO;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class OrderBookService {
 
     private final Logger log = LoggerFactory.getLogger(OrderBookService.class);
 
     private SecurityTokenOrderBook securityTokenOrderBook;
-
 
     OrderBookService() {}
 
@@ -25,58 +30,123 @@ public class OrderBookService {
         if (this.securityTokenOrderBook != null) {
             return securityTokenOrderBook;
         }
-        Map<SecurityToken, OrderBookWrapper> securityTokenOrderBookList = new HashMap<>();
+        Map<String, OrderBookWrapper> securityTokenOrderBookList = new HashMap<>();
         securityTokenOrderBook = new SecurityTokenOrderBook(securityTokenOrderBookList);
         return securityTokenOrderBook;
     };
 
-//    @JmsListener(destination = "outbound.orderBook.topic")
-//    SecurityTokenOrderBook getSecurityTokenOrderBookFromQueue(String securityTokenOrderBook) {
-//        log.debug("consume securityTokenOrderBook {} from queue", securityTokenOrderBook);
-//        this.securityTokenOrderBook = securityTokenOrderBook;
-//        return securityTokenOrderBook;
-//    };
-
-    Set<Order> getSellOrdersBySecurityToken(SecurityToken securityToken, SecurityTokenOrderBook securityTokenOrderBook) {
-        log.debug("get SellOrders by securityToken {}", securityToken);
-        if (securityTokenOrderBook.getSecurityTokenOrderBook().get(securityToken) != null) {
-            return Optional.of(securityTokenOrderBook.getSecurityTokenOrderBook().get(securityToken).getSellOrders())
+    Set<Order> getSellOrdersBySecurityToken(String securityTokenId, SecurityTokenOrderBook securityTokenOrderBook) {
+        log.debug("get SellOrders by securityToken Id {}", securityTokenId);
+        if (securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId) != null) {
+            return Optional.of(securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId).getSellOrders())
                 .orElse(new HashSet<>());
         }
         return new HashSet<>();
     }
 
-    Set<Order> getBuyOrdersBySecurityToken(SecurityToken securityToken, SecurityTokenOrderBook securityTokenOrderBook) {
-        log.debug("get BuyOrders by securityToken {}", securityToken);
-        if (securityTokenOrderBook.getSecurityTokenOrderBook().get(securityToken) != null) {
-            return Optional.of(securityTokenOrderBook.getSecurityTokenOrderBook().get(securityToken).getBuyOrders())
+    Set<Order> getBuyOrdersBySecurityToken(String securityTokenId, SecurityTokenOrderBook securityTokenOrderBook) {
+        log.debug("get BuyOrders by securityToken Id {}", securityTokenId);
+        if (securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId) != null) {
+            return Optional.of(securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId).getBuyOrders())
                 .orElse(new HashSet<>());
         }
         return new HashSet<>();
     }
 
-    public SecurityTokenOrderBook addToSecurityTokenSellOrders(SecurityToken securityToken, Order order, SecurityTokenOrderBook securityTokenOrderBook) {
-        log.debug("add sell order {} to securityToken {} order's book", order, securityToken);
-        securityTokenOrderBook.addToSellOrders(securityToken, order);
+    public SecurityTokenOrderBook addToSecurityTokenSellOrders(String securityTokenId, Order order, SecurityTokenOrderBook securityTokenOrderBook) {
+        log.debug("add sell order {} to securityToken Id {} order's book", order, securityTokenId);
+        securityTokenOrderBook.addToSellOrders(securityTokenId, order);
         return securityTokenOrderBook;
     }
 
-    public SecurityTokenOrderBook addToSecurityTokenBuyOrders(SecurityToken securityToken, Order order, SecurityTokenOrderBook securityTokenOrderBook) {
-        log.debug("add buy order {} to securityToken {} order's book", order, securityToken);
-        securityTokenOrderBook.addToBuyOrders(securityToken, order);
+    public SecurityTokenOrderBook addToSecurityTokenBuyOrders(String securityTokenId, Order order, SecurityTokenOrderBook securityTokenOrderBook) {
+        log.debug("add buy order {} to securityToken Id {} order's book", order, securityTokenId);
+        securityTokenOrderBook.addToBuyOrders(securityTokenId, order);
         return securityTokenOrderBook;
     }
 
-    public SecurityTokenOrderBook removeFromSecurityTokenSellOrders(SecurityToken securityToken, Order order, SecurityTokenOrderBook securityTokenOrderBook) {
-        log.debug("remove sell order {} from securityToken {} order's book", order, securityToken);
-        securityTokenOrderBook.removeFromSellOrders(securityToken, order);
+    public SecurityTokenOrderBook removeFromSecurityTokenSellOrders(String securityTokenId, Order order, SecurityTokenOrderBook securityTokenOrderBook) {
+        log.debug("remove sell order {} from securityToken Id {} order's book", order, securityTokenId);
+        securityTokenOrderBook.removeFromSellOrders(securityTokenId, order);
         return securityTokenOrderBook;
     }
 
-    public SecurityTokenOrderBook removeFromSecurityTokenBuyOrders(SecurityToken securityToken, Order order, SecurityTokenOrderBook securityTokenOrderBook) {
-        log.debug("remove buy order {} from securityToken {} order's book", order, securityToken);
-        securityTokenOrderBook.removeFromBuyOrders(securityToken, order);
+    public SecurityTokenOrderBook removeFromSecurityTokenBuyOrders(String securityTokenId, Order order, SecurityTokenOrderBook securityTokenOrderBook) {
+        log.debug("remove buy order {} from securityToken Id {} order's book", order, securityTokenId);
+        securityTokenOrderBook.removeFromBuyOrders(securityTokenId, order);
         return securityTokenOrderBook;
+    }
+
+    public void convertAndSendToQueue(SecurityTokenOrderBook securityTokenOrderBook, JmsTemplate jmsTemplate) {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, OrderBookWrapper> orderBook = securityTokenOrderBook.getSecurityTokenOrderBook();
+        Map<String, Map<String, List<String>>> result = new HashMap<>();
+        for (Map.Entry<String, OrderBookWrapper> entry : orderBook.entrySet()) {
+            String parentKey = entry.getKey();
+            OrderBookWrapper parentValue = entry.getValue();
+            List<String> parentBuyOrderList = new ArrayList<>(parentValue.getBuyOrders())
+                .stream()
+                .map(item -> {
+                    try {
+                        return mapper.writeValueAsString(new OrderDTO(item));
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                })
+                .collect(Collectors.toList());
+            List<String> parentSellOrderList = new ArrayList<>(parentValue.getSellOrders())
+                .stream()
+                .map(item -> {
+                    try {
+                        return mapper.writeValueAsString(new OrderDTO(item));
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                    return null;
+                })
+                .collect(Collectors.toList());
+            Map<String, List<String>> childMap = new HashMap<>();
+            childMap.put("BuyOrders", parentBuyOrderList);
+            childMap.put("SellOrders", parentSellOrderList);
+            result.put(parentKey, childMap);
+        }
+        jmsTemplate.convertAndSend("inbound.orderBook.topic", result);
+    }
+
+    public SecurityTokenOrderBook readAndConvertFromQueue(Map<String, Map<String, List<String>>> map) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, OrderBookWrapper> orderBook = new HashMap<>();
+        for (Map.Entry<String, Map<String, List<String>>> parentEntry : map.entrySet()) {
+            OrderBookWrapper orderBookWrapper = new OrderBookWrapper();
+            for (Map.Entry<String, List<String>> childEntry : parentEntry.getValue().entrySet()) {
+                if (childEntry.getKey().equals("BuyOrders")) {
+                    for (String item : childEntry.getValue()) {
+                        Order buyOrder = null;
+                        try {
+                            buyOrder = mapper.readValue(item, Order.class);
+                        } catch (JsonProcessingException e) {
+                            e.printStackTrace();
+                        }
+                        orderBookWrapper.addToBuyOrders(buyOrder);
+                    }
+                }
+                if (childEntry.getKey().equals("SellOrders")) {
+                    childEntry.getValue().stream().map(item -> {
+                        Order buyOrder = null;
+                        try {
+                            buyOrder = mapper.readValue(item, Order.class);
+                        } catch (JsonProcessingException e) {
+                            e.printStackTrace();
+                        }
+                        orderBookWrapper.addToSellOrders(buyOrder);
+                        return orderBookWrapper;
+                    });
+                }
+            }
+            orderBook.put(parentEntry.getKey(), orderBookWrapper);
+        }
+        return new SecurityTokenOrderBook(orderBook);
     }
 
 }
