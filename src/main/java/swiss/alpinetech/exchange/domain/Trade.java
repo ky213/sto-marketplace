@@ -51,4 +51,14 @@ public class Trade implements Serializable {
     public void setTakerOrderID(String takerOrderID) {
         TakerOrderID = takerOrderID;
     }
+
+    @Override
+    public String toString() {
+        return "Trade{" +
+            "TakerOrderID='" + TakerOrderID + '\'' +
+            ", MakerOrderID='" + MakerOrderID + '\'' +
+            ", Amount=" + Amount +
+            ", Price=" + Price +
+            '}';
+    }
 }

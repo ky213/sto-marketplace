@@ -7,7 +7,7 @@ import java.util.TreeSet;
 
 public class OrderBookWrapper implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     private Set<Order> buyOrders = new TreeSet<>(Comparator.comparing(Order::getPrice));
 
@@ -18,7 +18,7 @@ public class OrderBookWrapper implements Serializable {
         this.sellOrders = sellOrders;
     }
 
-    public OrderBookWrapper() { }
+    public OrderBookWrapper() {}
 
     public Set<Order> getBuyOrders() {
         return this.buyOrders;

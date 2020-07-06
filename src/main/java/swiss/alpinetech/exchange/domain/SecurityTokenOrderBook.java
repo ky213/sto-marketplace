@@ -1,65 +1,87 @@
 package swiss.alpinetech.exchange.domain;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 
 public class SecurityTokenOrderBook implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -295422703255886286L;
 
-    private Map<SecurityToken, OrderBookWrapper> securityTokenBuyOrders;
+    private Map<String, OrderBookWrapper> securityTokenOrderBook;
 
-    private Map<SecurityToken, OrderBookWrapper> securityTokenSellOrders;
+    private final Logger log = LoggerFactory.getLogger(SecurityTokenOrderBook.class);
 
-    public SecurityTokenOrderBook(Map<SecurityToken, OrderBookWrapper> securityTokenBuyOrders, Map<SecurityToken, OrderBookWrapper> securityTokenSellOrders) {
-        this.securityTokenBuyOrders = securityTokenBuyOrders;
-        this.securityTokenSellOrders = securityTokenSellOrders;
+    public SecurityTokenOrderBook(Map<String, OrderBookWrapper> securityTokenOrderBook) {
+        this.securityTokenOrderBook = securityTokenOrderBook;
     }
 
     public SecurityTokenOrderBook() {
     }
 
-    public Map<SecurityToken, OrderBookWrapper> getSecurityTokenBuyOrders() {
-        return securityTokenBuyOrders;
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
     }
 
-    public void setSecurityTokenBuyOrders(Map<SecurityToken, OrderBookWrapper> securityTokenBuyOrders) {
-        this.securityTokenBuyOrders = securityTokenBuyOrders;
+    public Map<String, OrderBookWrapper> getSecurityTokenOrderBook() {
+        return securityTokenOrderBook;
     }
 
-    public Map<SecurityToken, OrderBookWrapper> getSecurityTokenSellOrders() {
-        return securityTokenSellOrders;
+    public void setSecurityTokenOrderBook(Map<String, OrderBookWrapper> securityTokenOrderBook) {
+        this.securityTokenOrderBook = securityTokenOrderBook;
     }
 
-    public void setSecurityTokenSellOrders(Map<SecurityToken, OrderBookWrapper> securityTokenSellOrders) {
-        this.securityTokenSellOrders = securityTokenSellOrders;
-    }
-
-    public void addToSellOrders(SecurityToken securityToken, Order order) {
-        this.securityTokenSellOrders.computeIfPresent(securityToken, (k, v) -> {
+    public void addToSellOrders(String securityTokenId, Order order) {
+        this.securityTokenOrderBook.computeIfAbsent(securityTokenId, k -> new OrderBookWrapper());
+        this.securityTokenOrderBook.compute(securityTokenId, (k, v) -> {
             v.addToSellOrders(order);
             return v;
         });
     }
 
-    public void addToBuyOrders(SecurityToken securityToken, Order order) {
-        this.securityTokenBuyOrders.computeIfPresent(securityToken, (k, v) -> {
+    public void addToBuyOrders(String securityTokenId, Order order) {
+        this.securityTokenOrderBook.computeIfAbsent(securityTokenId, k -> new OrderBookWrapper());
+        this.securityTokenOrderBook.compute(securityTokenId, (k, v) -> {
             v.addToBuyOrders(order);
             return v;
         });
     }
 
-    public void removeFromSellOrders(SecurityToken securityToken, Order order) {
-        this.securityTokenSellOrders.computeIfPresent(securityToken, (k, v) -> {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SecurityTokenOrderBook that = (SecurityTokenOrderBook) o;
+        return Objects.equals(securityTokenOrderBook, that.securityTokenOrderBook) &&
+            Objects.equals(log, that.log);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(securityTokenOrderBook, log);
+    }
+
+    public void removeFromSellOrders(String securityTokenId, Order order) {
+        this.securityTokenOrderBook.computeIfPresent(securityTokenId, (k, v) -> {
             v.removeFromSellOrders(order);
             return v;
         });
     }
 
-    public void removeFromBuyOrders(SecurityToken securityToken, Order order) {
-        this.securityTokenBuyOrders.computeIfPresent(securityToken, (k, v) -> {
+    public void removeFromBuyOrders(String securityTokenId, Order order) {
+        this.securityTokenOrderBook.computeIfPresent(securityTokenId, (k, v) -> {
             v.removeFromBuyOrders(order);
             return v;
         });
+    }
+
+    @Override
+    public String toString() {
+        return "SecurityTokenOrderBook{" +
+            "securityTokenOrderBook=" + securityTokenOrderBook.toString() +
+            '}';
     }
 }
