@@ -47,6 +47,7 @@ import { faCaretRight } from '@fortawesome/free-solid-svg-icons/faCaretRight';
 import { faFileContract } from '@fortawesome/free-solid-svg-icons/faFileContract';
 import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload';
 import { faUserShield } from '@fortawesome/free-solid-svg-icons/faUserShield';
+import { faEllipsisV } from '@fortawesome/free-solid-svg-icons/faEllipsisV';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -100,6 +101,7 @@ export const loadIcons = () => {
     faCaretRight,
     faFileContract,
     faDownload,
-    faUserShield
+    faUserShield,
+    faEllipsisV
   );
 };

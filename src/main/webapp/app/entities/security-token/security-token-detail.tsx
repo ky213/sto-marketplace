@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
-import { Row } from 'reactstrap';
+import { Row, Col } from 'reactstrap';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './security-token.reducer';
-import { Info } from './components';
+import { Info, WhiteList } from './components';
 
 export interface ISecurityTokenDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -15,9 +15,16 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
   }, []);
 
   return (
-    <Row className="mx-auto">
-      <Info {...props.securityTokenEntity} />
-    </Row>
+    <div>
+      <Row>
+        <Col md="4">
+          <WhiteList />
+        </Col>
+        <Col md="8">
+          <Info {...props.securityTokenEntity} />
+        </Col>
+      </Row>
+    </div>
   );
 };
 
