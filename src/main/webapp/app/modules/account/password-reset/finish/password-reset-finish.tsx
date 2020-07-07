@@ -48,12 +48,21 @@ export const PasswordResetFinishPage = (props: IPasswordResetFinishProps) => {
             match: { value: 'newPassword', errorMessage: 'The password and its confirmation do not match!' }
           }}
         />
-        <Button color="success" type="submit">
-          Validate new password
-        </Button>
-        <Button tag={Link} to="/login" color="primary ml-2">
-          Login
-        </Button>
+        <Row>
+          <Col md="6">
+            <Button color="success" type="submit">
+              Validate new password
+            </Button>
+          </Col>
+          <Col md="2">
+            
+          </Col>
+          <Col md="4">
+            <Button tag={Link} to="/login" color="primary ml-2">
+              Return to Login Page
+            </Button>
+          </Col>
+        </Row>
       </AvForm>
     );
   };
