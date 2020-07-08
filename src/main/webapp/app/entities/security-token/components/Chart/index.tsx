@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Col, Card, CardHeader, CardBody, Button, CardFooter } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Line } from 'react-chartjs-2';
@@ -91,10 +92,11 @@ const index = () => {
         </CardBody>
         <CardFooter className="d-flex py-0">
           <Button className="ml-auto" color="none ">
-            <span className=" mr-2" style={{ fontSize: '14px' }}>
-              overview
-            </span>
-            <FontAwesomeIcon icon="caret-right" />
+            <Link to="/order" className=" mr-2" style={{ fontSize: '14px' }}>
+              <span className="text-primary">
+                view all <FontAwesomeIcon icon="caret-right" />
+              </span>
+            </Link>
           </Button>
         </CardFooter>
       </Card>

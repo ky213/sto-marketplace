@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Table, Card, CardHeader, CardBody, CardFooter, Button } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -99,10 +100,11 @@ function WhiteList(props) {
       </CardBody>
       <CardFooter className="d-flex p-0">
         <Button className="ml-auto" color="none ">
-          <span className=" mr-2" style={{ fontSize: '14px' }}>
-            view all
-          </span>
-          <FontAwesomeIcon icon="caret-right" />
+          <Link to="/white-listing">
+            <span className="mr-2 text-primary" style={{ fontSize: '14px' }}>
+              view all <FontAwesomeIcon icon="caret-right" />
+            </span>
+          </Link>
         </Button>
       </CardFooter>
     </Card>
