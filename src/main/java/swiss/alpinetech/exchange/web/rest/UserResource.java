@@ -159,6 +159,19 @@ public class UserResource {
     }
 
     /**
+     * {@code GET /users} : get all users whitelisted of sto.
+     *
+     * @param securityTokenId the sto ID.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body all users.
+     */
+    @GetMapping("/users-sto-whitelists")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<List<UserDTO>> getAllUsersForWhiteListing(@RequestParam Long securityTokenId) {
+        final List<UserDTO> userDTOList = userService.getForWhiteListingBySTO(securityTokenId);
+        return ResponseEntity.ok().body(userDTOList);
+    }
+
+    /**
      * Gets a list of all roles.
      * @return a string list of all roles.
      */
