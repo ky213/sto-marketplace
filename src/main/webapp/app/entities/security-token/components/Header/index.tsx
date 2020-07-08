@@ -2,7 +2,6 @@ import React from 'react';
 import { ISecurityToken } from 'app/shared/model/security-token.model';
 import { Row, Col } from 'reactstrap';
 import Switch from 'react-switch';
-import { STATUS } from 'app/shared/model/enumerations/status.model';
 import { STSTATUS } from 'app/shared/model/enumerations/ststatus.model';
 const Header = ({ name, status, logo, logoContentType }: ISecurityToken) => {
   return (
