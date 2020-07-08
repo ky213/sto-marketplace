@@ -1,5 +1,6 @@
 package swiss.alpinetech.exchange.service;
 
+import swiss.alpinetech.exchange.domain.Order;
 import swiss.alpinetech.exchange.domain.SecurityToken;
 
 import org.springframework.data.domain.Page;
@@ -28,6 +29,14 @@ public interface SecurityTokenService {
      * @return the persisted entity.
      */
     SecurityToken deactivateSecurityToken(Long id);
+
+    /**
+     * Update securityToken price according to order.
+     *
+     * @param order the entity id to update.
+     * @return the persisted entity.
+     */
+    SecurityToken updateSecurityTokenPrice(Order order);
 
     /**
      * Get all the securityTokens.
