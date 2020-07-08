@@ -5,7 +5,7 @@ import { ISecurityToken } from 'app/shared/model/security-token.model';
 
 const Balance = (props: ISecurityToken) => {
   return (
-    <div className="mt-3" style={{ width: '55%' }}>
+    <div className="mt-1" style={{ width: '55%' }}>
       <Card className="p-0">
         <CardBody className="py-2">
           <Row>

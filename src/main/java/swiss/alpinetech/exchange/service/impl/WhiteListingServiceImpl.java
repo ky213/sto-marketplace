@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import swiss.alpinetech.exchange.domain.Authority;
 import swiss.alpinetech.exchange.domain.User;
 import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 import swiss.alpinetech.exchange.repository.UserRepository;
@@ -43,6 +44,8 @@ public class WhiteListingServiceImpl implements WhiteListingService {
     private final WhiteListingRepository whiteListingRepository;
 
     private final WhiteListingSearchRepository whiteListingSearchRepository;
+
+    private Authentication authentication;
 
     @Autowired
     private UserRepository userRepository;
@@ -108,7 +111,13 @@ public class WhiteListingServiceImpl implements WhiteListingService {
     @Transactional(readOnly = true)
     public Page<WhiteListing> findAll(Pageable pageable) {
         log.debug("Request to get all WhiteListings");
-        return whiteListingRepository.findAll(pageable);
+        authentication = this.getAuth();
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN)) {
+                return whiteListingRepository.findAll(pageable);
+            }
+        }
+        return whiteListingRepository.findWhiteListingForUser(pageable, new Authority().name("ROLE_ADMIN"));
     }
 
     /**
@@ -186,5 +195,13 @@ public class WhiteListingServiceImpl implements WhiteListingService {
             PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
             WhiteListings.size());
         return WhiteListingPage;
+    }
+
+    private Authentication getAuth() {
+        if (this.authentication != null) {
+            return this.authentication;
+        }
+        authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication;
     }
 }

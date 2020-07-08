@@ -11,16 +11,12 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import swiss.alpinetech.exchange.domain.SecurityToken;
-import swiss.alpinetech.exchange.domain.Trade;
-import swiss.alpinetech.exchange.domain.User;
-import swiss.alpinetech.exchange.domain.enumeration.ACTIONTYPE;
+import swiss.alpinetech.exchange.domain.*;
 import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 import swiss.alpinetech.exchange.repository.SecurityTokenRepository;
 import swiss.alpinetech.exchange.repository.UserRepository;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.OrderService;
-import swiss.alpinetech.exchange.domain.Order;
 import swiss.alpinetech.exchange.repository.OrderRepository;
 import swiss.alpinetech.exchange.repository.search.OrderSearchRepository;
 import org.slf4j.Logger;
@@ -113,14 +109,7 @@ public class OrderServiceImpl implements OrderService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         String formattedString = ZonedDateTime.now().format(formatter);
         User user = this.userRepository.findOneByLogin(authentication.getName()).get();
-        SecurityToken securityToken = this.securityTokenRepository.findById(order.getSecurityToken().getId()).get();
-        if(order.getType().name().equals(ACTIONTYPE.BUY.name()) && securityToken.getLastSellingprice() > order.getPrice()) {
-            securityToken.setLastSellingprice(order.getPrice());
-        }
-        if(order.getType().name().equals(ACTIONTYPE.SELL.name()) && securityToken.getLastBuyingPrice() < order.getPrice()) {
-            securityToken.setLastBuyingPrice(order.getPrice());
-        }
-        SecurityToken newSecurityToken = this.securityTokenService.save(securityToken);
+        SecurityToken newSecurityToken = this.securityTokenService.updateSecurityTokenPrice(order);
         order.setUser(user);
         order.setSecurityToken(newSecurityToken);
         order.setCategoryToken(order.getSecurityToken().getCategory());
@@ -156,28 +145,63 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
-     * Update order fillToken and fillAmount.
+     * Update fillToken and fillAmount orders of trade.
      *
      * @param resultListTrades the list of trades result of matching engine.
+     * @return the updated entity.
+     */
+    @Override
+    public void updateOrderFillTokenAndFillAmount(List<Trade> resultListTrades) {
+        log.debug("update orders of trade list", resultListTrades);
+        if (resultListTrades.isEmpty()) {
+            return;
+        }
+        for (Trade trade : resultListTrades) {
+            orderRepository.findByIdOrder(trade.getMakerOrderID()).ifPresent(order -> {
+                order.setFillAmount(trade.getAmount());
+                order.setFillToken(trade.getAmount() / trade.getPrice());
+                orderRepository.save(order);
+            });
+            orderRepository.findByIdOrder(trade.getTakerOrderID()).ifPresent(order -> {
+                order.setFillAmount(trade.getAmount());
+                order.setFillToken(trade.getAmount() / trade.getPrice());
+                orderRepository.save(order);
+            });
+        }
+    }
+
+    /**
+     * Update order total amount.
+     *
+     * @param totalAmount the total amount.
      * @param orderId the order to update.
      * @return the updated entity.
      */
     @Override
-    public void UpdateOrderFillTokenAndFillAmount(List<Trade> resultListTrades, Long orderId) {
-        log.debug("update order with Id {} fillToken and fillAmount", orderId);
-        orderRepository.findById(orderId).ifPresent(order -> {
-            Double fillToken = 0.0;
-            Double fillAmount = 0.0;
-            if (!resultListTrades.isEmpty()) {
-                for (Trade resultListTrade : resultListTrades) {
-                    fillAmount += resultListTrade.getPrice();
-                    fillToken += resultListTrade.getAmount();
-                }
-            }
-            order.setFillAmount(fillAmount);
-            order.setFillToken(fillToken);
-            orderRepository.save(order);
-        });
+    public Order updateOrderAmount(Long orderId, Double totalAmount) {
+        log.debug("Request to update Order amount by orderId : {}", orderId);
+        Order orderToUpdate = orderRepository.findById(orderId).get();
+        orderToUpdate.setTotalAmount(totalAmount);
+        orderToUpdate.setUpdateBy(this.getAuth().getName());
+        Order result = orderRepository.save(orderToUpdate);
+        return result;
+    }
+
+    /**
+     * Update order status.
+     *
+     * @param status the list of trades result of matching engine.
+     * @param orderId the order to update.
+     * @return the updated entity.
+     */
+    @Override
+    public Order updateOrderStatus(Long orderId, STATUS status) {
+        log.debug("Request to update Order status by orderId : {}", orderId);
+        Order orderToUpdate = orderRepository.findById(orderId).get();
+        orderToUpdate.setStatus(status);
+        orderToUpdate.setUpdateBy(this.getAuth().getName());
+        Order result = orderRepository.save(orderToUpdate);
+        return result;
     }
 
     /**

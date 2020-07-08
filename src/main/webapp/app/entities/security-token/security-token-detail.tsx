@@ -16,7 +16,7 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
   }, []);
 
   return (
-    <div>
+    <div className="pb-3">
       <Row className="justify-content-between py-2 pr-3">
         <Header {...props.securityTokenEntity} />
       </Row>

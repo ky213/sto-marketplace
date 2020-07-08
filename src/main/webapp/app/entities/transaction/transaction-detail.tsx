@@ -33,7 +33,7 @@ export const TransactionDetail = (props: ITransactionDetailProps) => {
           <CardBody>
             <Row>
               <Col>
-                <small className="text-muted ">IdTx</small>
+                <small className="text-muted ">Id Transaction</small>
                 <p>{transactionEntity.idTx}</p>
               </Col>
               <Col>
@@ -43,7 +43,7 @@ export const TransactionDetail = (props: ITransactionDetailProps) => {
             </Row>
             <Row>
               <Col>
-                <small className="text-muted ">Create Date</small>
+                <small className="text-muted ">Creation Date</small>
                 <p>{moment(transactionEntity.createDate).format('LLL')}</p>
               </Col>
 
@@ -74,7 +74,7 @@ export const TransactionDetail = (props: ITransactionDetailProps) => {
             </Row>
             <Row>
               <Col>
-                <small className="text-muted ">Price</small>
+                <small className="text-muted ">Transaction price</small>
                 <p>CHF {transactionEntity.price?.toLocaleString()}</p>
               </Col>
               <Col>
@@ -104,18 +104,22 @@ export const TransactionDetail = (props: ITransactionDetailProps) => {
             </Row>
             <Row>
               <Col>
-                <small className="text-muted ">numBanTX</small>
+                <small className="text-muted ">Bank Transaction Number</small>
                 <p>{transactionEntity.numBankTx}</p>
               </Col>
               <Col>
-                <small className="text-muted ">confBlkDate</small>
-                <p>{moment(transactionEntity.confBlkDate).format('LLL')}</p>
+                <small className="text-muted ">Blockchain Transaction Id</small>
+                <p>{transactionEntity.numBlockchainTx}</p>
               </Col>
             </Row>
             <Row>
               <Col>
-                <small className="text-muted ">confBankDate</small>
+                <small className="text-muted ">Bank Confirmation Date</small>
                 <p>{moment(transactionEntity.confBankDate).format('LLL')}</p>
+              </Col>
+              <Col>
+                <small className="text-muted ">Blockchain Confirmation date</small>
+                <p>{moment(transactionEntity.confBlkDate).format('LLL')}</p>
               </Col>
             </Row>
             {(isAdmin || isBank || isSeller) && (
@@ -132,7 +136,7 @@ export const TransactionDetail = (props: ITransactionDetailProps) => {
                 </Row>
                 <Row>
                   <Col>
-                    <small className="text-muted ">Seller Address</small>
+                    <small className="text-muted ">Seller Eth Address</small>
                     <p>{transactionEntity.sellerBlkAddress}</p>
                   </Col>
                   <Col>
@@ -156,7 +160,7 @@ export const TransactionDetail = (props: ITransactionDetailProps) => {
                 </Row>
                 <Row>
                   <Col>
-                    <small className="text-muted ">Buyer Address</small>
+                    <small className="text-muted ">Buyer Eth Address</small>
                     <p>{transactionEntity.buyerBlkAddress}</p>
                   </Col>
                   <Col>

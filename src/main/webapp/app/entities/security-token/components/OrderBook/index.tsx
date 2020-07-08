@@ -45,6 +45,16 @@ const OrderBook = () => {
             <td className="text-danger">12</td>
             <td className="text-danger">12</td>
           </tr>
+          <tr>
+            <td className="text-success">12</td>
+            <td className="text-success">12</td>
+            <td className="text-center">
+              <span className="mr-1 text-success">12.3 </span>
+              <span className="ml-1 text-danger"> 334.5</span>
+            </td>
+            <td className="text-danger">12</td>
+            <td className="text-danger">12</td>
+          </tr>
         </tbody>
       </table>
     </div>

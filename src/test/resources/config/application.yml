@@ -81,6 +81,7 @@ spring:
     pool:
       enabled: true
       max-connections: 50
+    in-memory: false
 
   jms:
     pub-sub-domain: true

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +24,14 @@ public class OrderBookService {
 
     private SecurityTokenOrderBook securityTokenOrderBook;
 
-    OrderBookService() {}
+    private final JmsTemplate jmsTemplate;
 
-    SecurityTokenOrderBook initSecurityTokenOrderBook() {
+    @Autowired
+    OrderBookService(JmsTemplate jmsTemplate) {
+        this.jmsTemplate = jmsTemplate;
+    }
+
+    public SecurityTokenOrderBook initSecurityTokenOrderBook() {
         log.debug("init securityTokenOrderBook {}", securityTokenOrderBook);
         if (this.securityTokenOrderBook != null) {
             return securityTokenOrderBook;
@@ -35,7 +41,14 @@ public class OrderBookService {
         return securityTokenOrderBook;
     };
 
-    Set<Order> getSellOrdersBySecurityToken(String securityTokenId, SecurityTokenOrderBook securityTokenOrderBook) {
+//    @JmsListener(destination = "inbound.orderBook.topic")
+//    @SendTo("outbound.orderBook.topic")
+//    public Map<String, Map<String, List<String>>> receiveOrderBook(Map<String, Map<String, List<String>>> orderBook) {
+//        log.debug("send orderBook {} to outbound.orderBook.topic", orderBook);
+//        return orderBook;
+//    }
+
+    public Set<Order> getSellOrdersBySecurityToken(String securityTokenId, SecurityTokenOrderBook securityTokenOrderBook) {
         log.debug("get SellOrders by securityToken Id {}", securityTokenId);
         if (securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId) != null) {
             return Optional.of(securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId).getSellOrders())
@@ -44,7 +57,7 @@ public class OrderBookService {
         return new HashSet<>();
     }
 
-    Set<Order> getBuyOrdersBySecurityToken(String securityTokenId, SecurityTokenOrderBook securityTokenOrderBook) {
+    public Set<Order> getBuyOrdersBySecurityToken(String securityTokenId, SecurityTokenOrderBook securityTokenOrderBook) {
         log.debug("get BuyOrders by securityToken Id {}", securityTokenId);
         if (securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId) != null) {
             return Optional.of(securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId).getBuyOrders())
@@ -77,7 +90,7 @@ public class OrderBookService {
         return securityTokenOrderBook;
     }
 
-    public void convertAndSendToQueue(SecurityTokenOrderBook securityTokenOrderBook, JmsTemplate jmsTemplate) {
+    public void convertAndSendToTopic(SecurityTokenOrderBook securityTokenOrderBook) {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, OrderBookWrapper> orderBook = securityTokenOrderBook.getSecurityTokenOrderBook();
         Map<String, Map<String, List<String>>> result = new HashMap<>();
@@ -111,10 +124,10 @@ public class OrderBookService {
             childMap.put("SellOrders", parentSellOrderList);
             result.put(parentKey, childMap);
         }
-        jmsTemplate.convertAndSend("inbound.orderBook.topic", result);
+        jmsTemplate.convertAndSend("outbound.orderBook.topic", result);
     }
 
-    public SecurityTokenOrderBook readAndConvertFromQueue(Map<String, Map<String, List<String>>> map) throws JsonProcessingException {
+    public SecurityTokenOrderBook readAndConvertFromTopic(Map<String, Map<String, List<String>>> map) {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, OrderBookWrapper> orderBook = new HashMap<>();
         for (Map.Entry<String, Map<String, List<String>>> parentEntry : map.entrySet()) {

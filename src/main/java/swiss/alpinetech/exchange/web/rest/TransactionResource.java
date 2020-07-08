@@ -2,6 +2,7 @@ package swiss.alpinetech.exchange.web.rest;
 
 import swiss.alpinetech.exchange.domain.Transaction;
 import swiss.alpinetech.exchange.service.TransactionService;
+import swiss.alpinetech.exchange.service.dto.TransactionPriceDTO;
 import swiss.alpinetech.exchange.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -99,6 +101,23 @@ public class TransactionResource {
         Page<Transaction> page = transactionService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /transactions} : get all the transactions.
+     *
+     * @param securityTokenName the security token name.
+     * @param startDate the start created date.
+     * @param endDate the end created date.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of TransactionPriceDTO in body.
+     */
+    @GetMapping("/transactions-prices")
+    public ResponseEntity<List<TransactionPriceDTO>> getBySecurityTokenBetweenDate(@RequestParam String securityTokenName, @RequestParam String startDate, @RequestParam String endDate) {
+        log.debug("REST request to get all Transactions by security token name and between two created dates");
+        ZonedDateTime beginDateParam = ZonedDateTime.parse(startDate);
+        ZonedDateTime endDateParam = ZonedDateTime.parse(endDate);
+        List<TransactionPriceDTO> transactionPriceDTOS = transactionService.findBySecurityTokenBetweenDate(securityTokenName, beginDateParam, endDateParam);
+        return ResponseEntity.ok().body(transactionPriceDTOS);
     }
 
     /**

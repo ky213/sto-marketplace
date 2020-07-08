@@ -116,6 +116,11 @@ spring:
   output:
     ansi:
       console-available: true
+  jms:
+    pub-sub-domain: true
+  activemq:
+    packages:
+      trust-all: true
 
 server:
   servlet:

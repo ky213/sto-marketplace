@@ -6,6 +6,7 @@ import swiss.alpinetech.exchange.domain.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import swiss.alpinetech.exchange.domain.Trade;
+import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -42,13 +43,30 @@ public interface OrderService {
     Order cancel(Long orderId);
 
     /**
-     * Update order fillToken and fillAmount.
+     * Update fillToken and fillAmount orders of trade.
      *
      * @param resultListTrades the list of trades result of matching engine.
-     * @param orderId the id order tu update.
      * @return the updated entity.
      */
-    void UpdateOrderFillTokenAndFillAmount(List<Trade> resultListTrades, Long orderId);
+    void updateOrderFillTokenAndFillAmount(List<Trade> resultListTrades);
+
+    /**
+     * Update order total amount.
+     *
+     * @param totalAmount the total amount.
+     * @param orderId the order to update.
+     * @return the updated entity.
+     */
+    Order updateOrderAmount(Long orderId, Double totalAmount);
+
+    /**
+     * Update order status.
+     *
+     * @param status the list of trades result of matching engine.
+     * @param orderId the order to update.
+     * @return the updated entity.
+     */
+    Order updateOrderStatus(Long orderId, STATUS status);
 
     /**
      * Get all the orders.

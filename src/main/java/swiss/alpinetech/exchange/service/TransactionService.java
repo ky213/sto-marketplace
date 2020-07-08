@@ -5,7 +5,10 @@ import swiss.alpinetech.exchange.domain.Transaction;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import swiss.alpinetech.exchange.service.dto.TransactionPriceDTO;
 
+import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -44,6 +47,16 @@ public interface TransactionService {
      * @return the list of entities.
      */
     Page<Transaction> findAll(Pageable pageable);
+
+    /**
+     * Get all the transactions.
+     *
+     * @param securityTokenName the security token name.
+     * @param startDate the start created date.
+     * @param endDate the end created date.
+     * @return the list of entities.
+     */
+    List<TransactionPriceDTO> findBySecurityTokenBetweenDate(String securityTokenName, ZonedDateTime startDate, ZonedDateTime endDate);
 
     /**
      * Get the "id" transaction.

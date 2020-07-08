@@ -6,13 +6,19 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import swiss.alpinetech.exchange.domain.Order;
+import swiss.alpinetech.exchange.domain.OrderBookWrapper;
+import swiss.alpinetech.exchange.domain.SecurityTokenOrderBook;
+import swiss.alpinetech.exchange.domain.enumeration.ACTIONTYPE;
 import swiss.alpinetech.exchange.domain.enumeration.STSTATUS;
 import swiss.alpinetech.exchange.repository.WhiteListingRepository;
 import swiss.alpinetech.exchange.repository.search.WhiteListingSearchRepository;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
+import swiss.alpinetech.exchange.service.OrderBookService;
 import swiss.alpinetech.exchange.service.SecurityTokenService;
 import swiss.alpinetech.exchange.domain.SecurityToken;
 import swiss.alpinetech.exchange.repository.SecurityTokenRepository;
@@ -25,8 +31,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -50,10 +55,22 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     @Autowired
     private WhiteListingRepository whiteListingRepository;
 
+    @Autowired
+    private OrderBookService orderBookService;
+
+    private SecurityTokenOrderBook securityTokenOrderBook;
+
     public SecurityTokenServiceImpl(SecurityTokenRepository securityTokenRepository, SecurityTokenSearchRepository securityTokenSearchRepository) {
         this.securityTokenRepository = securityTokenRepository;
         this.securityTokenSearchRepository = securityTokenSearchRepository;
     }
+
+    @JmsListener(destination = "outbound.orderBook.topic")
+    void getSecurityTokenOrderBookFromTopic(Map<String, Map<String, List<String>>> message) {
+        log.debug("consume securityTokenOrderBook {} from topic", message);
+        this.securityTokenOrderBook = orderBookService.readAndConvertFromTopic(message);
+        log.debug("new securityTokenOrderBook {} from topic", securityTokenOrderBook.toString());
+    };
 
     /**
      * Save a securityToken.
@@ -67,6 +84,34 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
         SecurityToken result = securityTokenRepository.save(securityToken);
         securityTokenSearchRepository.save(result);
         return result;
+    }
+
+    /**
+     * Update securityToken price according to order.
+     *
+     * @param order the entity id to update.
+     * @return the persisted entity.
+     */
+    @Override
+    public SecurityToken updateSecurityTokenPrice(Order order) {
+        SecurityToken securityToken = this.securityTokenRepository.findById(order.getSecurityToken().getId()).get();
+        if (this.securityTokenOrderBook == null) {
+            return securityToken;
+        }
+        Set<Order> buyOrders = this.orderBookService.getBuyOrdersBySecurityToken(""+securityToken.getId(), this.securityTokenOrderBook); //du petit au grand
+        Set<Order> sellOrders = this.orderBookService.getSellOrdersBySecurityToken(""+securityToken.getId(), this.securityTokenOrderBook);
+
+        if(order.getType().name().equals(ACTIONTYPE.BUY.name()) && !buyOrders.isEmpty() &&
+            sellOrders.stream().min(Comparator.comparing(Order::getPrice)).get().getPrice() > order.getPrice()) {
+
+            securityToken.setLastSellingprice(order.getPrice());
+        }
+        if(order.getType().name().equals(ACTIONTYPE.SELL.name()) && !sellOrders.isEmpty() &&
+            buyOrders.stream().max(Comparator.comparing(Order::getPrice)).get().getPrice() < order.getPrice()) {
+
+            securityToken.setLastBuyingPrice(order.getPrice());
+        }
+        return save(securityToken);
     }
 
     /**
@@ -115,6 +160,32 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
             PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
             securityTokenList.size());
         return securityTokensPage;
+    }
+
+    /**
+     * get Total Balance of securityToken.
+     *
+     * @param securityTokenId the security token Id.
+     * @return the total Balance.
+     */
+    @Override
+    public Double getTotalBalance(Long securityTokenId) {
+        Double totalBalance = this.whiteListingRepository.findBySecuritytokenId(securityTokenId).stream().mapToDouble(item -> item.getBalance()).sum();
+        return totalBalance;
+    }
+
+    /**
+     * get Order book of securityToken.
+     *
+     * @param securityTokenId the security token Id.
+     * @return OrderBook.
+     */
+    @Override
+    public OrderBookWrapper getSecurityTokenOrderBook(Long securityTokenId) {
+        if (this.securityTokenOrderBook == null) {
+            return null;
+        }
+        return this.securityTokenOrderBook.getSecurityTokenOrderBook().get(""+securityTokenId);
     }
 
     /**
