@@ -24,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import swiss.alpinetech.exchange.service.dto.TransactionPriceDTO;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -179,6 +180,25 @@ public class TransactionServiceImpl implements TransactionService {
             PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
             transactionList.size());
         return transactionsPage;
+    }
+
+    /**
+     * Get all the transactions.
+     *
+     * @param securityTokenName the security token name.
+     * @param startDate the start created date.
+     * @param endDate the end created date.
+     * @return the list of entities.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<TransactionPriceDTO> findBySecurityTokenBetweenDate(String securityTokenName, ZonedDateTime startDate, ZonedDateTime endDate) {
+        log.debug("Request to get all Transactions by security token name and between two created dates");
+        List<TransactionPriceDTO> transactionPriceDTOS = transactionRepository.findBySecurityTokenNameAndCreateDateBetween(securityTokenName, startDate, endDate)
+            .stream()
+            .map(TransactionPriceDTO::new)
+            .collect(Collectors.toList());
+        return transactionPriceDTOS;
     }
 
     /**
