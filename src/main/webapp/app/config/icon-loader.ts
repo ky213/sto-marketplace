@@ -48,6 +48,7 @@ import { faFileContract } from '@fortawesome/free-solid-svg-icons/faFileContract
 import { faDownload } from '@fortawesome/free-solid-svg-icons/faDownload';
 import { faUserShield } from '@fortawesome/free-solid-svg-icons/faUserShield';
 import { faEllipsisV } from '@fortawesome/free-solid-svg-icons/faEllipsisV';
+import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
 
 import { library } from '@fortawesome/fontawesome-svg-core';
 
@@ -102,6 +103,7 @@ export const loadIcons = () => {
     faFileContract,
     faDownload,
     faUserShield,
-    faEllipsisV
+    faEllipsisV,
+    faCheck
   );
 };

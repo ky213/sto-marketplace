@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 function WhiteList(props) {
   return (
     <Card className="p-0 h-100">
-      <CardHeader className="py-3">Users Whitelisteds </CardHeader>
+      <CardHeader className="py-3">Users Whitelisted </CardHeader>
       <CardBody className="p-0">
         <Table>
           <tbody>
