@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import swiss.alpinetech.exchange.domain.Order;
+import swiss.alpinetech.exchange.domain.OrderBookWrapper;
 import swiss.alpinetech.exchange.domain.SecurityTokenOrderBook;
 import swiss.alpinetech.exchange.domain.enumeration.ACTIONTYPE;
 import swiss.alpinetech.exchange.domain.enumeration.STSTATUS;
@@ -100,12 +101,12 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
         Set<Order> buyOrders = this.orderBookService.getBuyOrdersBySecurityToken(""+securityToken.getId(), this.securityTokenOrderBook); //du petit au grand
         Set<Order> sellOrders = this.orderBookService.getSellOrdersBySecurityToken(""+securityToken.getId(), this.securityTokenOrderBook);
 
-        if(order.getType().name().equals(ACTIONTYPE.BUY.name()) &&
+        if(order.getType().name().equals(ACTIONTYPE.BUY.name()) && !buyOrders.isEmpty() &&
             sellOrders.stream().min(Comparator.comparing(Order::getPrice)).get().getPrice() > order.getPrice()) {
 
             securityToken.setLastSellingprice(order.getPrice());
         }
-        if(order.getType().name().equals(ACTIONTYPE.SELL.name()) &&
+        if(order.getType().name().equals(ACTIONTYPE.SELL.name()) && !sellOrders.isEmpty() &&
             buyOrders.stream().max(Comparator.comparing(Order::getPrice)).get().getPrice() < order.getPrice()) {
 
             securityToken.setLastBuyingPrice(order.getPrice());
@@ -171,6 +172,20 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     public Double getTotalBalance(Long securityTokenId) {
         Double totalBalance = this.whiteListingRepository.findBySecuritytokenId(securityTokenId).stream().mapToDouble(item -> item.getBalance()).sum();
         return totalBalance;
+    }
+
+    /**
+     * get Order book of securityToken.
+     *
+     * @param securityTokenId the security token Id.
+     * @return OrderBook.
+     */
+    @Override
+    public OrderBookWrapper getSecurityTokenOrderBook(Long securityTokenId) {
+        if (this.securityTokenOrderBook == null) {
+            return null;
+        }
+        return this.securityTokenOrderBook.getSecurityTokenOrderBook().get(""+securityTokenId);
     }
 
     /**

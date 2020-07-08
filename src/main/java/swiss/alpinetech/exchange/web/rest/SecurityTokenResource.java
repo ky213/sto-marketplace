@@ -1,6 +1,7 @@
 package swiss.alpinetech.exchange.web.rest;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import swiss.alpinetech.exchange.domain.OrderBookWrapper;
 import swiss.alpinetech.exchange.domain.SecurityToken;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.SecurityTokenService;
@@ -155,8 +156,22 @@ public class SecurityTokenResource {
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
     public ResponseEntity<Double> getSecurityTokenTotalBalance(@PathVariable Long id) {
         log.debug("REST request to get SecurityToken {} total balance", id);
-        Double securityTokenServiceTotalBalance = securityTokenService.getTotalBalance(id);
-        return ResponseEntity.ok().body(securityTokenServiceTotalBalance);
+        Double securityTokenTotalBalance = securityTokenService.getTotalBalance(id);
+        return ResponseEntity.ok().body(securityTokenTotalBalance);
+    }
+
+    /**
+     * {@code GET  /security-tokens/:id/order-book} : get the "id" securityToken.
+     *
+     * @param id the id of the securityToken to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the order book, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/security-tokens/{id}/order-book")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<OrderBookWrapper> getSecurityTokenOrderBook(@PathVariable Long id) {
+        log.debug("REST request to get SecurityToken {} order book", id);
+        OrderBookWrapper securityTokenOrderBook = securityTokenService.getSecurityTokenOrderBook(id);
+        return ResponseEntity.ok().body(securityTokenOrderBook);
     }
 
     /**

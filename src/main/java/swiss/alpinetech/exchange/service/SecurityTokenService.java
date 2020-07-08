@@ -1,6 +1,7 @@
 package swiss.alpinetech.exchange.service;
 
 import swiss.alpinetech.exchange.domain.Order;
+import swiss.alpinetech.exchange.domain.OrderBookWrapper;
 import swiss.alpinetech.exchange.domain.SecurityToken;
 
 import org.springframework.data.domain.Page;
@@ -53,6 +54,14 @@ public interface SecurityTokenService {
      * @return the total Balance.
      */
     Double getTotalBalance(Long securityTokenId);
+
+    /**
+     * get Order book of securityToken.
+     *
+     * @param securityTokenId the security token Id.
+     * @return OrderBook.
+     */
+    OrderBookWrapper getSecurityTokenOrderBook(Long securityTokenId);
 
     /**
      * Get the "id" securityToken.
