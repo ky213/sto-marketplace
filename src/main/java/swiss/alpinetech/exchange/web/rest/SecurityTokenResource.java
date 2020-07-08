@@ -146,6 +146,20 @@ public class SecurityTokenResource {
     }
 
     /**
+     * {@code GET  /security-tokens/:id/total-balance} : get the "id" securityToken.
+     *
+     * @param id the id of the securityToken to retrieve.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the total balance, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/security-tokens/{id}/total-balance")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<Double> getSecurityTokenTotalBalance(@PathVariable Long id) {
+        log.debug("REST request to get SecurityToken {} total balance", id);
+        Double securityTokenServiceTotalBalance = securityTokenService.getTotalBalance(id);
+        return ResponseEntity.ok().body(securityTokenServiceTotalBalance);
+    }
+
+    /**
      * {@code DELETE  /security-tokens/:id} : delete the "id" securityToken.
      *
      * @param id the id of the securityToken to delete.

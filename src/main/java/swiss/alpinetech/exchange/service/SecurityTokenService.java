@@ -47,6 +47,14 @@ public interface SecurityTokenService {
     Page<SecurityToken> findAll(Pageable pageable);
 
     /**
+     * get Total Balance of securityToken.
+     *
+     * @param securityTokenId the security token Id.
+     * @return the total Balance.
+     */
+    Double getTotalBalance(Long securityTokenId);
+
+    /**
      * Get the "id" securityToken.
      *
      * @param id the id of the entity.

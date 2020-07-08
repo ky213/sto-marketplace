@@ -162,6 +162,18 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     }
 
     /**
+     * get Total Balance of securityToken.
+     *
+     * @param securityTokenId the security token Id.
+     * @return the total Balance.
+     */
+    @Override
+    public Double getTotalBalance(Long securityTokenId) {
+        Double totalBalance = this.whiteListingRepository.findBySecuritytokenId(securityTokenId).stream().mapToDouble(item -> item.getBalance()).sum();
+        return totalBalance;
+    }
+
+    /**
      * Get one securityToken by id.
      *
      * @param id the id of the entity.
