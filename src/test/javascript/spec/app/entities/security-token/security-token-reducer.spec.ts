@@ -35,7 +35,8 @@ describe('Entities reducer tests', () => {
     totalItems: 0,
     updating: false,
     updateSuccess: false,
-    chartData: []
+    chartData: [],
+    totalBalance: 0
   };
 
   function testInitialState(state) {

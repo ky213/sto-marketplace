@@ -11,6 +11,7 @@ export const ACTION_TYPES = {
   FETCH_SECURITYTOKEN_LIST: 'securityToken/FETCH_SECURITYTOKEN_LIST',
   FETCH_SECURITYTOKEN: 'securityToken/FETCH_SECURITYTOKEN',
   FETCH_CHART_DATA: 'securityToken/FETCH_CHART_DATA',
+  FETCH_TOTAL_BALANCE: 'securityToken/FETCH_TOTAL_BALANCE',
   CREATE_SECURITYTOKEN: 'securityToken/CREATE_SECURITYTOKEN',
   UPDATE_SECURITYTOKEN: 'securityToken/UPDATE_SECURITYTOKEN',
   UPDATE_SECURITYTOKEN_PRICE: 'securityToken/UPDATE_SECURITYTOKEN_PRICE',
@@ -27,7 +28,8 @@ const initialState = {
   updating: false,
   totalItems: 0,
   updateSuccess: false,
-  chartData: []
+  chartData: [],
+  totalBalance: 0
 };
 
 export type SecurityTokenState = Readonly<typeof initialState>;
@@ -40,6 +42,7 @@ export default (state: SecurityTokenState = initialState, action): SecurityToken
     case REQUEST(ACTION_TYPES.FETCH_SECURITYTOKEN_LIST):
     case REQUEST(ACTION_TYPES.FETCH_SECURITYTOKEN):
     case REQUEST(ACTION_TYPES.FETCH_CHART_DATA):
+    case REQUEST(ACTION_TYPES.FETCH_TOTAL_BALANCE):
       return {
         ...state,
         errorMessage: null,
@@ -59,6 +62,7 @@ export default (state: SecurityTokenState = initialState, action): SecurityToken
     case FAILURE(ACTION_TYPES.FETCH_SECURITYTOKEN_LIST):
     case FAILURE(ACTION_TYPES.FETCH_SECURITYTOKEN):
     case FAILURE(ACTION_TYPES.FETCH_CHART_DATA):
+    case FAILURE(ACTION_TYPES.FETCH_TOTAL_BALANCE):
     case FAILURE(ACTION_TYPES.CREATE_SECURITYTOKEN):
     case FAILURE(ACTION_TYPES.UPDATE_SECURITYTOKEN):
     case FAILURE(ACTION_TYPES.DELETE_SECURITYTOKEN):
@@ -88,6 +92,12 @@ export default (state: SecurityTokenState = initialState, action): SecurityToken
         ...state,
         loading: false,
         chartData: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_TOTAL_BALANCE):
+      return {
+        ...state,
+        loading: false,
+        totalBalance: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.CREATE_SECURITYTOKEN):
     case SUCCESS(ACTION_TYPES.UPDATE_SECURITYTOKEN):
@@ -204,6 +214,14 @@ export const getChartData: any = (STName: string, startDate: string, endDate: st
   return {
     type: ACTION_TYPES.FETCH_CHART_DATA,
     payload: axios.get<any[]>(requestUrl)
+  };
+};
+
+export const getTotalBalance: any = (id: number) => {
+  const requestUrl = `/api/security-tokens/${id}/total-balance`;
+  return {
+    type: ACTION_TYPES.FETCH_TOTAL_BALANCE,
+    payload: axios.get<number>(requestUrl)
   };
 };
 
