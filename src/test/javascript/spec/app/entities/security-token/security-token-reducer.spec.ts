@@ -17,6 +17,8 @@ import reducer, {
 } from 'app/entities/security-token/security-token.reducer';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 import { ISecurityToken, defaultValue } from 'app/shared/model/security-token.model';
+import { IUser } from 'app/shared/model/user.model';
+import { IOrder } from 'app/shared/model/order.model';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {
@@ -34,7 +36,11 @@ describe('Entities reducer tests', () => {
     entity: defaultValue,
     totalItems: 0,
     updating: false,
-    updateSuccess: false
+    updateSuccess: false,
+    chartData: [],
+    totalBalance: 0,
+    usersWhitelisted: [] as ReadonlyArray<IUser>,
+    orderBook: { buyOrders: [] as ReadonlyArray<IOrder>, sellOrders: [] as ReadonlyArray<IOrder> }
   };
 
   function testInitialState(state) {
