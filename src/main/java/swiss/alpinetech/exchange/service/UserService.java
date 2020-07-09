@@ -14,6 +14,7 @@ import swiss.alpinetech.exchange.domain.Authority;
 import swiss.alpinetech.exchange.domain.User;
 import swiss.alpinetech.exchange.repository.AuthorityRepository;
 import swiss.alpinetech.exchange.repository.UserRepository;
+import swiss.alpinetech.exchange.repository.WhiteListingRepository;
 import swiss.alpinetech.exchange.repository.search.UserSearchRepository;
 import swiss.alpinetech.exchange.repository.search.WhiteListingSearchRepository;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
@@ -61,6 +62,9 @@ public class UserService {
 
     @Autowired
     private WhiteListingSearchRepository whiteListingSearchRepository;
+
+    @Autowired
+    private WhiteListingRepository whiteListingRepository;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserSearchRepository userSearchRepository, AuthorityRepository authorityRepository, CacheManager cacheManager) {
         this.userRepository = userRepository;
@@ -300,6 +304,17 @@ public class UserService {
             PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
             userList.size());
         return usersPage;
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserDTO> getForWhiteListingBySTO(Long securityTokenId) {
+        log.debug("Request to all user whiteliste of this token {}", securityTokenId);
+        List<UserDTO> usersList = this.whiteListingRepository.findBySecuritytokenId(securityTokenId)
+            .stream()
+            .map(item -> item.getUser())
+            .map(UserDTO::new)
+            .collect(Collectors.toList());
+        return usersList;
     }
 
     @Transactional(readOnly = true)
