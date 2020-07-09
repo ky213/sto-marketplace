@@ -6,6 +6,7 @@ import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util'
 
 import { ISecurityToken, defaultValue } from 'app/shared/model/security-token.model';
 import { IUser } from 'app/shared/model/user.model';
+import { IOrder } from 'app/shared/model/order.model';
 
 export const ACTION_TYPES = {
   SEARCH_SECURITYTOKENS: 'securityToken/SEARCH_SECURITYTOKENS',
@@ -14,6 +15,7 @@ export const ACTION_TYPES = {
   FETCH_CHART_DATA: 'securityToken/FETCH_CHART_DATA',
   FETCH_TOTAL_BALANCE: 'securityToken/FETCH_TOTAL_BALANCE',
   FETCH_USERS_WHITELISTED: 'securityToken/FETCH_USERS_WHITELISTED',
+  FETCH_ORDER_BOOK: 'securityToken/FETCH_ORDER_BOOK',
   CREATE_SECURITYTOKEN: 'securityToken/CREATE_SECURITYTOKEN',
   UPDATE_SECURITYTOKEN: 'securityToken/UPDATE_SECURITYTOKEN',
   UPDATE_SECURITYTOKEN_PRICE: 'securityToken/UPDATE_SECURITYTOKEN_PRICE',
@@ -32,7 +34,8 @@ const initialState = {
   updateSuccess: false,
   chartData: [],
   totalBalance: 0,
-  usersWhitelisted: [] as ReadonlyArray<IUser>
+  usersWhitelisted: [] as ReadonlyArray<IUser>,
+  orderBook: { buyOrders: [] as ReadonlyArray<IOrder>, sellOrders: [] as ReadonlyArray<IOrder> }
 };
 
 export type SecurityTokenState = Readonly<typeof initialState>;
@@ -47,6 +50,7 @@ export default (state: SecurityTokenState = initialState, action): SecurityToken
     case REQUEST(ACTION_TYPES.FETCH_CHART_DATA):
     case REQUEST(ACTION_TYPES.FETCH_TOTAL_BALANCE):
     case REQUEST(ACTION_TYPES.FETCH_USERS_WHITELISTED):
+    case REQUEST(ACTION_TYPES.FETCH_ORDER_BOOK):
       return {
         ...state,
         errorMessage: null,
@@ -68,6 +72,7 @@ export default (state: SecurityTokenState = initialState, action): SecurityToken
     case FAILURE(ACTION_TYPES.FETCH_CHART_DATA):
     case FAILURE(ACTION_TYPES.FETCH_TOTAL_BALANCE):
     case FAILURE(ACTION_TYPES.FETCH_USERS_WHITELISTED):
+    case FAILURE(ACTION_TYPES.FETCH_ORDER_BOOK):
     case FAILURE(ACTION_TYPES.CREATE_SECURITYTOKEN):
     case FAILURE(ACTION_TYPES.UPDATE_SECURITYTOKEN):
     case FAILURE(ACTION_TYPES.DELETE_SECURITYTOKEN):
@@ -110,6 +115,18 @@ export default (state: SecurityTokenState = initialState, action): SecurityToken
         loading: false,
         usersWhitelisted: action.payload.data
       };
+    case SUCCESS(ACTION_TYPES.FETCH_ORDER_BOOK):
+      if (action.payload.data.buyOrder)
+        return {
+          ...state,
+          loading: false,
+          orderBook: action.payload.data
+        };
+      else
+        return {
+          ...state,
+          loading: false
+        };
     case SUCCESS(ACTION_TYPES.CREATE_SECURITYTOKEN):
     case SUCCESS(ACTION_TYPES.UPDATE_SECURITYTOKEN):
       return {
@@ -235,11 +252,20 @@ export const getTotalBalance: any = (id: number) => {
     payload: axios.get<number>(requestUrl)
   };
 };
+
 export const getUsersWhitelisted: any = (id: number) => {
   const requestUrl = `/api/users-sto-whitelists/?securityTokenId=${id}`;
   return {
     type: ACTION_TYPES.FETCH_USERS_WHITELISTED,
     payload: axios.get<number>(requestUrl)
+  };
+};
+
+export const getOrderBook: any = (id: number) => {
+  const requestUrl = `/api/security-tokens/${id}/order-book`;
+  return {
+    type: ACTION_TYPES.FETCH_ORDER_BOOK,
+    payload: axios.get<any[]>(requestUrl)
   };
 };
 

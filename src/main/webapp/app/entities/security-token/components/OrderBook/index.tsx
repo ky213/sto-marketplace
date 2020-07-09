@@ -1,64 +1,62 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
+import { IRootState } from 'app/shared/reducers';
+import { getOrderBook } from '../../security-token.reducer';
 
-const OrderBook = () => {
+export interface OrderBookProps extends StateProps, DispatchProps {
+  id: number;
+}
+
+const OrderBook = (props: OrderBookProps) => {
+  useEffect(() => {
+    if (props.id) props.getOrderBook(props.id);
+  }, [props.id]);
+  const { orderBook } = props;
   return (
-    <div className="mt-2 px-2 pb-2 bg-white ">
+    <div className="mt-2 px-2 pb-2 bg-white" style={{ height: '40%', overflowY: 'scroll' }}>
       <small>Order book</small>
-      <table className="w-100">
-        <thead style={{ fontSize: '12px' }}>
-          <tr className="border-0 text-secondary ">
-            <th>Total</th>
-            <th>Size</th>
-            <th className="text-center">Prices</th>
-            <th>Size</th>
-            <th>Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="text-success">12</td>
-            <td className="text-success">12</td>
-            <td className="text-center">
-              <span className="mr-1 text-success">12.3 </span>
-              <span className="ml-1 text-danger"> 334.5</span>
-            </td>
-            <td className="text-danger">12</td>
-            <td className="text-danger">12</td>
-          </tr>
-          <tr>
-            <td className="text-success">12</td>
-            <td className="text-success">12</td>
-            <td className="text-center">
-              <span className="mr-1 text-success">12.3 </span>
-              <span className="ml-1 text-danger"> 334.5</span>
-            </td>
-            <td className="text-danger">12</td>
-            <td className="text-danger">12</td>
-          </tr>
-          <tr>
-            <td className="text-success">12</td>
-            <td className="text-success">12</td>
-            <td className="text-center">
-              <span className="mr-1 text-success">12.3 </span>
-              <span className="ml-1 text-danger"> 334.5</span>
-            </td>
-            <td className="text-danger">12</td>
-            <td className="text-danger">12</td>
-          </tr>
-          <tr>
-            <td className="text-success">12</td>
-            <td className="text-success">12</td>
-            <td className="text-center">
-              <span className="mr-1 text-success">12.3 </span>
-              <span className="ml-1 text-danger"> 334.5</span>
-            </td>
-            <td className="text-danger">12</td>
-            <td className="text-danger">12</td>
-          </tr>
-        </tbody>
-      </table>
+      <div className="w-100">
+        <div className=" d-flex justify-content-between text-secondary " style={{ fontSize: '12px' }}>
+          <span>Total</span>
+          <span>Size</span>
+          <span>Prices</span>
+          <span>Size</span>
+          <span>Total</span>
+        </div>
+        <div className="d-flex">
+          {orderBook.buyOrders.map(order => (
+            <div key={order.id} className="d-flex justify-content-between w-100 mr-1">
+              <span className="text-success">{order.totalAmount}</span>
+              <span className="text-success" style={{ marginLeft: '21px' }}>
+                {order.volume}
+              </span>
+              <span className="text-success">{order.price}</span>
+            </div>
+          ))}
+          {orderBook.sellOrders.map(order => (
+            <div key={order.id} className="d-flex justify-content-between w-100 ml-1">
+              <span className="text-danger">{order.price}</span>
+              <span className="text-danger" style={{ marginRight: '21px' }}>
+                {order.volume}
+              </span>
+              <span className="text-danger">{order.totalAmount}</span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };
 
-export default OrderBook;
+const mapStateToProps = ({ securityToken }: IRootState) => ({
+  orderBook: securityToken.orderBook
+});
+
+const mapDispatchToProps = {
+  getOrderBook
+};
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+type DispatchProps = typeof mapDispatchToProps;
+
+export default connect(mapStateToProps, mapDispatchToProps)(OrderBook);
