@@ -5,12 +5,12 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { ISecurityToken, defaultValue } from 'app/shared/model/security-token.model';
-import { stat } from 'fs';
 
 export const ACTION_TYPES = {
   SEARCH_SECURITYTOKENS: 'securityToken/SEARCH_SECURITYTOKENS',
   FETCH_SECURITYTOKEN_LIST: 'securityToken/FETCH_SECURITYTOKEN_LIST',
   FETCH_SECURITYTOKEN: 'securityToken/FETCH_SECURITYTOKEN',
+  FETCH_CHART_DATA: 'securityToken/FETCH_CHART_DATA',
   CREATE_SECURITYTOKEN: 'securityToken/CREATE_SECURITYTOKEN',
   UPDATE_SECURITYTOKEN: 'securityToken/UPDATE_SECURITYTOKEN',
   UPDATE_SECURITYTOKEN_PRICE: 'securityToken/UPDATE_SECURITYTOKEN_PRICE',
@@ -26,7 +26,8 @@ const initialState = {
   entity: defaultValue,
   updating: false,
   totalItems: 0,
-  updateSuccess: false
+  updateSuccess: false,
+  chartData: []
 };
 
 export type SecurityTokenState = Readonly<typeof initialState>;
@@ -38,6 +39,7 @@ export default (state: SecurityTokenState = initialState, action): SecurityToken
     case REQUEST(ACTION_TYPES.SEARCH_SECURITYTOKENS):
     case REQUEST(ACTION_TYPES.FETCH_SECURITYTOKEN_LIST):
     case REQUEST(ACTION_TYPES.FETCH_SECURITYTOKEN):
+    case REQUEST(ACTION_TYPES.FETCH_CHART_DATA):
       return {
         ...state,
         errorMessage: null,
@@ -56,6 +58,7 @@ export default (state: SecurityTokenState = initialState, action): SecurityToken
     case FAILURE(ACTION_TYPES.SEARCH_SECURITYTOKENS):
     case FAILURE(ACTION_TYPES.FETCH_SECURITYTOKEN_LIST):
     case FAILURE(ACTION_TYPES.FETCH_SECURITYTOKEN):
+    case FAILURE(ACTION_TYPES.FETCH_CHART_DATA):
     case FAILURE(ACTION_TYPES.CREATE_SECURITYTOKEN):
     case FAILURE(ACTION_TYPES.UPDATE_SECURITYTOKEN):
     case FAILURE(ACTION_TYPES.DELETE_SECURITYTOKEN):
@@ -79,6 +82,12 @@ export default (state: SecurityTokenState = initialState, action): SecurityToken
         ...state,
         loading: false,
         entity: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_CHART_DATA):
+      return {
+        ...state,
+        loading: false,
+        chartData: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.CREATE_SECURITYTOKEN):
     case SUCCESS(ACTION_TYPES.UPDATE_SECURITYTOKEN):
@@ -189,6 +198,14 @@ export const setBlob = (name, data, contentType?) => ({
     contentType
   }
 });
+
+export const getChartData: any = (STName: string, startDate: string, endDate: string) => {
+  const requestUrl = `api/transactions-prices/?securityTokenName=${STName}&startDate=${startDate}&endDate=${endDate}`;
+  return {
+    type: ACTION_TYPES.FETCH_CHART_DATA,
+    payload: axios.get<any[]>(requestUrl)
+  };
+};
 
 export const reset = () => ({
   type: ACTION_TYPES.RESET

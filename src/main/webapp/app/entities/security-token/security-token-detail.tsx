@@ -6,7 +6,6 @@ import { Row, Col } from 'reactstrap';
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './security-token.reducer';
 import { Info, WhiteList, OrdersChart, Header, State, Balance, OrderBook } from './components';
-import { Order } from '../order/order';
 
 export interface ISecurityTokenDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -21,7 +20,7 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
         <Header {...props.securityTokenEntity} />
       </Row>
       <Row>
-        <OrdersChart />
+        <OrdersChart securityTokenName={props.securityTokenEntity.name} />
         <Col>
           <State />
           <Balance {...props.securityTokenEntity} />
