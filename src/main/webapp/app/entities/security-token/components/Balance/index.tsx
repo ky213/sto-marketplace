@@ -11,7 +11,7 @@ export interface BalanceProps extends StateProps, DispatchProps {
 
 const Balance = (props: BalanceProps) => {
   useEffect(() => {
-    props.getTotalBalance(props.id);
+    if (props.id) props.getTotalBalance(props.id);
   }, [props.id]);
 
   return (

@@ -1,9 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Table, Card, CardHeader, CardBody, CardFooter, Button } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { connect } from 'react-redux';
+import { IRootState } from 'app/shared/reducers';
+import { getUsersWhitelisted } from '../../security-token.reducer';
 
-function WhiteList(props) {
+export interface WhitelistProps extends StateProps, DispatchProps {
+  id: number;
+}
+
+function WhiteList(props: WhitelistProps) {
+  useEffect(() => {
+    if (props.id) props.getUsersWhitelisted(props.id);
+  }, [props.id]);
+
   return (
     <Card className="p-0 h-100">
       <CardHeader className="py-3">Users Whitelisted </CardHeader>
@@ -111,4 +122,15 @@ function WhiteList(props) {
   );
 }
 
-export default WhiteList;
+const mapStateToProps = ({ securityToken }: IRootState) => ({
+  usersWhitelisted: securityToken.usersWhitelisted
+});
+
+const mapDispatchToProps = {
+  getUsersWhitelisted
+};
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+type DispatchProps = typeof mapDispatchToProps;
+
+export default connect(mapStateToProps, mapDispatchToProps)(WhiteList);

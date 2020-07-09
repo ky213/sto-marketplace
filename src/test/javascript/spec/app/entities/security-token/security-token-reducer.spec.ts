@@ -36,7 +36,8 @@ describe('Entities reducer tests', () => {
     updating: false,
     updateSuccess: false,
     chartData: [],
-    totalBalance: 0
+    totalBalance: 0,
+    usersWhitelisted: []
   };
 
   function testInitialState(state) {
