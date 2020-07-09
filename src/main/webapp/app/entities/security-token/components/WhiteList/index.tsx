@@ -21,91 +21,25 @@ function WhiteList(props: WhitelistProps) {
       <CardBody className="p-0">
         <Table>
           <tbody>
-            <tr className="border-top-0">
-              <td className="d-flex border-top-0">
-                <div>
-                  <p className="m-0" style={{ fontSize: '16px' }}>
-                    User 1
-                  </p>
-                  <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                    Risk level 4
-                  </p>
-                </div>
-              </td>
-              <td className="text-right  border-top-0">
-                <Button color="none">
-                  <FontAwesomeIcon icon="ellipsis-v" />
-                </Button>
-              </td>
-            </tr>
-            <tr>
-              <td className="d-flex">
-                <div>
-                  <p className="m-0" style={{ fontSize: '16px' }}>
-                    User 2
-                  </p>
-                  <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                    Risk level 4
-                  </p>
-                </div>
-              </td>
-              <td className="text-right">
-                <Button color="none">
-                  <FontAwesomeIcon icon="ellipsis-v" />
-                </Button>
-              </td>
-            </tr>
-            <tr>
-              <td className="d-flex">
-                <div>
-                  <p className="m-0" style={{ fontSize: '16px' }}>
-                    User 3
-                  </p>
-                  <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                    Risk level 4
-                  </p>
-                </div>
-              </td>
-              <td className="text-right">
-                <Button color="none">
-                  <FontAwesomeIcon icon="ellipsis-v" />
-                </Button>
-              </td>
-            </tr>
-            <tr>
-              <td className="d-flex">
-                <div>
-                  <p className="m-0" style={{ fontSize: '16px' }}>
-                    User 4
-                  </p>
-                  <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                    Risk level 4
-                  </p>
-                </div>
-              </td>
-              <td className="text-right">
-                <Button color="none">
-                  <FontAwesomeIcon icon="ellipsis-v" />
-                </Button>
-              </td>
-            </tr>
-            <tr>
-              <td className="d-flex">
-                <div>
-                  <p className="m-0" style={{ fontSize: '16px' }}>
-                    User 5
-                  </p>
-                  <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                    Risk level 4
-                  </p>
-                </div>
-              </td>
-              <td className="text-right">
-                <Button color="none">
-                  <FontAwesomeIcon icon="ellipsis-v" />
-                </Button>
-              </td>
-            </tr>
+            {props.usersWhitelisted.map(user => (
+              <tr className="border-top-0" key={user.id}>
+                <td className="d-flex border-top-0">
+                  <div>
+                    <p className="m-0" style={{ fontSize: '16px' }}>
+                      {user.firstName} {user.lastName}
+                    </p>
+                    <p className="text-muted m-0" style={{ fontSize: '12px' }}>
+                      Risk level {user.setting.riskProfil}
+                    </p>
+                  </div>
+                </td>
+                <td className="text-right  border-top-0">
+                  <Button color="none">
+                    <FontAwesomeIcon icon="ellipsis-v" />
+                  </Button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </Table>
       </CardBody>

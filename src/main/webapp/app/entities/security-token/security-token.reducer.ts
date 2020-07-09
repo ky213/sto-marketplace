@@ -5,6 +5,7 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { ISecurityToken, defaultValue } from 'app/shared/model/security-token.model';
+import { IUser } from 'app/shared/model/user.model';
 
 export const ACTION_TYPES = {
   SEARCH_SECURITYTOKENS: 'securityToken/SEARCH_SECURITYTOKENS',
@@ -31,7 +32,7 @@ const initialState = {
   updateSuccess: false,
   chartData: [],
   totalBalance: 0,
-  usersWhitelisted: []
+  usersWhitelisted: [] as ReadonlyArray<IUser>
 };
 
 export type SecurityTokenState = Readonly<typeof initialState>;
@@ -235,7 +236,7 @@ export const getTotalBalance: any = (id: number) => {
   };
 };
 export const getUsersWhitelisted: any = (id: number) => {
-  const requestUrl = `/api/users-sto-whitelists/${id}`;
+  const requestUrl = `/api/users-sto-whitelists/?securityTokenId=${id}`;
   return {
     type: ACTION_TYPES.FETCH_USERS_WHITELISTED,
     payload: axios.get<number>(requestUrl)

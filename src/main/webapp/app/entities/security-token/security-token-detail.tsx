@@ -28,7 +28,7 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
         </Col>
       </Row>
       <Row className="mt-3">
-        <Col md="4">
+        <Col className="p-0">
           <WhiteList id={props.securityTokenEntity.id} />
         </Col>
         <Col md="8">
