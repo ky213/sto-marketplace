@@ -5,7 +5,8 @@ import { Row, Col } from 'reactstrap';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './security-token.reducer';
-import { Info, WhiteList, OrdersChart, Header, State, Balance, OrderBook } from './components';
+import { Info, OrdersChart, Header, State, Balance, OrderBook } from './components';
+import WhiteList from './components/WhiteList';
 
 export interface ISecurityTokenDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
