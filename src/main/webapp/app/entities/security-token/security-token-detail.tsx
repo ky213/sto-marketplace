@@ -23,7 +23,6 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
       <Row>
         <OrdersChart securityTokenName={props.securityTokenEntity.name} />
         <Col>
-          <State />
           <Balance id={props.securityTokenEntity.id} />
           <OrderBook id={props.securityTokenEntity.id} />
         </Col>
