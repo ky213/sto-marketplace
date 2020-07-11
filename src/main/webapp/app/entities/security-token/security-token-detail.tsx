@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router-dom';
-import { Row, Col } from 'reactstrap';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { Row, Col, Button } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './security-token.reducer';
-import { Info, OrdersChart, Header, State, Balance, OrderBook } from './components';
+import { Info, OrdersChart, Header, Balance, OrderBook } from './components';
 import WhiteList from './components/WhiteList';
 
 export interface ISecurityTokenDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
@@ -34,6 +35,11 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
         <Col md="8">
           <Info {...props.securityTokenEntity} />
         </Col>
+      </Row>
+      <Row className="mt-2">
+        <Button tag={Link} to="/security-token" replace color="info">
+          <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
+        </Button>
       </Row>
     </div>
   );

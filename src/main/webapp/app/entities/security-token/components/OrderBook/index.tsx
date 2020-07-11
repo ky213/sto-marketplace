@@ -15,7 +15,7 @@ const OrderBook = (props: OrderBookProps) => {
   }, [props.id]);
 
   return (
-    <div className="mt-2 px-2 pb-2 bg-white" style={{ height: '70%', overflowY: 'scroll' }}>
+    <div className="mt-2 px-2 pb-2 bg-white" style={{ height: '79%', overflowY: 'scroll' }}>
       <small>Order book</small>
       <div className="w-100">
         <div className=" d-flex justify-content-between text-secondary " style={{ fontSize: '12px' }}>

@@ -2,14 +2,12 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, Row, Col, Card, CardHeader, CardBody, Badge } from 'reactstrap';
-import { ICrudGetAction, TextFormat } from 'react-jhipster';
+import { TextFormat } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './order.reducer';
-import { IOrder } from 'app/shared/model/order.model';
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
-import moment from 'moment';
+import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 
 export interface IOrderDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 

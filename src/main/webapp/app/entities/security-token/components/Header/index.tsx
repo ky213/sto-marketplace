@@ -1,9 +1,27 @@
 import React from 'react';
-import { ISecurityToken } from 'app/shared/model/security-token.model';
+import { connect } from 'react-redux';
 import { Row, Col } from 'reactstrap';
 import Switch from 'react-switch';
+
+import { updateEntity } from '../../security-token.reducer';
+import { ISecurityToken } from 'app/shared/model/security-token.model';
 import { STSTATUS } from 'app/shared/model/enumerations/ststatus.model';
-const Header = ({ name, status, logo, logoContentType }: ISecurityToken) => {
+import { IRootState } from 'app/shared/reducers';
+
+export interface HeaderProps extends StateProps, DispatchProps, ISecurityToken {}
+
+const Header = (props: HeaderProps) => {
+  const { name, status, logo, logoContentType } = props;
+
+  const handleChange = (checked, event, id) => {
+    let newStatus;
+
+    if (status === STSTATUS.ACTIVE) newStatus = STSTATUS.DISABLED;
+    if (status === STSTATUS.DISABLED) newStatus = STSTATUS.ACTIVE;
+
+    props.updateEntity({ ...props.securityTokenEntity, status: newStatus });
+  };
+
   return (
     <>
       <Col>
@@ -23,11 +41,23 @@ const Header = ({ name, status, logo, logoContentType }: ISecurityToken) => {
             <h3>Active </h3>
           </Col>
           <Col className="col-2 text-left">
-            <Switch onChange={() => {}} checked={status === STSTATUS.ACTIVE} />
+            <Switch onChange={handleChange} checked={status === STSTATUS.ACTIVE} />
           </Col>
         </Row>
       </Col>
     </>
   );
 };
-export default Header;
+
+const mapStateToProps = (storeState: IRootState) => ({
+  securityTokenEntity: storeState.securityToken.entity
+});
+
+const mapDispatchToProps = {
+  updateEntity
+};
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+type DispatchProps = typeof mapDispatchToProps;
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

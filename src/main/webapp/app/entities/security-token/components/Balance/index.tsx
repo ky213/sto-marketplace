@@ -15,7 +15,7 @@ const Balance = (props: BalanceProps) => {
   }, [props.id]);
 
   return (
-    <div className="mt-1" style={{ width: '55%' }}>
+    <div className="mt-1">
       <Card className="p-0">
         <CardBody className="py-2">
           <Row>
@@ -31,13 +31,6 @@ const Balance = (props: BalanceProps) => {
               </div>
             </Col>
           </Row>
-
-          <p className="mt-3 mb-0 text-muted text-sm">
-            <span className="text-danger mr-2">
-              <FontAwesomeIcon icon="arrow-down" /> 12%
-            </span>
-            <span className="text-nowrap">Since last month</span>
-          </p>
         </CardBody>
       </Card>
     </div>
