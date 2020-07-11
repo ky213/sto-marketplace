@@ -330,11 +330,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private Authentication getAuth() {
-        if (this.authentication != null) {
-            return this.authentication;
+        Authentication newAuthentication = SecurityContextHolder.getContext().getAuthentication();
+        if (newAuthentication != null) {
+            return newAuthentication;
         }
-        authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication;
+        return this.authentication;
     }
 
 }
