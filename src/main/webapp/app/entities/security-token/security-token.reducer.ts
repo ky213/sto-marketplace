@@ -116,17 +116,11 @@ export default (state: SecurityTokenState = initialState, action): SecurityToken
         usersWhitelisted: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.FETCH_ORDER_BOOK):
-      if (action.payload.data.buyOrder)
-        return {
-          ...state,
-          loading: false,
-          orderBook: action.payload.data
-        };
-      else
-        return {
-          ...state,
-          loading: false
-        };
+      return {
+        ...state,
+        loading: false,
+        orderBook: action.payload.data
+      };
     case SUCCESS(ACTION_TYPES.CREATE_SECURITYTOKEN):
     case SUCCESS(ACTION_TYPES.UPDATE_SECURITYTOKEN):
       return {

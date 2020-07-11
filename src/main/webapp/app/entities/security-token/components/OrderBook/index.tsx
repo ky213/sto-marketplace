@@ -8,10 +8,12 @@ export interface OrderBookProps extends StateProps, DispatchProps {
 }
 
 const OrderBook = (props: OrderBookProps) => {
+  const { orderBook } = props;
+
   useEffect(() => {
     if (props.id) props.getOrderBook(props.id);
   }, [props.id]);
-  const { orderBook } = props;
+
   return (
     <div className="mt-2 px-2 pb-2 bg-white" style={{ height: '70%', overflowY: 'scroll' }}>
       <small>Order book</small>
@@ -24,24 +26,30 @@ const OrderBook = (props: OrderBookProps) => {
           <span>Total</span>
         </div>
         <div className="d-flex">
-          {orderBook.buyOrders.map(order => (
-            <div key={order.id} className="d-flex justify-content-between w-100 mr-1">
-              <span className="text-success">{order.totalAmount}</span>
-              <span className="text-success" style={{ marginLeft: '21px' }}>
-                {order.volume}
-              </span>
-              <span className="text-success">{order.price}</span>
-            </div>
-          ))}
-          {orderBook.sellOrders.map(order => (
-            <div key={order.id} className="d-flex justify-content-between w-100 ml-1">
-              <span className="text-danger">{order.price}</span>
-              <span className="text-danger" style={{ marginRight: '21px' }}>
-                {order.volume}
-              </span>
-              <span className="text-danger">{order.totalAmount}</span>
-            </div>
-          ))}
+          <div className="w-50">
+            {orderBook &&
+              orderBook.buyOrders.map(order => (
+                <div key={order.id} className="d-flex justify-content-between w-100 mr-1">
+                  <span className="text-success">{order.totalAmount}</span>
+                  <span className="text-success" style={{ marginLeft: '21px' }}>
+                    {order.volume}
+                  </span>
+                  <span className="text-success">{order.price}</span>
+                </div>
+              ))}
+          </div>
+          <div className="w-50">
+            {orderBook &&
+              orderBook.sellOrders.map(order => (
+                <div key={order.id} className="d-flex justify-content-between w-100 ml-1">
+                  <span className="text-danger">{order.price}</span>
+                  <span className="text-danger pl-4" style={{ marginRight: '21px' }}>
+                    {order.volume}
+                  </span>
+                  <span className="text-danger pr-2">{order.totalAmount}</span>
+                </div>
+              ))}
+          </div>
         </div>
       </div>
     </div>

@@ -3,12 +3,14 @@ import SockJS from 'sockjs-client';
 import Stomp from 'webstomp-client';
 import { Observable } from 'rxjs';
 import { Storage } from 'react-jhipster';
+import { includes } from 'lodash';
 
 import { ACTION_TYPES as ADMIN_ACTIONS } from 'app/modules/administration/administration.reducer';
 import { ACTION_TYPES as AUTH_ACTIONS } from 'app/shared/reducers/authentication';
 import { ACTION_TYPES as ORDER_ACTIONS } from 'app/entities/order/order.reducer';
 import { ACTION_TYPES as SECURITYTOKEN_ACTIONS } from 'app/entities/security-token/security-token.reducer';
 import { SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
+import { AUTHORITIES } from './constants';
 
 let stompClient = null;
 
@@ -102,10 +104,14 @@ const unsubscribe = () => {
 
 export default store => next => action => {
   if (action.type === SUCCESS(AUTH_ACTIONS.GET_SESSION)) {
+    const isAdmin = includes(action.payload.data.authorities, AUTHORITIES.ADMIN);
+    const isBank = includes(action.payload.data.authorities, AUTHORITIES.BANK);
+
     connect();
     if (!alreadyConnectedOnce) {
       receive().subscribe(activity => {
-        if ('idOrder' in activity)
+        if ('idOrder' in activity && (isAdmin || isBank)) {
+          /* eslint  @typescript-eslint/no-misused-promises:off */
           return Promise.all([
             store.dispatch({
               type: ORDER_ACTIONS.PUSH_ORDER,
@@ -116,11 +122,18 @@ export default store => next => action => {
               payload: activity
             })
           ]);
+        }
 
-        return store.dispatch({
-          type: ADMIN_ACTIONS.WEBSOCKET_ACTIVITY_MESSAGE,
-          payload: activity
-        });
+        return Promise.all([
+          store.dispatch({
+            type: SECURITYTOKEN_ACTIONS.UPDATE_SECURITYTOKEN_PRICE,
+            payload: activity
+          }),
+          store.dispatch({
+            type: ADMIN_ACTIONS.WEBSOCKET_ACTIVITY_MESSAGE,
+            payload: activity
+          })
+        ]);
       });
     }
   } else if (action.type === FAILURE(AUTH_ACTIONS.GET_SESSION)) {
