@@ -9,6 +9,7 @@ export default class RegisterPage extends BasePage {
   email: ElementFinder = this.selector.$('#email');
   saveButton: ElementFinder = this.selector.$('button[type=submit]');
   title: ElementFinder = $('#register-title');
+  activated: ElementFinder = $('label[for="activated"]');
 
   constructor() {
     super(selector);
@@ -22,6 +23,10 @@ export default class RegisterPage extends BasePage {
 
   async getTitle() {
     return this.title.getAttribute('id');
+  }
+
+  async setActivated() {
+    return this.activated.click();
   }
 
   async setUserName(username: string) {

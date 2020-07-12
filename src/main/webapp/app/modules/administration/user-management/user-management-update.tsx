@@ -404,8 +404,8 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
                 </>
               )}
               <AvGroup check>
-                <Label>
-                  <AvInput type="checkbox" name="activated" value={user?.activated} checked={user?.activated} /> Activated
+                <Label for="activated">
+                  <AvInput id="activated" type="checkbox" name="activated" value={user?.activated} checked={user?.activated} /> Activated
                 </Label>
               </AvGroup>
               <Button tag={Link} to="/admin/user-management" replace color="info">

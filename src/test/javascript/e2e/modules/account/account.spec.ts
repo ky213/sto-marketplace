@@ -102,17 +102,28 @@ describe('Account', () => {
     await waitUntilClickable(modifiedDateSortButton);
     await modifiedDateSortButton.click();
 
-    const deactivatedButton = getUserDeactivatedButtonByLogin('user_test');
-    await waitUntilClickable(deactivatedButton);
-    await deactivatedButton.click();
-    await waitUntilHidden(deactivatedButton);
+    const editButton = element(by.css('[href="/admin/user-management/user_test/edit"]'));
+    await waitUntilClickable(editButton);
+    await editButton.click();
+    await waitUntilHidden(editButton);
 
-    // Deactivated button should disappear
-    expect(await deactivatedButton.isPresent()).to.be.false;
+    await registerPage.waitUntilDisplayed();
+    expect(await element(by.id('register-title')).isPresent()).to.be.true;
+
+    await registerPage.setActivated();
+
+    await registerPage.save();
+
+    const toast = getToastByInnerText('A user is updated with identifier user_test');
+    await waitUntilDisplayed(toast);
+
+    // Success toast should appear
+    expect(await toast.isPresent()).to.be.true;
+
     await navBarPage.autoSignOut();
   });
 
-  // it('should not be able to sign up if login already taken', async () => {
+  // it('should not be able to register if login already taken', async () => {
   //   await registerPage.get();
   //   expect(await registerPage.getTitle()).to.eq(registerPageTitle);
 
@@ -124,7 +135,7 @@ describe('Account', () => {
   //   expect(await toast.isPresent()).to.be.true;
   // });
 
-  // it('should not be able to sign up if email already taken', async () => {
+  // it('should not be able to register if email already taken', async () => {
   //   expect(await registerPage.getTitle()).to.eq(registerPageTitle);
 
   //   await registerPage.username.sendKeys('_jhi');
