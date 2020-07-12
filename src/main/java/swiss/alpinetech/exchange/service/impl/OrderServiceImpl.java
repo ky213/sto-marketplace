@@ -13,7 +13,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import swiss.alpinetech.exchange.domain.*;
 import swiss.alpinetech.exchange.domain.enumeration.STATUS;
-import swiss.alpinetech.exchange.repository.SecurityTokenRepository;
 import swiss.alpinetech.exchange.repository.UserRepository;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.OrderService;
@@ -59,9 +58,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private SecurityTokenRepository securityTokenRepository;
 
     @Autowired
     private SecurityTokenService securityTokenService;

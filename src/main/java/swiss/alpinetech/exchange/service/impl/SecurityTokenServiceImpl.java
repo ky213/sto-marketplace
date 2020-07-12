@@ -98,18 +98,20 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
         if (this.securityTokenOrderBook == null) {
             return securityToken;
         }
-        Set<Order> buyOrders = this.orderBookService.getBuyOrdersBySecurityToken(""+securityToken.getId(), this.securityTokenOrderBook); //du petit au grand
+        Set<Order> buyOrders = this.orderBookService.getBuyOrdersBySecurityToken(""+securityToken.getId(), this.securityTokenOrderBook);
         Set<Order> sellOrders = this.orderBookService.getSellOrdersBySecurityToken(""+securityToken.getId(), this.securityTokenOrderBook);
 
-        if(order.getType().name().equals(ACTIONTYPE.BUY.name()) && !buyOrders.isEmpty() &&
-            sellOrders.stream().min(Comparator.comparing(Order::getPrice)).get().getPrice() > order.getPrice()) {
-
-            securityToken.setLastSellingprice(order.getPrice());
+        if(order.getType().name().equals(ACTIONTYPE.BUY.name()) && !buyOrders.isEmpty()) {
+            Double minBuyOrdersPrice = buyOrders.stream().min(Comparator.comparing(Order::getPrice)).get().getPrice();
+            if (minBuyOrdersPrice >= order.getPrice()) {
+                securityToken.setLastSellingprice(order.getPrice());
+            }
         }
-        if(order.getType().name().equals(ACTIONTYPE.SELL.name()) && !sellOrders.isEmpty() &&
-            buyOrders.stream().max(Comparator.comparing(Order::getPrice)).get().getPrice() < order.getPrice()) {
-
-            securityToken.setLastBuyingPrice(order.getPrice());
+        if(order.getType().name().equals(ACTIONTYPE.SELL.name()) && !sellOrders.isEmpty()) {
+            Double maxSellOrdersPrice = sellOrders.stream().max(Comparator.comparing(Order::getPrice)).get().getPrice();
+            if (maxSellOrdersPrice <= order.getPrice()) {
+                securityToken.setLastBuyingPrice(order.getPrice());
+            }
         }
         return save(securityToken);
     }
