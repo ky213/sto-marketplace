@@ -1,4 +1,3 @@
-
 exports.config = {
   allScriptsTimeout: 60000,
 
@@ -12,15 +11,15 @@ exports.config = {
   capabilities: {
     browserName: 'chrome',
     chromeOptions: {
-        args: process.env.JHI_E2E_HEADLESS
-          ? [ '--headless', '--disable-gpu', '--window-size=800,600' ]
-          : [ '--disable-gpu', '--window-size=800,600' ]
+      args: process.env.JHI_E2E_HEADLESS
+        ? ['--headless', '--disable-gpu', '--window-size=800,600']
+        : ['--disable-gpu', '--window-size=800,600']
     }
   },
 
   directConnect: true,
 
-  baseUrl: 'http://localhost:8080/',
+  baseUrl: 'http://localhost:9000/',
 
   framework: 'mocha',
 
@@ -33,15 +32,18 @@ exports.config = {
     timeout: 60000
   },
 
-  beforeLaunch () {
+  beforeLaunch() {
     require('ts-node').register({
       project: './tsconfig.e2e.json'
     });
   },
 
-  onPrepare () {
+  onPrepare() {
     // @ts-ignore
-    browser.driver.manage().window().setSize(1280, 1024);
+    browser.driver
+      .manage()
+      .window()
+      .setSize(1280, 1024);
     // @ts-ignore
     browser.ignoreSynchronization = true;
     // Disable animations

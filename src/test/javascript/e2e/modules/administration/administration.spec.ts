@@ -11,9 +11,9 @@ describe('Administration', () => {
   let signInPage: SignInPage;
 
   before(async () => {
-    await browser.get('/');
+    await browser.get('/login');
     navBarPage = new NavBarPage();
-    signInPage = await navBarPage.getSignInPage();
+    signInPage = new SignInPage();
     await signInPage.waitUntilDisplayed();
 
     await signInPage.username.sendKeys('admin');

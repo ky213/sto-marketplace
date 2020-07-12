@@ -29,7 +29,7 @@ export const Login = (props: ILoginProps) => {
     return <Redirect to={from} />;
   }
   return (
-    <Row className="h-100">
+    <Row id="login-page" className="h-100">
       <Col className="auth-image"></Col>
       <Col className="w-100 d-flex align-items-center justify-content-center">
         <LoginModal showModal={showModal} handleLogin={handleLogin} handleClose={handleClose} loginError={props.loginError} />

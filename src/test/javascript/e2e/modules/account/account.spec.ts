@@ -30,9 +30,9 @@ describe('Account', () => {
 
   before(async () => {
     await browser.get('/login');
-    // navBarPage = new NavBarPage();
-    // signInPage = await navBarPage.getSignInPage();
-    // await signInPage.waitUntilDisplayed();
+    navBarPage = new NavBarPage();
+    signInPage = new SignInPage();
+    await signInPage.waitUntilDisplayed();
   });
 
   it('should fail to login with bad password', async () => {
@@ -60,10 +60,9 @@ describe('Account', () => {
 
     // Login page should close when login success
     expect(await signInPage.isHidden()()).to.be.true;
-    await navBarPage.autoSignOut();
   });
 
-  it('should be able to sign up', async () => {
+  it('should be able to register a new user', async () => {
     await waitUntilDisplayed(navBarPage.accountMenu);
 
     registerPage = await navBarPage.getRegisterPage();
@@ -114,29 +113,29 @@ describe('Account', () => {
     await navBarPage.autoSignOut();
   });
 
-  it('should not be able to sign up if login already taken', async () => {
-    await registerPage.get();
-    expect(await registerPage.getTitle()).to.eq(registerPageTitle);
+  // it('should not be able to sign up if login already taken', async () => {
+  //   await registerPage.get();
+  //   expect(await registerPage.getTitle()).to.eq(registerPageTitle);
 
-    await registerPage.autoSignUpUsing('user_test', 'admin@localhost.jh', 'user_test');
-    const toast = getToastByInnerText('Login name already used!');
-    await waitUntilDisplayed(toast);
+  //   await registerPage.autoSignUpUsing('user_test', 'admin@localhost.jh', 'user_test');
+  //   const toast = getToastByInnerText('Login name already used!');
+  //   await waitUntilDisplayed(toast);
 
-    // Error toast should appear
-    expect(await toast.isPresent()).to.be.true;
-  });
+  //   // Error toast should appear
+  //   expect(await toast.isPresent()).to.be.true;
+  // });
 
-  it('should not be able to sign up if email already taken', async () => {
-    expect(await registerPage.getTitle()).to.eq(registerPageTitle);
+  // it('should not be able to sign up if email already taken', async () => {
+  //   expect(await registerPage.getTitle()).to.eq(registerPageTitle);
 
-    await registerPage.username.sendKeys('_jhi');
-    await registerPage.saveButton.click();
-    const toast = getToastByInnerText('Email is already in use!');
-    await waitUntilDisplayed(toast);
+  //   await registerPage.username.sendKeys('_jhi');
+  //   await registerPage.saveButton.click();
+  //   const toast = getToastByInnerText('Email is already in use!');
+  //   await waitUntilDisplayed(toast);
 
-    // Error toast should appear
-    expect(await toast.isPresent()).to.be.true;
-  });
+  //   // Error toast should appear
+  //   expect(await toast.isPresent()).to.be.true;
+  // });
 
   it('should be able to log in with new registered account', async () => {
     await signInPage.get();

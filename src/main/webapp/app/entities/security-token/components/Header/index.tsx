@@ -13,11 +13,11 @@ export interface HeaderProps extends StateProps, DispatchProps, ISecurityToken {
 const Header = (props: HeaderProps) => {
   const { name, status, logo, logoContentType } = props;
 
-  const handleChange = (checked, event, id) => {
-    let newStatus;
+  const handleChange = checked => {
+    let newStatus: STSTATUS;
 
-    if (status === STSTATUS.ACTIVE) newStatus = STSTATUS.DISABLED;
-    if (status === STSTATUS.DISABLED) newStatus = STSTATUS.ACTIVE;
+    if (checked) newStatus = STSTATUS.ACTIVE;
+    else newStatus = STSTATUS.DISABLED;
 
     props.updateEntity({ ...props.securityTokenEntity, status: newStatus });
   };

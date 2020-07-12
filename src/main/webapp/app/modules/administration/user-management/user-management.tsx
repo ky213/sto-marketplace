@@ -116,7 +116,7 @@ export const UserManagement = (props: IUserManagementProps) => {
             </th>
             <th> Phone</th>
             <th>Role</th>
-            <th className="hand text-nowrap text-nowrap" onClick={sort('createdDate')}>
+            <th id="modified-date-sort" className="hand text-nowrap text-nowrap" onClick={sort('createdDate')}>
               Registration Date
               <FontAwesomeIcon icon="sort" className="ml-2" />
             </th>

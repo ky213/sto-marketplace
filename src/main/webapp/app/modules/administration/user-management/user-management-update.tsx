@@ -64,7 +64,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
   };
 
   return (
-    <div>
+    <div id="register-form">
       <Row className="justify-content-center">
         <Col md="8">
           <h4>Create or edit a User</h4>
