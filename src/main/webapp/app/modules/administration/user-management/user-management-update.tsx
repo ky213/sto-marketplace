@@ -15,7 +15,7 @@ import { DatePicker } from 'app/shared/components/DatePicker';
 export interface IUserManagementUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ login: string }> {}
 
 export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
-  const { loading, updating } = props;
+  const { loading, updating, updateSuccess } = props;
   const user = props.users.find(({ login }) => login === props.match.params.login);
   const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.login);
   const [selectedRoles, setSelectedRoles] = useState(new Set(user?.authorities));
@@ -430,7 +430,8 @@ const mapStateToProps = (storeState: IRootState) => ({
   users: storeState.userManagement.users,
   roles: storeState.userManagement.authorities,
   loading: storeState.userManagement.loading,
-  updating: storeState.userManagement.updating
+  updating: storeState.userManagement.updating,
+  updateSuccess: storeState.userManagement.updateSuccess
 });
 
 const mapDispatchToProps = { getUser, getRoles, updateUser, createUser, reset };

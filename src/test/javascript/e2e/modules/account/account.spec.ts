@@ -67,7 +67,7 @@ describe('Account', () => {
     await registerPage.get();
     expect(await registerPage.getTitle()).to.eq(registerPageTitle);
 
-    await registerPage.autoSignUpUsing('user_test', 'admin@localhost.jh', 'user_test');
+    await registerPage.autoSignUpUsing('user_test', 'admin@localhost.jh');
 
     const toast = getToastByInnerText('A user is created with identifier user_test');
     await waitUntilDisplayed(toast);
@@ -110,7 +110,7 @@ describe('Account', () => {
     await registerPage.waitUntilDisplayed();
     expect(await element(by.id('register-title')).isPresent()).to.be.true;
 
-    await registerPage.setActivated();
+    expect(await element(by.id('activated')).getAttribute('value')).to.equal('true');
 
     await registerPage.save();
 
@@ -119,47 +119,46 @@ describe('Account', () => {
 
     // Success toast should appear
     expect(await toast.isPresent()).to.be.true;
+  });
 
+  it('should not be able to register if login already taken', async () => {
+    await registerPage.get();
+    expect(await registerPage.getTitle()).to.eq(registerPageTitle);
+
+    await registerPage.autoSignUpUsing('user_test', 'admin@localhost.jh');
+    const toast = getToastByInnerText('Login name already used!');
+    await waitUntilDisplayed(toast);
+
+    // Error toast should appear
+    expect(await toast.isPresent()).to.be.true;
+  });
+
+  it('should not be able to register if email already taken', async () => {
+    await registerPage.get();
+    expect(await registerPage.getTitle()).to.eq(registerPageTitle);
+
+    await registerPage.autoSignUpUsing('_jhi', 'admin@localhost.jh');
+    const toast = getToastByInnerText('Email is already in use!');
+    await waitUntilDisplayed(toast);
+
+    // Error toast should appear
+    expect(await toast.isPresent()).to.be.true;
     await navBarPage.autoSignOut();
   });
 
-  // it('should not be able to register if login already taken', async () => {
-  //   await registerPage.get();
-  //   expect(await registerPage.getTitle()).to.eq(registerPageTitle);
+  // it('should be able to log in with new registered account', async () => {
+  //   await signInPage.get();
+  //   expect(await signInPage.getTitle()).to.eq(loginPageTitle);
 
-  //   await registerPage.autoSignUpUsing('user_test', 'admin@localhost.jh', 'user_test');
-  //   const toast = getToastByInnerText('Login name already used!');
-  //   await waitUntilDisplayed(toast);
+  //   await signInPage.username.sendKeys('user_test');
+  //   await signInPage.password.sendKeys('user_test');
+  //   await signInPage.loginButton.click();
+  //   await signInPage.waitUntilHidden();
 
-  //   // Error toast should appear
-  //   expect(await toast.isPresent()).to.be.true;
+  //   // Login page should close when login success
+  //   expect(await signInPage.isHidden()()).to.be.true;
+  //   await navBarPage.autoSignOut();
   // });
-
-  // it('should not be able to register if email already taken', async () => {
-  //   expect(await registerPage.getTitle()).to.eq(registerPageTitle);
-
-  //   await registerPage.username.sendKeys('_jhi');
-  //   await registerPage.saveButton.click();
-  //   const toast = getToastByInnerText('Email is already in use!');
-  //   await waitUntilDisplayed(toast);
-
-  //   // Error toast should appear
-  //   expect(await toast.isPresent()).to.be.true;
-  // });
-
-  it('should be able to log in with new registered account', async () => {
-    await signInPage.get();
-    expect(await signInPage.getTitle()).to.eq(loginPageTitle);
-
-    await signInPage.username.sendKeys('user_test');
-    await signInPage.password.sendKeys('user_test');
-    await signInPage.loginButton.click();
-    await signInPage.waitUntilHidden();
-
-    // Login page should close when login success
-    expect(await signInPage.isHidden()()).to.be.true;
-    await navBarPage.autoSignOut();
-  });
 
   it('should login with admin account', async () => {
     await signInPage.get();
@@ -221,27 +220,27 @@ describe('Account', () => {
     await navBarPage.autoSignOut();
   });
 
-  it('should login with user_test account', async () => {
+  it('should login with user account', async () => {
     await signInPage.get();
     expect(await signInPage.getTitle()).to.eq(loginPageTitle);
 
-    await signInPage.username.sendKeys('user_test');
-    await signInPage.password.sendKeys('user_test');
+    await signInPage.username.sendKeys('user');
+    await signInPage.password.sendKeys('user');
     await signInPage.loginButton.click();
     await signInPage.waitUntilHidden();
 
     expect(await signInPage.isHidden()()).to.be.true;
   });
 
-  it('should be able to change user_test settings', async () => {
+  it('should be able to change user settings', async () => {
     await waitUntilDisplayed(navBarPage.accountMenu);
 
     settingsPage = await navBarPage.getSettingsPage();
     await waitUntilDisplayed(settingsPage.title);
     expect(await settingsPage.getTitle()).to.eq(settingsPageTitle);
 
-    await settingsPage.firstName.sendKeys('jhipster');
-    await settingsPage.lastName.sendKeys('retspihj');
+    await settingsPage.setFirstName('jhipster');
+    await settingsPage.setLastName('retspihj');
     await settingsPage.saveButton.click();
 
     const toast = getToastByInnerText('Settings saved!');
@@ -268,7 +267,7 @@ describe('Account', () => {
     await settingsPage.get();
     expect(await settingsPage.getTitle()).to.eq(settingsPageTitle);
 
-    await settingsPage.setEmail('.jh');
+    await settingsPage.setEmail('system@alpinetech.swiss');
     await settingsPage.save();
 
     const toast = getToastByInnerText('Email is already in use!');

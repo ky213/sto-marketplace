@@ -25,15 +25,18 @@ export default class SettingsPage extends BasePage {
     return this.title.getAttribute('id');
   }
 
-  async setFirstName(firstName) {
+  async setFirstName(firstName: string) {
+    await this.firstName.clear();
     await this.firstName.sendKeys(firstName);
   }
 
-  async setLastName(lastName) {
+  async setLastName(lastName: string) {
+    await this.lastName.clear();
     await this.lastName.sendKeys(lastName);
   }
 
-  async setEmail(email) {
+  async setEmail(email: string) {
+    await this.email.clear();
     await this.email.sendKeys(email);
   }
 

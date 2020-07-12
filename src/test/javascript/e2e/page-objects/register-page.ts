@@ -24,6 +24,9 @@ export default class RegisterPage extends BasePage {
   async getTitle() {
     return this.title.getAttribute('id');
   }
+  async getActivated() {
+    return this.activated.getAttribute('checked');
+  }
 
   async setActivated() {
     return this.activated.click();
@@ -37,7 +40,7 @@ export default class RegisterPage extends BasePage {
     await this.email.sendKeys(email);
   }
 
-  async autoSignUpUsing(username: string, email: string, password: string) {
+  async autoSignUpUsing(username: string, email: string) {
     await this.setUserName(username);
     await this.setEmail(email);
     await this.save();

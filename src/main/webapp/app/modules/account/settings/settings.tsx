@@ -64,6 +64,7 @@ export const SettingsPage = (props: IUserSettingsProps) => {
             />
             {/* Email */}
             <AvField
+              id="email"
               name="email"
               label="Email"
               placeholder={'Your email'}
