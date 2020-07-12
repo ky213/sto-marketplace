@@ -67,7 +67,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
     <div id="register-form">
       <Row className="justify-content-center">
         <Col md="8">
-          <h4>Create or edit a User</h4>
+          <h4 id="register-title">Create or edit a User</h4>
         </Col>
       </Row>
       <Row className="justify-content-center">
@@ -86,6 +86,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
               <AvGroup>
                 <Label for="login">Username</Label>
                 <AvField
+                  id="username"
                   type="text"
                   className="form-control"
                   name="login"
@@ -146,6 +147,7 @@ export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
               <div className="form-row">
                 <AvGroup className="col">
                   <AvField
+                    id="email"
                     name="email"
                     label="Email"
                     placeholder={'Your email'}

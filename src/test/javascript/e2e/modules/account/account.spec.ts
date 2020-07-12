@@ -30,6 +30,7 @@ describe('Account', () => {
 
   before(async () => {
     await browser.get('/login');
+    registerPage = new RegisterPage();
     navBarPage = new NavBarPage();
     signInPage = new SignInPage();
     await signInPage.waitUntilDisplayed();
@@ -63,19 +64,17 @@ describe('Account', () => {
   });
 
   it('should be able to register a new user', async () => {
-    await waitUntilDisplayed(navBarPage.accountMenu);
-
-    registerPage = await navBarPage.getRegisterPage();
-    await registerPage.waitUntilDisplayed();
+    await registerPage.get();
     expect(await registerPage.getTitle()).to.eq(registerPageTitle);
 
     await registerPage.autoSignUpUsing('user_test', 'admin@localhost.jh', 'user_test');
 
-    const toast = getToastByInnerText('<strong>Registration saved!</strong> Please check your email for confirmation.');
+    const toast = getToastByInnerText('A user is created with identifier user_test');
     await waitUntilDisplayed(toast);
 
     // Success toast should appear
     expect(await toast.isPresent()).to.be.true;
+    await navBarPage.autoSignOut();
   });
 
   it('should load user management', async () => {
