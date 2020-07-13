@@ -6,8 +6,8 @@ export default class BankInfoComponentsPage {
   title: ElementFinder = element(by.id('bank-info-heading'));
   noRecords: ElementFinder = element(by.css('#app-view-container .table-responsive div.alert.alert-warning'));
   table: ElementFinder = element(by.css('#app-view-container div.table-responsive > table'));
-
   records: ElementArrayFinder = this.table.all(by.css('tbody tr'));
+  bankName: ElementFinder = element(by.id('bank-name'));
 
   getDetailsButton(record: ElementFinder) {
     return record.element(by.css('a.btn.btn-info.btn-sm'));

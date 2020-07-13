@@ -28,11 +28,10 @@ describe('BankInfo e2e test', () => {
   let beforeRecordsCount = 0;
 
   before(async () => {
-    await browser.get('/');
     navBarPage = new NavBarPage();
-    signInPage = await navBarPage.getSignInPage();
-    await signInPage.waitUntilDisplayed();
+    signInPage = new SignInPage();
 
+    await signInPage.get();
     await signInPage.username.sendKeys('admin');
     await signInPage.password.sendKeys('admin');
     await signInPage.loginButton.click();
@@ -57,17 +56,15 @@ describe('BankInfo e2e test', () => {
     await bankInfoComponentsPage.createButton.click();
     bankInfoUpdatePage = new BankInfoUpdatePage();
     expect(await bankInfoUpdatePage.getPageTitle().getText()).to.match(/Create or edit a BankInfo/);
-    await bankInfoUpdatePage.cancel();
   });
 
   it('should create and save BankInfos', async () => {
-    await bankInfoComponentsPage.createButton.click();
     await bankInfoUpdatePage.setBankNameInput('bankName');
     expect(await bankInfoUpdatePage.getBankNameInput()).to.match(/bankName/);
     await bankInfoUpdatePage.setLogoInput(absolutePath);
     await bankInfoUpdatePage.countrySelectLastOption();
-    await bankInfoUpdatePage.setBicNumberInput('bicNumber');
-    expect(await bankInfoUpdatePage.getBicNumberInput()).to.match(/bicNumber/);
+    await bankInfoUpdatePage.setBicNumberInput('xxxxxxxxxxxx');
+    expect(await bankInfoUpdatePage.getBicNumberInput()).to.match(/xxxxxxxxxxxx/);
     await bankInfoUpdatePage.setOmnibusAccountInput('omnibusAccount');
     expect(await bankInfoUpdatePage.getOmnibusAccountInput()).to.match(/omnibusAccount/);
     await bankInfoUpdatePage.setFixedFeeInput('5');
@@ -79,15 +76,14 @@ describe('BankInfo e2e test', () => {
     await waitUntilHidden(bankInfoUpdatePage.saveButton);
     expect(await isVisible(bankInfoUpdatePage.saveButton)).to.be.false;
 
-    expect(await bankInfoComponentsPage.createButton.isEnabled()).to.be.true;
+    await waitUntilDisplayed(bankInfoComponentsPage.bankName);
 
-    await waitUntilDisplayed(bankInfoComponentsPage.table);
-
-    await waitUntilCount(bankInfoComponentsPage.records, beforeRecordsCount + 1);
-    expect(await bankInfoComponentsPage.records.count()).to.eq(beforeRecordsCount + 1);
+    expect(await bankInfoComponentsPage.bankName.getText()).to.match(/bankName/);
   });
 
   it('should delete last BankInfo', async () => {
+    await navBarPage.getEntityPage('bank-info');
+    expect(await bankInfoComponentsPage.title.getText()).to.match(/Bank Infos/);
     const deleteButton = bankInfoComponentsPage.getDeleteButton(bankInfoComponentsPage.records.last());
     await click(deleteButton);
 

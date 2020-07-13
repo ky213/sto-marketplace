@@ -64,7 +64,9 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
           <Card className="p-0">
             <CardHeader>
               <h6 className="p-0 m-0">Profile</h6>
-              <small className="text-muted p-0 m-0">The information can be edited</small>
+              <small id="exchangeApp.bankInfo.home.createOrEditLabel" className="text-muted p-0 m-0">
+                Create or edit a BankInfo
+              </small>
             </CardHeader>
             <CardBody>
               {loading ? (
