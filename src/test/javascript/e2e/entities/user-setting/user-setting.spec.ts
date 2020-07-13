@@ -25,9 +25,9 @@ describe('UserSetting e2e test', () => {
   let beforeRecordsCount = 0;
 
   before(async () => {
-    await browser.get('/');
     navBarPage = new NavBarPage();
-    signInPage = await navBarPage.getSignInPage();
+    signInPage = new SignInPage();
+    await signInPage.get();
     await signInPage.waitUntilDisplayed();
 
     await signInPage.username.sendKeys('admin');
@@ -75,10 +75,10 @@ describe('UserSetting e2e test', () => {
     await userSettingUpdatePage.setCityInput('city');
     expect(await userSettingUpdatePage.getCityInput()).to.match(/city/);
     await userSettingUpdatePage.countrySelectLastOption();
-    await userSettingUpdatePage.setIbanInput('iban');
-    expect(await userSettingUpdatePage.getIbanInput()).to.match(/iban/);
-    await userSettingUpdatePage.setEthAddressInput('ethAddress');
-    expect(await userSettingUpdatePage.getEthAddressInput()).to.match(/ethAddress/);
+    await userSettingUpdatePage.setIbanInput('xxxxxxxxxxxxxx');
+    expect(await userSettingUpdatePage.getIbanInput()).to.match(/xxxxxxxxxxxxxx/);
+    await userSettingUpdatePage.setEthAddressInput('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+    expect(await userSettingUpdatePage.getEthAddressInput()).to.match(/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx/);
     await userSettingUpdatePage.setRiskProfilInput('5');
     expect(await userSettingUpdatePage.getRiskProfilInput()).to.eq('5');
     await userSettingUpdatePage.setBalanceInput('5');
