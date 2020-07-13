@@ -145,16 +145,15 @@ public class OrderBookService {
                     }
                 }
                 if (childEntry.getKey().equals("SellOrders")) {
-                    childEntry.getValue().stream().map(item -> {
-                        Order buyOrder = null;
+                    for (String item : childEntry.getValue()) {
+                        Order sellOrder = null;
                         try {
-                            buyOrder = mapper.readValue(item, Order.class);
+                            sellOrder = mapper.readValue(item, Order.class);
                         } catch (JsonProcessingException e) {
                             e.printStackTrace();
                         }
-                        orderBookWrapper.addToSellOrders(buyOrder);
-                        return orderBookWrapper;
-                    });
+                        orderBookWrapper.addToSellOrders(sellOrder);
+                    }
                 }
             }
             orderBook.put(parentEntry.getKey(), orderBookWrapper);

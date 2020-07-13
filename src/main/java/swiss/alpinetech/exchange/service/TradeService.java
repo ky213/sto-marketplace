@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import swiss.alpinetech.exchange.domain.*;
 import swiss.alpinetech.exchange.domain.enumeration.ACTIONTYPE;
@@ -24,7 +25,11 @@ public class TradeService {
 
     private final TransactionService transactionService;
 
+    private final SecurityTokenService securityTokenService;
+
     private final OrderService orderService;
+
+    private final SimpMessageSendingOperations messagingTemplate;
 
     private SecurityTokenOrderBook securityTokenOrderBook;
 
@@ -38,11 +43,15 @@ public class TradeService {
                  TransactionService transactionService,
                  ActiveMQQueue queue,
                  JmsTemplate jmsTemplate,
+                 SimpMessageSendingOperations messagingTemplate,
+                 SecurityTokenService securityTokenService,
                  OrderBookService orderBookService) {
         this.orderService = orderService;
         this.transactionService = transactionService;
         this.queue = queue;
         this.jmsTemplate = jmsTemplate;
+        this.messagingTemplate = messagingTemplate;
+        this.securityTokenService = securityTokenService;
         this.orderBookService = orderBookService;
         this.securityTokenOrderBook = orderBookService.initSecurityTokenOrderBook();
     }
@@ -66,6 +75,13 @@ public class TradeService {
         this.Process(order);
     }
 
+    private boolean isSameUser(Order orderA, Order orderB) {
+        if (orderA.getUser().getId().equals(orderB.getUser().getId())) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * process an order.
      *
@@ -81,6 +97,8 @@ public class TradeService {
             createTransaction(resultListTrades, order);
             orderService.updateOrderFillTokenAndFillAmount(resultListTrades);
             sendTradeListToQueue(resultListTrades);
+            securityTokenService.updateSecurityTokenPrice(order);
+            this.messagingTemplate.convertAndSend("/topic/tracker", orderService.findOne(order.getId()).get());
             return resultListTrades;
         }
         if (order.getType().equals(ACTIONTYPE.BUY)) {
@@ -88,6 +106,8 @@ public class TradeService {
             createTransaction(resultListTrades, order);
             orderService.updateOrderFillTokenAndFillAmount(resultListTrades);
             sendTradeListToQueue(resultListTrades);
+            securityTokenService.updateSecurityTokenPrice(order);
+            this.messagingTemplate.convertAndSend("/topic/tracker", orderService.findOne(order.getId()).get());
             return resultListTrades;
         }
         return null;
@@ -126,6 +146,9 @@ public class TradeService {
         if (sellOrdersList.get(n-1).getPrice() <= order.getPrice()) {
             for (int i = n-1; i >= 0; i--) {
                 Order sellOrder = sellOrdersList.get(i);
+                if (isSameUser(order, sellOrder)) {
+                    break;
+                }
                 if (sellOrder.getPrice() > order.getPrice()) {
                     break;
                 }
@@ -165,6 +188,9 @@ public class TradeService {
         if (buyOrdersList.get(n-1).getPrice() >= order.getPrice()) {
             for (int i = n-1; i >= 0; i--) {
                 Order buyOrder = buyOrdersList.get(i);
+                if (isSameUser(order, buyOrder)) {
+                    break;
+                }
                 if (buyOrder.getPrice() < order.getPrice()) {
                     break;
                 }
