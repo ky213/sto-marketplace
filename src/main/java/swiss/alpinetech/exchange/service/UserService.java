@@ -1,17 +1,25 @@
 package swiss.alpinetech.exchange.service;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.apache.commons.collections4.IteratorUtils;
 import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.client.RestTemplate;
 import swiss.alpinetech.exchange.config.Constants;
 import swiss.alpinetech.exchange.domain.Authority;
 import swiss.alpinetech.exchange.domain.User;
+import swiss.alpinetech.exchange.domain.UserSetting;
 import swiss.alpinetech.exchange.repository.AuthorityRepository;
 import swiss.alpinetech.exchange.repository.UserRepository;
 import swiss.alpinetech.exchange.repository.WhiteListingRepository;
@@ -59,6 +67,8 @@ public class UserService {
     private final AuthorityRepository authorityRepository;
 
     private final CacheManager cacheManager;
+
+    RestTemplate restTemplate;
 
     @Autowired
     private WhiteListingSearchRepository whiteListingSearchRepository;
@@ -423,6 +433,42 @@ public class UserService {
             .stream()
             .filter(user -> !this.userIsAdmin(user))
             .collect(Collectors.toList());
+    }
+
+    public Double getAndUpdateBalanceAccountFromAvaloq(String login) {
+        User user = this.userRepository.findOneByLogin(login).get();
+        String sandboxHost = "https://api-qwgzy.emea.sandbox.avaloq.com";
+        String token = "";
+        String accountID = user.getSetting().getIban();
+        if (accountID == null || accountID == "") {
+            UserSetting userSetting = user.getSetting();
+            userSetting.setBalance(0.0);
+            user.setSetting(userSetting);
+            userRepository.save(user);
+            return 0.0;
+        }
+        String calUrl = sandboxHost + "/account-management/accounts/" + accountID + "?with_balance=true";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        headers.setBearerAuth(token);
+        HttpEntity request = new HttpEntity(headers);
+        String stringReturnObject = this.restTemplate.exchange(calUrl, HttpMethod.GET, request, String.class).getBody();
+        if (stringReturnObject == null) {
+            return null;
+        }
+        JsonObject convertedObject = new Gson().fromJson(stringReturnObject, JsonObject.class);
+        Double balance = convertedObject
+            .get("balance")
+            .getAsJsonObject()
+            .get("amount")
+            .getAsJsonObject()
+            .get("value")
+            .getAsDouble();
+        UserSetting userSetting = user.getSetting();
+        userSetting.setBalance(balance);
+        user.setSetting(userSetting);
+        userRepository.save(user);
+        return balance;
     }
 
     private boolean userIsAdmin(User user) {
