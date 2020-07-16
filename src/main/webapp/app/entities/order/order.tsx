@@ -4,21 +4,12 @@ import { connect } from 'react-redux';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { Button, InputGroup, Col, Row, Table, Card, Badge } from 'reactstrap';
 import { AvForm, AvGroup, AvInput } from 'availity-reactstrap-validation';
-import {
-  ICrudSearchAction,
-  ICrudGetAllAction,
-  TextFormat,
-  getSortState,
-  IPaginationBaseState,
-  JhiItemCount,
-  JhiPagination
-} from 'react-jhipster';
+import { TextFormat, getSortState, JhiItemCount, JhiPagination } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
 import { getSearchEntities, getEntities, reset } from './order.reducer';
-import { IOrder } from 'app/shared/model/order.model';
-import { APP_DATE_FORMAT, APP_LOCAL_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
+import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import OrderExportDialog from './components/OrderExport';
 
@@ -140,6 +131,12 @@ export const Order = (props: IOrderProps) => {
     NONE: 'info'
   };
 
+  const orderCancelStatus = {
+    SUCCESS: 'SUCCESS',
+    REMOVE: 'REMOVE',
+    FAIL: 'FAIL'
+  };
+
   const { orderList, match, loading, totalItems } = props;
 
   return (
@@ -254,20 +251,16 @@ export const Order = (props: IOrderProps) => {
                           <Button tag={Link} to={`${match.url}/${order.id}`} color="info" size="sm">
                             <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
                           </Button>
-                          <>
-                            {/* <Button tag={Link} to={`${match.url}/${order.id}/edit`} color="primary" size="sm">
-                                <FontAwesomeIcon icon="pencil-alt" /> <span className="d-none d-md-inline">Edit</span>
-                              </Button> */}
-                            <Button
-                              tag={Link}
-                              to={`${match.url}/${order.id}/cancel`}
-                              color="danger"
-                              size="sm"
-                              disabled={order.status === 'REMOVE'}
-                            >
-                              <FontAwesomeIcon icon="ban" /> <span className="d-none d-md-inline">Cancel</span>
-                            </Button>
-                          </>
+
+                          <Button
+                            tag={Link}
+                            to={`${match.url}/${order.id}/cancel`}
+                            color="danger"
+                            size="sm"
+                            disabled={order.status in orderCancelStatus}
+                          >
+                            <FontAwesomeIcon icon="ban" /> <span className="d-none d-md-inline">Cancel</span>
+                          </Button>
                         </div>
                       </td>
                     </tr>
