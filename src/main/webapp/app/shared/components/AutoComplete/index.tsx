@@ -4,6 +4,8 @@ import { Alert } from 'reactstrap';
 import { AvForm, AvInput } from 'availity-reactstrap-validation';
 
 export interface AutoCompleteProps {
+  inputId: string;
+  resultId: string;
   initialValue: string;
   initialItem: { [value: string]: string };
   items: { [value: string]: string }[];
@@ -12,7 +14,16 @@ export interface AutoCompleteProps {
   status?: (value: A11yStatusMessageOptions<any>) => any;
 }
 
-export const AutoComplete = ({ initialValue, items, initialItem, selectItem, suggestItems, status }: AutoCompleteProps) => {
+export const AutoComplete = ({
+  inputId,
+  resultId,
+  initialValue,
+  items,
+  initialItem,
+  selectItem,
+  suggestItems,
+  status
+}: AutoCompleteProps) => {
   return (
     <Downshift
       initialInputValue={initialValue}
@@ -27,6 +38,7 @@ export const AutoComplete = ({ initialValue, items, initialItem, selectItem, sug
           <div {...getRootProps({ refKey: '' }, { suppressRefError: true })}>
             <AvInput
               {...getInputProps()}
+              id={inputId}
               name="any"
               required
               validate={{
@@ -34,14 +46,19 @@ export const AutoComplete = ({ initialValue, items, initialItem, selectItem, sug
               }}
             />
           </div>
-          <div {...getMenuProps()} className="position-absolute w-100" style={{ zIndex: 1, maxHeight: '200px', overflow: 'scroll' }}>
+          <div
+            {...getMenuProps()}
+            id={resultId}
+            className="position-absolute w-100"
+            style={{ zIndex: 1, maxHeight: '200px', overflow: 'scroll' }}
+          >
             {isOpen ? (
               items.length ? (
                 items
                   .filter(item => !inputValue || item.value?.includes(inputValue))
                   .map((item, index) => (
                     <div
-                      className="border border-top-0 p-2"
+                      className="border border-top-0 p-2 item"
                       key={index}
                       {...getItemProps({
                         index,
@@ -56,9 +73,7 @@ export const AutoComplete = ({ initialValue, items, initialItem, selectItem, sug
                     </div>
                   ))
               ) : (
-                <Alert color="warning" className="">
-                  no result
-                </Alert>
+                <Alert color="warning">no result</Alert>
               )
             ) : null}
           </div>

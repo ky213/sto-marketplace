@@ -106,6 +106,8 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                 <AvGroup className="col-md-6">
                   <Label for="white-listing-user">User</Label>
                   <AutoComplete
+                    inputId="white-listing-customerName"
+                    resultId="user-results"
                     initialItem={{ value: user?.login }}
                     initialValue={whiteListingEntity?.user?.login}
                     items={suggestedUsers.map((usr: IUser) => ({ value: usr.login }))}
@@ -116,6 +118,8 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                 <AvGroup className="col-md-6">
                   <Label for="white-listing-securitytoken">Security token</Label>
                   <AutoComplete
+                    inputId="white-listing-stName"
+                    resultId="white-listing-results"
                     initialItem={{ value: securityToken?.idRed }}
                     initialValue={whiteListingEntity?.securitytoken?.idRed}
                     items={suggestedSecurityTokens.map((st: ISecurityToken) => ({ value: st.idRed }))}

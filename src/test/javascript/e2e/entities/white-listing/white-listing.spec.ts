@@ -13,6 +13,7 @@ import {
   waitUntilCount,
   isVisible
 } from '../../util/utils';
+import { assignIn } from 'lodash';
 
 const expect = chai.expect;
 
@@ -25,10 +26,10 @@ describe('WhiteListing e2e test', () => {
   let beforeRecordsCount = 0;
 
   before(async () => {
-    await browser.get('/');
     navBarPage = new NavBarPage();
-    signInPage = await navBarPage.getSignInPage();
-    await signInPage.waitUntilDisplayed();
+    signInPage = new SignInPage();
+    whiteListingUpdatePage = new WhiteListingUpdatePage();
+    await signInPage.get();
 
     await signInPage.username.sendKeys('admin');
     await signInPage.password.sendKeys('admin');
@@ -54,36 +55,20 @@ describe('WhiteListing e2e test', () => {
 
   it('should load create WhiteListing page', async () => {
     await whiteListingComponentsPage.createButton.click();
-    whiteListingUpdatePage = new WhiteListingUpdatePage();
+    await waitUntilDisplayed(whiteListingUpdatePage.pageTitle);
     expect(await whiteListingUpdatePage.getPageTitle().getText()).to.match(/Create or edit a WhiteListing/);
-    await whiteListingUpdatePage.cancel();
   });
 
   it('should create and save WhiteListings', async () => {
-    await whiteListingComponentsPage.createButton.click();
-    await whiteListingUpdatePage.setDateEventInput('01/01/2001' + protractor.Key.TAB + '02:30AM');
-    expect(await whiteListingUpdatePage.getDateEventInput()).to.contain('2001-01-01T02:30');
-    await whiteListingUpdatePage.statusSelectLastOption();
-    const selectedActive = await whiteListingUpdatePage.getActiveInput().isSelected();
-    if (selectedActive) {
-      await whiteListingUpdatePage.getActiveInput().click();
-      expect(await whiteListingUpdatePage.getActiveInput().isSelected()).to.be.false;
-    } else {
-      await whiteListingUpdatePage.getActiveInput().click();
-      expect(await whiteListingUpdatePage.getActiveInput().isSelected()).to.be.true;
-    }
-    await whiteListingUpdatePage.setEthAddressInput('ethAddress');
-    expect(await whiteListingUpdatePage.getEthAddressInput()).to.match(/ethAddress/);
-    await whiteListingUpdatePage.setDateSynchBlkInput('01/01/2001' + protractor.Key.TAB + '02:30AM');
-    expect(await whiteListingUpdatePage.getDateSynchBlkInput()).to.contain('2001-01-01T02:30');
-    await whiteListingUpdatePage.setStNameInput('stName');
-    expect(await whiteListingUpdatePage.getStNameInput()).to.match(/stName/);
-    await whiteListingUpdatePage.setCustomerNameInput('customerName');
-    expect(await whiteListingUpdatePage.getCustomerNameInput()).to.match(/customerName/);
-    await whiteListingUpdatePage.setBalanceInput('5');
-    expect(await whiteListingUpdatePage.getBalanceInput()).to.eq('5');
-    await whiteListingUpdatePage.userSelectLastOption();
-    await whiteListingUpdatePage.securitytokenSelectLastOption();
+    await whiteListingUpdatePage.setCustomerNameInput('user');
+    await waitUntilDisplayed(whiteListingUpdatePage.userSelect);
+    await whiteListingUpdatePage.userSelectFirstOption();
+    expect(await whiteListingUpdatePage.getCustomerNameInput()).to.match(/user/);
+    await whiteListingUpdatePage.setStNameInput('Nebraska ');
+    await waitUntilDisplayed(whiteListingUpdatePage.securitytokenSelect);
+    await whiteListingUpdatePage.securitytokenSelectFirstOption();
+    expect(await whiteListingUpdatePage.getStNameInput()).to.contains('Nebraska paymen');
+
     await waitUntilDisplayed(whiteListingUpdatePage.saveButton);
     await whiteListingUpdatePage.save();
     await waitUntilHidden(whiteListingUpdatePage.saveButton);

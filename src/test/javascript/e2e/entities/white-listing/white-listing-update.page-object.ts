@@ -7,57 +7,17 @@ export default class WhiteListingUpdatePage {
   dateEventInput: ElementFinder = element(by.css('input#white-listing-dateEvent'));
   statusSelect: ElementFinder = element(by.css('select#white-listing-status'));
   activeInput: ElementFinder = element(by.css('input#white-listing-active'));
-  ethAddressInput: ElementFinder = element(by.css('input#white-listing-ethAddress'));
-  dateSynchBlkInput: ElementFinder = element(by.css('input#white-listing-dateSynchBlk'));
   stNameInput: ElementFinder = element(by.css('input#white-listing-stName'));
   customerNameInput: ElementFinder = element(by.css('input#white-listing-customerName'));
-  balanceInput: ElementFinder = element(by.css('input#white-listing-balance'));
-  userSelect: ElementFinder = element(by.css('select#white-listing-user'));
-  securitytokenSelect: ElementFinder = element(by.css('select#white-listing-securitytoken'));
+  userSelect: ElementFinder = element(by.css('#user-results'));
+  securitytokenSelect: ElementFinder = element(by.css('#white-listing-results'));
 
   getPageTitle() {
     return this.pageTitle;
   }
 
-  async setDateEventInput(dateEvent) {
-    await this.dateEventInput.sendKeys(dateEvent);
-  }
-
-  async getDateEventInput() {
-    return this.dateEventInput.getAttribute('value');
-  }
-
-  async setStatusSelect(status) {
-    await this.statusSelect.sendKeys(status);
-  }
-
-  async getStatusSelect() {
-    return this.statusSelect.element(by.css('option:checked')).getText();
-  }
-
-  async statusSelectLastOption() {
-    await this.statusSelect
-      .all(by.tagName('option'))
-      .last()
-      .click();
-  }
   getActiveInput() {
     return this.activeInput;
-  }
-  async setEthAddressInput(ethAddress) {
-    await this.ethAddressInput.sendKeys(ethAddress);
-  }
-
-  async getEthAddressInput() {
-    return this.ethAddressInput.getAttribute('value');
-  }
-
-  async setDateSynchBlkInput(dateSynchBlk) {
-    await this.dateSynchBlkInput.sendKeys(dateSynchBlk);
-  }
-
-  async getDateSynchBlkInput() {
-    return this.dateSynchBlkInput.getAttribute('value');
   }
 
   async setStNameInput(stName) {
@@ -76,18 +36,10 @@ export default class WhiteListingUpdatePage {
     return this.customerNameInput.getAttribute('value');
   }
 
-  async setBalanceInput(balance) {
-    await this.balanceInput.sendKeys(balance);
-  }
-
-  async getBalanceInput() {
-    return this.balanceInput.getAttribute('value');
-  }
-
-  async userSelectLastOption() {
+  async userSelectFirstOption() {
     await this.userSelect
-      .all(by.tagName('option'))
-      .last()
+      .all(by.className('item'))
+      .first()
       .click();
   }
 
@@ -103,10 +55,10 @@ export default class WhiteListingUpdatePage {
     return this.userSelect.element(by.css('option:checked')).getText();
   }
 
-  async securitytokenSelectLastOption() {
+  async securitytokenSelectFirstOption() {
     await this.securitytokenSelect
-      .all(by.tagName('option'))
-      .last()
+      .all(by.className('item'))
+      .first()
       .click();
   }
 
