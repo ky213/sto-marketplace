@@ -12,7 +12,6 @@ import { getEntity, updateEntity, createEntity, suggestUsers, suggestSecurityTok
 import { AutoComplete } from 'app/shared/components/AutoComplete';
 import { IUser } from 'app/shared/model/user.model';
 import { ISecurityToken } from 'app/shared/model/security-token.model';
-import { A11yStatusMessageOptions } from 'downshift';
 
 export interface IWhiteListingUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 

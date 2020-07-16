@@ -2,10 +2,8 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
-import { ICrudGetAction, ICrudDeleteAction } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { ITransaction } from 'app/shared/model/transaction.model';
 import { IRootState } from 'app/shared/reducers';
 import { getEntity, deleteEntity } from './transaction.reducer';
 
@@ -30,7 +28,6 @@ export const TransactionDeleteDialog = (props: ITransactionDeleteDialogProps) =>
     props.deleteEntity(props.transactionEntity.id);
   };
 
-  const { transactionEntity } = props;
   return (
     <Modal isOpen toggle={handleClose}>
       <ModalHeader toggle={handleClose}>Confirm delete operation</ModalHeader>

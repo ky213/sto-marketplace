@@ -1,19 +1,10 @@
 import axios from 'axios';
 import { uniqBy } from 'lodash';
-import {
-  ICrudSearchAction,
-  parseHeaderForLinks,
-  loadMoreDataWhenScrolled,
-  ICrudGetAction,
-  ICrudGetAllAction,
-  ICrudPutAction,
-  ICrudDeleteAction
-} from 'react-jhipster';
+import { parseHeaderForLinks, loadMoreDataWhenScrolled, ICrudPutAction, ICrudDeleteAction } from 'react-jhipster';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 import { IOrder, defaultValue } from 'app/shared/model/order.model';
-import { stat } from 'fs';
 
 export const ACTION_TYPES = {
   SEARCH_ORDERS: 'order/SEARCH_ORDERS',

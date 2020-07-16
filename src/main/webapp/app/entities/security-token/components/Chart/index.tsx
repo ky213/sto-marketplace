@@ -8,7 +8,6 @@ import { connect } from 'react-redux';
 import { getChartData } from '../../security-token.reducer';
 import { IRootState } from 'app/shared/reducers';
 import moment from 'moment';
-import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 
 export interface ChartProps extends StateProps, DispatchProps {
   securityTokenName: string;

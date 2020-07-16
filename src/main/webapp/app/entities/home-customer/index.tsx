@@ -3,7 +3,6 @@ import { Switch } from 'react-router-dom';
 
 import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 
-import HomeCustomer from './home-customer';
 import HomeCustomerDetail from './home-customer-detail';
 import HomeCustomerUpdate from './home-customer-update';
 import HomeCustomerDeleteDialog from './home-customer-delete-dialog';

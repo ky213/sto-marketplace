@@ -3,7 +3,6 @@ import { Switch } from 'react-router-dom';
 
 import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 
-import HomeBank from './home-bank';
 import HomeBankDetail from './home-bank-detail';
 import HomeBankUpdate from './home-bank-update';
 import HomeBankDeleteDialog from './home-bank-delete-dialog';
