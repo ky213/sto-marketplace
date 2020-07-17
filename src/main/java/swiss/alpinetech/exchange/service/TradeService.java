@@ -75,13 +75,6 @@ public class TradeService {
         this.Process(order);
     }
 
-    private boolean isSameUser(Order orderA, Order orderB) {
-        if (orderA.getUser().getId().equals(orderB.getUser().getId())) {
-            return true;
-        }
-        return false;
-    }
-
     /**
      * process an order.
      *
@@ -146,8 +139,8 @@ public class TradeService {
         if (sellOrdersList.get(n-1).getPrice() <= order.getPrice()) {
             for (int i = n-1; i >= 0; i--) {
                 Order sellOrder = sellOrdersList.get(i);
-                if (isSameUser(order, sellOrder)) {
-                    break;
+                if (orderService.isSameUser(order, sellOrder)) {
+                    continue;
                 }
                 if (sellOrder.getPrice() > order.getPrice()) {
                     break;
@@ -163,7 +156,7 @@ public class TradeService {
                 }
                 if (sellOrder.getTotalAmount() < order.getTotalAmount()) {
                     listTrades.add(new Trade(order.getIdOrder(), sellOrder.getIdOrder(), sellOrder.getTotalAmount(), sellOrder.getPrice()));
-                    order.setTotalAmount(order.getTotalAmount() - sellOrder.getTotalAmount());
+                    order = orderService.updateOrderAmount(order.getId(), order.getTotalAmount() - sellOrder.getTotalAmount());
                     securityTokenOrderBook = orderBookService.removeFromSecurityTokenSellOrders(sellOrder.getSecurityToken().getId().toString(), sellOrder, securityTokenOrderBook);
                     continue;
                 }
@@ -188,8 +181,8 @@ public class TradeService {
         if (buyOrdersList.get(n-1).getPrice() >= order.getPrice()) {
             for (int i = n-1; i >= 0; i--) {
                 Order buyOrder = buyOrdersList.get(i);
-                if (isSameUser(order, buyOrder)) {
-                    break;
+                if (orderService.isSameUser(order, buyOrder)) {
+                    continue;
                 }
                 if (buyOrder.getPrice() < order.getPrice()) {
                     break;
@@ -205,7 +198,7 @@ public class TradeService {
                 }
                 if (buyOrder.getTotalAmount() < order.getTotalAmount()) {
                     listTrades.add(new Trade(order.getIdOrder(), buyOrder.getIdOrder(), buyOrder.getTotalAmount(), buyOrder.getPrice()));
-                    order.setTotalAmount(order.getTotalAmount() - buyOrder.getTotalAmount());
+                    order = orderService.updateOrderAmount(order.getId(), order.getTotalAmount() - buyOrder.getTotalAmount());
                     securityTokenOrderBook = orderBookService.removeFromSecurityTokenBuyOrders(buyOrder.getSecurityToken().getId().toString(), buyOrder, securityTokenOrderBook);
                     continue;
                 }

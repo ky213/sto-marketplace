@@ -137,4 +137,6 @@ public interface OrderService {
 
 
     Page<Order> searchUserOrders(String query, Long userId, Pageable pageable);
+
+    boolean isSameUser(Order orderA, Order orderB);
 }
