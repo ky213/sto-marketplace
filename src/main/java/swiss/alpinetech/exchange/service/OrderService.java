@@ -107,6 +107,13 @@ public interface OrderService {
     List<Order> findUserOrders(Long userId);
 
     /**
+     * Get all user Orders.
+     *
+     * @return the list of entities.
+     */
+    Page<Order> findUserOrdersByStatus(List<STATUS> statuses, Long userId, Pageable pageable);
+
+    /**
      * export orders.
      *
      * @param beginDate .
