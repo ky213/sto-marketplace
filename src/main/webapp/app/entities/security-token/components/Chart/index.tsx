@@ -110,23 +110,21 @@ const Chart = (props: ChartProps) => {
   }, [props.securityTokenName]);
 
   return (
-    <Col md="6" className="px-0">
-      <Card className="p-0" style={{ height: '400px' }}>
-        <CardHeader>Latest Orders</CardHeader>
-        <CardBody>
-          <Line data={data} options={options} />
-        </CardBody>
-        <CardFooter className="d-flex py-0">
-          <Button className="ml-auto" color="none ">
-            <Link to="/order" className=" mr-2" style={{ fontSize: '14px' }}>
-              <span className="text-primary">
-                view all <FontAwesomeIcon icon="caret-right" />
-              </span>
-            </Link>
-          </Button>
-        </CardFooter>
-      </Card>
-    </Col>
+    <Card className="p-0" style={{ height: '400px' }}>
+      <CardHeader>Latest Orders</CardHeader>
+      <CardBody>
+        <Line data={data} options={options} />
+      </CardBody>
+      <CardFooter className="d-flex py-0">
+        <Button className="ml-auto" color="none ">
+          <Link to="/order" className=" mr-2" style={{ fontSize: '14px' }}>
+            <span className="text-primary">
+              view all <FontAwesomeIcon icon="caret-right" />
+            </span>
+          </Link>
+        </Button>
+      </CardFooter>
+    </Card>
   );
 };
 

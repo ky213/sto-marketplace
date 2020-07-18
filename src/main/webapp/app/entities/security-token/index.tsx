@@ -5,6 +5,7 @@ import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 
 import SecurityToken from './security-token';
 import SecurityTokenDetail from './security-token-detail';
+import SecurityTokenDetailUser from './security-token-detail-user';
 import SecurityTokenUpdate from './security-token-update';
 import SecurityTokenDeleteDialog from './security-token-delete-dialog';
 import PrivateRoute from 'app/shared/auth/private-route';
@@ -21,7 +22,13 @@ const Routes = ({ match }) => (
         component={SecurityTokenUpdate}
         hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
       />
-      <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={SecurityTokenDetail} />
+      <PrivateRoute
+        exact
+        path={`${match.url}/:id`}
+        component={SecurityTokenDetail}
+        hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
+      />
+      <PrivateRoute exact path={`${match.url}/:id/user`} component={SecurityTokenDetailUser} hasAnyAuthorities={[AUTHORITIES.USER]} />
       <ErrorBoundaryRoute path={match.url} component={SecurityToken} />
     </Switch>
   </>

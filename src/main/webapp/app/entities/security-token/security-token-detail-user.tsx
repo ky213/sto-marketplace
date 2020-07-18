@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './security-token.reducer';
-import { Info, OrdersChart, Header, Balance, OrderBook } from './components';
+import { Info, OrdersChart, Header, Balance, OrderBook, Trading } from './components';
 import WhiteList from './components/WhiteList';
 
 export interface ISecurityTokenDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
@@ -26,7 +26,7 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
           <OrdersChart securityTokenName={props.securityTokenEntity.name} />
         </Col>
         <Col>
-          <Balance id={props.securityTokenEntity.id} />
+          <Trading />
           <OrderBook id={props.securityTokenEntity.id} />
         </Col>
       </Row>

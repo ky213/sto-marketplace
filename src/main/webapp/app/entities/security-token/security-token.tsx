@@ -218,7 +218,7 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
                   )}
                   <td className="text-right">
                     <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`${match.url}/${securityToken.id}`} color="info" size="sm">
+                      <Button tag={Link} to={`${match.url}/${securityToken.id}${isAdmin || isBank ? '' : '/user'}`} color="info" size="sm">
                         <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
                       </Button>
                       {(isAdmin || isBank) && (

@@ -6,7 +6,7 @@ import { TextFormat, JhiPagination, JhiItemCount, getSortState } from 'react-jhi
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { AvForm, AvGroup, AvInput } from 'availity-reactstrap-validation';
 
-import { APP_DATE_FORMAT, AUTHORITIES } from 'app/config/constants';
+import { APP_DATE_FORMAT } from 'app/config/constants';
 import { ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
 import { getUser, getUsers, getSearchUsers, updateUser, reset } from './user-management.reducer';
 import { IRootState } from 'app/shared/reducers';
