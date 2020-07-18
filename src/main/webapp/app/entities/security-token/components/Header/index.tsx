@@ -17,7 +17,7 @@ const Header = (props: HeaderProps) => {
   const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
   const isBank = account.authorities.includes(AUTHORITIES.ADMIN);
 
-  const handleChange = checked => {
+  const handleChange = (checked: boolean) => {
     let newStatus: STSTATUS;
 
     if (checked) newStatus = STSTATUS.ACTIVE;
