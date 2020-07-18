@@ -5,3 +5,4 @@ export { default as State } from './State';
 export { default as Balance } from './Balance';
 export { default as OrderBook } from './OrderBook';
 export { default as Trading } from './Trading';
+export { default as AccountBalance } from './AccountBalance';

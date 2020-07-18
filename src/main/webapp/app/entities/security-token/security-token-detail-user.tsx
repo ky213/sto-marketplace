@@ -6,8 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
 import { getEntity } from './security-token.reducer';
-import { Info, OrdersChart, Header, Balance, OrderBook, Trading } from './components';
-import WhiteList from './components/WhiteList';
+import { Info, OrdersChart, Header, Balance, OrderBook, Trading, AccountBalance } from './components';
 
 export interface ISecurityTokenDetailProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
@@ -15,6 +14,10 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
   useEffect(() => {
     props.getEntity(props.match.params.id);
   }, []);
+
+  useEffect(() => {
+    if (props.success) props.history.push('/order');
+  }, [props.success]);
 
   return (
     <div className="pb-3">
@@ -31,14 +34,15 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
         </Col>
       </Row>
       <Row className="mt-3">
-        <Col className="p-0">
-          <WhiteList id={props.securityTokenEntity.id} />
-        </Col>
         <Col md="8">
           <Info {...props.securityTokenEntity} />
         </Col>
+        <Col className="pr-3">
+          <Balance id={props.securityTokenEntity.id} />
+          <AccountBalance />
+        </Col>
       </Row>
-      <Row className="mt-2">
+      <Row className="mt-2 ml-1">
         <Button tag={Link} to="/security-token" replace color="info">
           <FontAwesomeIcon icon="arrow-left" /> <span className="d-none d-md-inline">Back</span>
         </Button>
@@ -47,8 +51,9 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
   );
 };
 
-const mapStateToProps = ({ securityToken, authentication }: IRootState) => ({
-  securityTokenEntity: securityToken.entity
+const mapStateToProps = ({ securityToken, order }: IRootState) => ({
+  securityTokenEntity: securityToken.entity,
+  success: order.updateSuccess
 });
 
 const mapDispatchToProps = { getEntity };
