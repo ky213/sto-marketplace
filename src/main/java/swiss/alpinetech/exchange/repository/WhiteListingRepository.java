@@ -22,6 +22,9 @@ public interface WhiteListingRepository extends JpaRepository<WhiteListing, Long
     @Query("select whiteListing from WhiteListing whiteListing where whiteListing.user.login = ?#{principal.username}")
     Page<WhiteListing> findByUserIsCurrentUser(Pageable pageable);
 
+    @Query("select whiteListing from WhiteListing whiteListing where whiteListing.user.login = ?#{principal.username}")
+    List<WhiteListing> findByUserIsCurrentUser();
+
     @Query("select whiteListing from WhiteListing whiteListing where ?1 = whiteListing.securitytoken.id")
     List<WhiteListing> findBySecuritytokenId(Long securityTokenId);
 

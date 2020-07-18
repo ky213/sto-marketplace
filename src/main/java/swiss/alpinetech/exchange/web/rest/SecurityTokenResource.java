@@ -3,6 +3,7 @@ package swiss.alpinetech.exchange.web.rest;
 import org.springframework.security.access.prepost.PreAuthorize;
 import swiss.alpinetech.exchange.domain.OrderBookWrapper;
 import swiss.alpinetech.exchange.domain.SecurityToken;
+import swiss.alpinetech.exchange.domain.enumeration.CATEGORY;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.SecurityTokenService;
 import swiss.alpinetech.exchange.web.rest.errors.BadRequestAlertException;
@@ -24,6 +25,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -172,6 +174,19 @@ public class SecurityTokenResource {
         log.debug("REST request to get SecurityToken {} order book", id);
         OrderBookWrapper securityTokenOrderBook = securityTokenService.getSecurityTokenOrderBook(id);
         return ResponseEntity.ok().body(securityTokenOrderBook);
+    }
+
+    /**
+     * {@code GET  /security-tokens/assets} : get the securityTokens assets.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the assets, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/security-tokens/assets")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<Map<CATEGORY, Long>> getSecurityTokenOrderBook() {
+        log.debug("REST request to get SecurityTokens assets");
+        Map<CATEGORY, Long> map = securityTokenService.getAssets();
+        return ResponseEntity.ok().body(map);
     }
 
     /**

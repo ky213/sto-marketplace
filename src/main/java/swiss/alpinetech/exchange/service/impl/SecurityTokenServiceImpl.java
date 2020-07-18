@@ -13,6 +13,7 @@ import swiss.alpinetech.exchange.domain.Order;
 import swiss.alpinetech.exchange.domain.OrderBookWrapper;
 import swiss.alpinetech.exchange.domain.SecurityTokenOrderBook;
 import swiss.alpinetech.exchange.domain.enumeration.ACTIONTYPE;
+import swiss.alpinetech.exchange.domain.enumeration.CATEGORY;
 import swiss.alpinetech.exchange.domain.enumeration.STSTATUS;
 import swiss.alpinetech.exchange.repository.WhiteListingRepository;
 import swiss.alpinetech.exchange.repository.search.WhiteListingSearchRepository;
@@ -33,6 +34,8 @@ import swiss.alpinetech.exchange.service.UserService;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -62,6 +65,8 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     private OrderBookService orderBookService;
 
     private SecurityTokenOrderBook securityTokenOrderBook;
+
+    private Authentication authentication;
 
     public SecurityTokenServiceImpl(SecurityTokenRepository securityTokenRepository, SecurityTokenSearchRepository securityTokenSearchRepository) {
         this.securityTokenRepository = securityTokenRepository;
@@ -144,27 +149,18 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     @Transactional(readOnly = true)
     public Page<SecurityToken> findAll(Pageable pageable) {
         log.debug("Request to get all SecurityTokens");
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        for (GrantedAuthority authority : authentication.getAuthorities()) {
-            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN)) {
-                return securityTokenRepository.findAll(pageable);
-            }
+        if (currentUserIsAdmin()) {
+            return securityTokenRepository.findAll(pageable);
         }
-        for (GrantedAuthority authority : authentication.getAuthorities()) {
-            if(authority.getAuthority().equals(AuthoritiesConstants.BANK)) {
-                return securityTokenRepository.findAllByStatusACTIVE(pageable);
-            }
+        if (currentUserIsBank()) {
+            return securityTokenRepository.findAllByStatusACTIVE(pageable);
         }
         List<SecurityToken> securityTokenList = IteratorUtils.toList(this.whiteListingRepository.findByUserIsCurrentUser(pageable).iterator())
             .stream()
             .filter(wl -> wl.getSecuritytoken().getStatus().equals(STSTATUS.ACTIVE) && wl.isActive())
             .map(wl -> wl.getSecuritytoken())
             .collect(Collectors.toList());
-        Page<SecurityToken> securityTokensPage = new PageImpl<SecurityToken>(
-            securityTokenList,
-            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
-            securityTokenList.size());
-        return securityTokensPage;
+        return convertListToPage(securityTokenList, pageable);
     }
 
     /**
@@ -191,6 +187,18 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
             return null;
         }
         return this.securityTokenOrderBook.getSecurityTokenOrderBook().get(""+securityTokenId);
+    }
+
+    /**
+     * get Assets of securityTokens for whitelisted user.
+     *
+     * @return Assets.
+     */
+    @Override
+    public Map<CATEGORY, Long> getAssets() {
+        List<SecurityToken> securityTokenList = getSecurityTokensForUserWhiteList();
+        Map<CATEGORY, Long> map = securityTokenList.stream().collect(groupingBy(SecurityToken::getCategory, counting()));
+        return map;
     }
 
     /**
@@ -229,34 +237,22 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     @Transactional(readOnly = true)
     public Page<SecurityToken> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of SecurityTokens for query {}", query);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        for (GrantedAuthority authority : authentication.getAuthorities()) {
-            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN)) {
-                return securityTokenSearchRepository.search(queryStringQuery(query), pageable);
-            }
+        authentication = getAuth();
+        if (currentUserIsAdmin()) {
+            return securityTokenSearchRepository.search(queryStringQuery(query), pageable);
         }
-        for (GrantedAuthority authority : authentication.getAuthorities()) {
-            if(authority.getAuthority().equals(AuthoritiesConstants.BANK)) {
-                List<SecurityToken> securityTokenList = IteratorUtils.toList(securityTokenSearchRepository.search(
-                    QueryBuilders
-                        .boolQuery()
-                        .must(queryStringQuery(query))
-                        .must(matchQuery("status", STSTATUS.ACTIVE.name()))
-                ).iterator());
-                Page<SecurityToken> securityTokenPage = new PageImpl<SecurityToken>(
-                    securityTokenList,
-                    PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
-                    securityTokenList.size());
-                return securityTokenPage;
-            }
+        if (currentUserIsBank()) {
+            List<SecurityToken> securityTokenList = IteratorUtils.toList(securityTokenSearchRepository.search(
+                QueryBuilders
+                    .boolQuery()
+                    .must(queryStringQuery(query))
+                    .must(matchQuery("status", STSTATUS.ACTIVE.name()))
+            ).iterator());
+            return convertListToPage(securityTokenList, pageable);
         }
         Long userId = this.userService.getUserWithAuthoritiesByLogin(authentication.getName()).get().getId();
         List<SecurityToken> securityTokenList =  this.searchForWhiteListing(query, userId);
-        Page<SecurityToken> securityTokenPage = new PageImpl<SecurityToken>(
-            securityTokenList,
-            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
-            securityTokenList.size());
-        return securityTokenPage;
+        return convertListToPage(securityTokenList, pageable);
     }
 
     @Override
@@ -282,6 +278,52 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
             .iterator())
             .stream()
             .filter(st -> securityTokensPermitted.contains(st.getId()) && st.getStatus().equals(STSTATUS.ACTIVE))
+            .collect(Collectors.toList());
+
+        return securityTokenList;
+    }
+
+    private Authentication getAuth() {
+        Authentication newAuthentication = SecurityContextHolder.getContext().getAuthentication();
+        if (newAuthentication != null) {
+            return newAuthentication;
+        }
+        return this.authentication;
+    }
+
+    private boolean currentUserIsAdmin() {
+        authentication = getAuth();
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.ADMIN)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean currentUserIsBank() {
+        authentication = getAuth();
+        for (GrantedAuthority authority : authentication.getAuthorities()) {
+            if(authority.getAuthority().equals(AuthoritiesConstants.BANK)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private Page<SecurityToken> convertListToPage(List<SecurityToken> securityTokenList, Pageable pageable) {
+        Page<SecurityToken> securityTokensPage = new PageImpl<SecurityToken>(
+            securityTokenList,
+            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
+            securityTokenList.size());
+        return securityTokensPage;
+    }
+
+    private List<SecurityToken> getSecurityTokensForUserWhiteList() {
+        List<SecurityToken> securityTokenList = IteratorUtils.toList(this.whiteListingRepository.findByUserIsCurrentUser().iterator())
+            .stream()
+            .filter(wl -> wl.getSecuritytoken().getStatus().equals(STSTATUS.ACTIVE) && wl.isActive())
+            .map(wl -> wl.getSecuritytoken())
             .collect(Collectors.toList());
 
         return securityTokenList;

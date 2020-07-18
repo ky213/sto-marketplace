@@ -6,8 +6,10 @@ import swiss.alpinetech.exchange.domain.SecurityToken;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import swiss.alpinetech.exchange.domain.enumeration.CATEGORY;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -62,6 +64,13 @@ public interface SecurityTokenService {
      * @return OrderBook.
      */
     OrderBookWrapper getSecurityTokenOrderBook(Long securityTokenId);
+
+    /**
+     * get Assets of securityTokens for whitelisted user.
+     *
+     * @return Assets.
+     */
+    Map<CATEGORY, Long> getAssets();
 
     /**
      * Get the "id" securityToken.
