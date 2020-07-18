@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
-import { Row, Col, Alert, Label, Input, FormGroup, Modal } from 'reactstrap';
+import { Row, Col, Alert, Label, Input, FormGroup, Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import Switch from 'react-switch';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { IRootState } from 'app/shared/reducers';
 import { ORDERTYPE } from 'app/shared/model/enumerations/ordertype.model';
 import { ACTIONTYPE } from 'app/shared/model/enumerations/actiontype.model';
-import { createEntity } from 'app/entities/order/order.reducer';
+import { createEntity, reset } from 'app/entities/order/order.reducer';
 import { IOrder } from 'app/shared/model/order.model';
 
 export interface TradingProps extends StateProps, DispatchProps {}
@@ -14,8 +15,11 @@ export interface TradingProps extends StateProps, DispatchProps {}
 const Trading = (props: TradingProps) => {
   const [volume, setVolume] = useState(1);
   const [orderType, setOrderType] = useState(ORDERTYPE.LIMIT);
+  const [isOpen, setIsOpen] = useState(false);
+  const [actionType, setActionType] = useState(ACTIONTYPE.BUY);
+  const [price, setPrice] = useState(0);
 
-  const { securityToken, account } = props;
+  const { securityToken, account, success } = props;
 
   const handleVolumeChange = (value: string) => {
     setVolume(parseFloat(value));
@@ -26,20 +30,12 @@ const Trading = (props: TradingProps) => {
     else setOrderType(ORDERTYPE.LIMIT);
   };
 
-  const handleTrade = (type: ACTIONTYPE) => {
-    const price = type === ACTIONTYPE.BUY ? securityToken.lastBuyingPrice : securityToken.lastSellingprice;
-    const totalAmount = price * volume;
-
-    if (isNaN(totalAmount)) {
-      alert('Please set a correct volume value!');
-      return;
-    }
-
+  const confirmCreate = () => {
     const entity: IOrder = {
-      type,
       volume,
+      type: actionType,
       price,
-      totalAmount,
+      totalAmount: price * volume,
       active: false,
       securityTokenName: securityToken.name,
       symbol: securityToken.symbol,
@@ -49,12 +45,56 @@ const Trading = (props: TradingProps) => {
     };
 
     props.createEntity(entity);
+
+    setIsOpen(false);
+  };
+
+  const handleTrade = (type: ACTIONTYPE) => {
+    const stPrice = type === ACTIONTYPE.BUY ? securityToken.lastBuyingPrice : securityToken.lastSellingprice;
+
+    if (isNaN(stPrice * volume)) {
+      alert('Please set a correct volume value!');
+      return;
+    }
+    setActionType(type);
+    setPrice(stPrice);
+    setIsOpen(true);
   };
 
   return (
     <Row className="px-3">
-      <Modal>
-        <h1>Hello</h1>
+      <Modal isOpen={isOpen}>
+        <ModalHeader>Confirm order creation</ModalHeader>
+        <ModalBody id="exchangeApp.securityToken.delete.question">
+          <div className="px-5">
+            <p>
+              <strong>Security Token: </strong> {securityToken.name}
+            </p>
+            <p>
+              <strong>Order Type: </strong> {orderType}
+            </p>
+            <p>
+              <strong>Price: </strong> {price} CHF
+            </p>
+            <p>
+              <strong>Volume: </strong> {volume}
+            </p>
+            <p className="border-top pt-2 d-flex justify-content-between">
+              <strong>Total Amout : </strong>
+              <strong>{(price * volume).toLocaleString()} CHF</strong>
+            </p>
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="danger" onClick={() => setIsOpen(false)}>
+            <FontAwesomeIcon icon="ban" />
+            &nbsp; Cancel
+          </Button>
+          <Button id="jhi-confirm-delete-securityToken" color="primary" onClick={confirmCreate}>
+            <FontAwesomeIcon icon="check" />
+            &nbsp; Confirm
+          </Button>
+        </ModalFooter>
       </Modal>
       <Row className="w-100">
         <Col>
@@ -109,12 +149,13 @@ const Trading = (props: TradingProps) => {
   );
 };
 
-const mapStateToProps = ({ securityToken, authentication }: IRootState) => ({
+const mapStateToProps = ({ securityToken, authentication, order }: IRootState) => ({
   securityToken: securityToken.entity,
-  account: authentication.account
+  account: authentication.account,
+  success: order.updateSuccess
 });
 
-const mapDispatchToProps = { createEntity };
+const mapDispatchToProps = { createEntity, reset };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = typeof mapDispatchToProps;
