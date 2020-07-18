@@ -24,6 +24,8 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     Page<Order> findAllByUserId(Long userId, Pageable pageable);
 
+    List<Order> findAllByUserId(Long userId);
+
     @Query(value = "SELECT * from jhi_order where update_date BETWEEN ?1 AND ?2", nativeQuery = true)
     List<Order> getAllBetweenDates(ZonedDateTime startDate, ZonedDateTime endDate);
 

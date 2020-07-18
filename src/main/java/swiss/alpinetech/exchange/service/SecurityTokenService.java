@@ -73,6 +73,13 @@ public interface SecurityTokenService {
     Map<CATEGORY, Long> getAssets();
 
     /**
+     * get Total amounts of securityTokens.
+     *
+     * @return Total amounts of securityTokens.
+     */
+    Map<String, Double> getTotalAmount();
+
+    /**
      * Get the "id" securityToken.
      *
      * @param id the id of the entity.

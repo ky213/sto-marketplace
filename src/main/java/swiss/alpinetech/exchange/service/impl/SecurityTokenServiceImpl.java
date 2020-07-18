@@ -19,6 +19,7 @@ import swiss.alpinetech.exchange.repository.WhiteListingRepository;
 import swiss.alpinetech.exchange.repository.search.WhiteListingSearchRepository;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.OrderBookService;
+import swiss.alpinetech.exchange.service.OrderService;
 import swiss.alpinetech.exchange.service.SecurityTokenService;
 import swiss.alpinetech.exchange.domain.SecurityToken;
 import swiss.alpinetech.exchange.repository.SecurityTokenRepository;
@@ -34,9 +35,8 @@ import swiss.alpinetech.exchange.service.UserService;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import static java.util.stream.Collectors.counting;
-import static java.util.stream.Collectors.groupingBy;
 
+import static java.util.stream.Collectors.*;
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
@@ -57,6 +57,9 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private OrderService orderService;
 
     @Autowired
     private WhiteListingRepository whiteListingRepository;
@@ -199,6 +202,26 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
         List<SecurityToken> securityTokenList = getSecurityTokensForUserWhiteList();
         Map<CATEGORY, Long> map = securityTokenList.stream().collect(groupingBy(SecurityToken::getCategory, counting()));
         return map;
+    }
+
+    /**
+     * get Total amounts of securityTokens.
+     *
+     * @return Total amounts of securityTokens.
+     */
+    @Override
+    public Map<String, Double> getTotalAmount() {
+        authentication = getAuth();
+        Long userId = this.userService.getUserWithAuthoritiesByLogin(authentication.getName()).get().getId();
+        List<Order> orderList = orderService.findUserOrders(userId);
+        Map<String, Double> output = new HashMap<>();
+        orderList.stream().collect(groupingBy(Order::getSecurityToken, summingDouble(Order::getTotalAmount))).forEach( (k, v) -> output.put(k.getName(), v));
+        return output
+            .entrySet()
+            .stream()
+            .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                (oldValue, newValue) -> oldValue, LinkedHashMap::new));
     }
 
     /**

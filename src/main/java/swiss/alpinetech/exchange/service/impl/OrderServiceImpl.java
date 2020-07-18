@@ -257,6 +257,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
+     * Get all user Orders.
+     *
+     * @return the list of entities.
+     */
+    @Override
+    public List<Order> findUserOrders(Long userId) {
+        log.debug("Request to get list of user Orders");
+        return orderRepository.findAllByUserId(userId);
+    }
+
+    /**
      * export orders.
      *
      * @param beginDate .
