@@ -131,10 +131,13 @@ public class OrderServiceImpl implements OrderService {
      * @return the cancelled entity.
      */
     @Override
-    public Order cancel(Long orderId) {
+    public Order cancel(Long orderId) throws Exception {
         authentication = this.getAuth();
         log.debug("Request to cancel Order by orderId : {}", orderId);
         Order orderToCancel = orderRepository.findById(orderId).get();
+        if (Arrays.asList(STATUS.SUCCESS, STATUS.FAIL, STATUS.REMOVE).contains(orderToCancel.getStatus())) {
+            throw new Exception("Order is already completed");
+        }
         orderToCancel.setStatus(STATUS.REMOVE);
         orderToCancel.setUpdateBy(authentication.getName());
         Order result = orderRepository.save(orderToCancel);

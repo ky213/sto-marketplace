@@ -123,7 +123,7 @@ public class OrderResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/cancel-order")
-    public ResponseEntity<Order> cancelOrder(@Valid @RequestParam Long orderId) throws URISyntaxException {
+    public ResponseEntity<Order> cancelOrder(@Valid @RequestParam Long orderId) throws Exception {
         log.debug("REST request to cancel Order by Id : {}", orderId);
         if (orderId == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");

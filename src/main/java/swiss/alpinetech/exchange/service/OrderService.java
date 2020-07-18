@@ -40,7 +40,7 @@ public interface OrderService {
      * @param orderId the entity to cancel.
      * @return the cancelled entity.
      */
-    Order cancel(Long orderId);
+    Order cancel(Long orderId) throws Exception;
 
     /**
      * Update fillToken and fillAmount orders of trade.
