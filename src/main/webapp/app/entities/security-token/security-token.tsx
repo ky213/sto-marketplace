@@ -176,9 +176,6 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
                           <img src={`data:${securityToken.logoContentType};base64,${securityToken.logo}`} style={{ maxHeight: '30px' }} />
                           &nbsp;
                         </a>
-                        {/* <span>
-                          {securityToken.logoContentType}, {byteSize(securityToken.logo)}
-                        </span> */}
                       </div>
                     ) : null}
                   </td>

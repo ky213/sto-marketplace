@@ -7,11 +7,15 @@ import { updateEntity } from '../../security-token.reducer';
 import { ISecurityToken } from 'app/shared/model/security-token.model';
 import { STSTATUS } from 'app/shared/model/enumerations/ststatus.model';
 import { IRootState } from 'app/shared/reducers';
+import { AUTHORITIES } from 'app/config/constants';
 
 export interface HeaderProps extends StateProps, DispatchProps, ISecurityToken {}
 
 const Header = (props: HeaderProps) => {
-  const { name, status, logo, logoContentType } = props;
+  const { name, status, logo, logoContentType, account } = props;
+
+  const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
+  const isBank = account.authorities.includes(AUTHORITIES.ADMIN);
 
   const handleChange = checked => {
     let newStatus: STSTATUS;
@@ -36,21 +40,24 @@ const Header = (props: HeaderProps) => {
         </Row>
       </Col>
       <Col className="text-right">
-        <Row className="justify-content-center align-items-center">
-          <Col className="pr-0 mr-0">
-            <h3>Active </h3>
-          </Col>
-          <Col className="col-2 text-left">
-            <Switch onChange={handleChange} checked={status === STSTATUS.ACTIVE} />
-          </Col>
-        </Row>
+        {(isAdmin || isBank) && (
+          <Row className="justify-content-center align-items-center">
+            <Col className="pr-0 mr-0">
+              <h3>Active </h3>
+            </Col>
+            <Col className="col-2 text-left">
+              <Switch onChange={handleChange} checked={status === STSTATUS.ACTIVE} />
+            </Col>
+          </Row>
+        )}
       </Col>
     </>
   );
 };
 
 const mapStateToProps = (storeState: IRootState) => ({
-  securityTokenEntity: storeState.securityToken.entity
+  securityTokenEntity: storeState.securityToken.entity,
+  account: storeState.authentication.account
 });
 
 const mapDispatchToProps = {

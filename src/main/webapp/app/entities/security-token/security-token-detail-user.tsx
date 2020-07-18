@@ -22,7 +22,7 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
         <Header {...props.securityTokenEntity} />
       </Row>
       <Row>
-        <Col md="6" className="px-0">
+        <Col className="px-0">
           <OrdersChart securityTokenName={props.securityTokenEntity.name} />
         </Col>
         <Col>
@@ -48,8 +48,7 @@ export const SecurityTokenDetail = (props: ISecurityTokenDetailProps) => {
 };
 
 const mapStateToProps = ({ securityToken, authentication }: IRootState) => ({
-  securityTokenEntity: securityToken.entity,
-  account: authentication.account
+  securityTokenEntity: securityToken.entity
 });
 
 const mapDispatchToProps = { getEntity };
