@@ -203,6 +203,19 @@ public class SecurityTokenResource {
     }
 
     /**
+     * {@code GET  /security-tokens/assets} : get the securityTokens assets.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the assets, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/security-tokens/last-whitelisted")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<List<SecurityToken>> getLastSTOWhitelisted() {
+        log.debug("REST request to get SecurityTokens total amounts");
+        List<SecurityToken> securityTokenList = securityTokenService.getLastSTOWhitelisted();
+        return ResponseEntity.ok().body(securityTokenList);
+    }
+
+    /**
      * {@code DELETE  /security-tokens/:id} : delete the "id" securityToken.
      *
      * @param id the id of the securityToken to delete.

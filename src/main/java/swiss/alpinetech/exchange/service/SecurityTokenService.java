@@ -80,6 +80,13 @@ public interface SecurityTokenService {
     Map<String, Double> getTotalAmount();
 
     /**
+     * get last 5 Security Token whitelisted on the marketplace by the bank for current user.
+     *
+     * @return securityTokens list.
+     */
+    List<SecurityToken> getLastSTOWhitelisted();
+
+    /**
      * Get the "id" securityToken.
      *
      * @param id the id of the entity.

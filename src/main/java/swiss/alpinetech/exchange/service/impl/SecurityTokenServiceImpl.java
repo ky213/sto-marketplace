@@ -235,6 +235,25 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     }
 
     /**
+     * get last 5 Security Token whitelisted on the marketplace by the bank for current user.
+     *
+     * @return securityTokens list.
+     */
+    @Override
+    public List<SecurityToken> getLastSTOWhitelisted() {
+        List<SecurityToken> securityTokenList = IteratorUtils.toList(this.whiteListingRepository.findByUserIsCurrentUser().iterator())
+            .stream()
+            .sorted(Comparator.comparing(wl -> wl.getDateEvent()))
+            .filter(wl -> wl.getSecuritytoken().getStatus().equals(STSTATUS.ACTIVE) && wl.isActive())
+            .map(wl -> wl.getSecuritytoken())
+            .collect(Collectors.toList());
+        if (securityTokenList.size() >= 5) {
+            return securityTokenList.subList(0,5);
+        }
+        return securityTokenList;
+    }
+
+    /**
      * Get one securityToken by id.
      *
      * @param id the id of the entity.
