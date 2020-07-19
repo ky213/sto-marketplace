@@ -314,8 +314,8 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
             .filter(st ->
                         securityTokensPermitted.contains(st.getId()) &&
                         st.getStatus().equals(STSTATUS.ACTIVE) &&
-                        st.getRestrictionCounty().equals(user.getSetting().getCountry().name()) &&
-                        st.getRestrictionNationality().equals(user.getSetting().getNationality())
+                        !st.getRestrictionCounty().equals(user.getSetting().getCountry().name()) &&
+                        !st.getRestrictionNationality().equals(user.getSetting().getNationality())
             )
             .collect(Collectors.toList());
 
