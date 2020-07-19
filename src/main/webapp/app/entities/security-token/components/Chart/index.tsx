@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Col, Card, CardHeader, CardBody, Button, CardFooter } from 'reactstrap';
+import { Card, CardHeader, CardBody, Button, CardFooter } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Line } from 'react-chartjs-2';
 import { connect } from 'react-redux';
+import moment from 'moment';
+import { FlexibleXYPlot, YAxis, XAxis, VerticalGridLines, HorizontalGridLines, LineMarkSeries } from 'react-vis';
 
 import { getChartData } from '../../security-token.reducer';
 import { IRootState } from 'app/shared/reducers';
-import moment from 'moment';
 
 export interface ChartProps extends StateProps, DispatchProps {
   securityTokenName: string;
@@ -18,92 +18,6 @@ const Chart = (props: ChartProps) => {
     .subtract(7, 'days')
     .toISOString();
   const endDate = moment().toISOString();
-  const labels = new Array(7)
-    .fill('')
-    .map((e, i) => {
-      return moment()
-        .subtract(i + 1, 'days')
-        .format('DD MMM');
-    })
-    .reverse();
-
-  const data = {
-    datasets: [
-      {
-        borderColor: '#1a237e',
-        data: props.chartData
-      }
-    ],
-    labels
-  };
-
-  const options = {
-    responsive: true,
-    maintainAspectRatio: false,
-    animation: false,
-    cornerRadius: 20,
-    legend: {
-      display: false
-    },
-    layout: {
-      padding: 0
-    },
-    scales: {
-      xAxes: [
-        {
-          barThickness: 14,
-          maxBarThickness: 10,
-          barPercentage: 0.5,
-          categoryPercentage: 0.5,
-          gridLines: {
-            display: false,
-            drawBorder: false
-          },
-          ticks: {
-            padding: 20,
-            fontColor: 'gray'
-          }
-        }
-      ],
-      yAxes: [
-        {
-          gridLines: {
-            borderDash: [2],
-            borderDashOffset: [2],
-            color: 'gray',
-            drawBorder: false,
-            zeroLineBorderDash: [2],
-            zeroLineBorderDashOffset: [2],
-            zeroLineColor: 'gray'
-          },
-          ticks: {
-            padding: 20,
-            fontColor: 'gray',
-            beginAtZero: true,
-            min: 0,
-            maxTicksLimit: 5,
-            callback(value) {
-              return value > 0 ? value + 'K' : value;
-            }
-          }
-        }
-      ]
-    },
-    tooltips: {
-      enabled: true,
-      mode: 'index',
-      intersect: false,
-      caretSize: 10,
-      yPadding: 20,
-      xPadding: 20,
-      borderWidth: 1,
-      borderColor: 'gray',
-      backgroundColor: 'white',
-      titleFontColor: 'blue',
-      bodyFontColor: 'gray',
-      footerFontColor: 'gray'
-    }
-  };
 
   useEffect(() => {
     if (props.securityTokenName) props.getChartData(props.securityTokenName, startDate, endDate);
@@ -112,8 +26,34 @@ const Chart = (props: ChartProps) => {
   return (
     <Card className="p-0" style={{ height: '400px' }}>
       <CardHeader>Latest Orders</CardHeader>
-      <CardBody>
-        <Line data={data} options={options} />
+      <CardBody className="p-0">
+        <FlexibleXYPlot>
+          <YAxis attr="y" attrAxis="x" orientation="left" />
+          <XAxis
+            attr="x"
+            attrAxis="y"
+            orientation="bottom"
+            tickTotal={7}
+            tickFormat={(t, i) =>
+              moment()
+                .subtract(7 - i, 'days')
+                .format('DD MMM')
+            }
+          />
+          <VerticalGridLines />
+          <HorizontalGridLines />
+          <LineMarkSeries
+            data={[
+              { x: 1, y: 1 },
+              { x: 3, y: 2 },
+              { x: 4, y: 6 },
+              { x: 5, y: 7 },
+              { x: 6, y: 1 },
+              { x: 7, y: 1 },
+              { x: 8, y: 1 }
+            ]}
+          />
+        </FlexibleXYPlot>
       </CardBody>
       <CardFooter className="d-flex py-0">
         <Button className="ml-auto" color="none ">
