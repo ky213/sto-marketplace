@@ -13,16 +13,19 @@ import { IOrder } from 'app/shared/model/order.model';
 export interface TradingProps extends StateProps, DispatchProps {}
 
 const Trading = (props: TradingProps) => {
-  const [volume, setVolume] = useState(1);
+  const [volume, setVolume] = useState(0);
   const [orderType, setOrderType] = useState(ORDERTYPE.LIMIT);
   const [isOpen, setIsOpen] = useState(false);
   const [actionType, setActionType] = useState(ACTIONTYPE.BUY);
   const [price, setPrice] = useState(0);
 
-  const { securityToken, account, success } = props;
+  const { securityToken, account } = props;
 
   const handleVolumeChange = (value: string) => {
     setVolume(parseFloat(value));
+  };
+  const handlePriceChange = (value: string) => {
+    setPrice(parseFloat(value));
   };
 
   const handleChange = (checked: boolean) => {
@@ -50,14 +53,11 @@ const Trading = (props: TradingProps) => {
   };
 
   const handleTrade = (type: ACTIONTYPE) => {
-    const stPrice = type === ACTIONTYPE.BUY ? securityToken.lastBuyingPrice : securityToken.lastSellingprice;
-
-    if (isNaN(stPrice * volume)) {
-      alert('Please set a correct volume value!');
+    if (isNaN(price * volume)) {
+      alert('Please set correct value!');
       return;
     }
     setActionType(type);
-    setPrice(stPrice);
     setIsOpen(true);
   };
 
@@ -125,13 +125,7 @@ const Trading = (props: TradingProps) => {
         </Col>
       </Row>
       <Row className="w-100">
-        <Col>
-          <FormGroup>
-            <Label>Volume</Label>
-            <Input type="number" value={volume} onChange={({ target }) => handleVolumeChange(target.value)} />
-          </FormGroup>
-        </Col>
-        <Col className="d-flex align-items-center justify-content-center">
+        <Col className="d-flex align-items-center justify-content-center mx-auto">
           <h3 className={`${orderType === ORDERTYPE.MARKET ? 'text-secondary' : ''}`}>Limit </h3>
           <Switch
             onChange={handleChange}
@@ -143,6 +137,24 @@ const Trading = (props: TradingProps) => {
             offColor="#4e98ed"
           />
           <h3 className={`${orderType === ORDERTYPE.LIMIT ? 'text-secondary' : ''}`}> Market</h3>
+        </Col>
+      </Row>
+      <Row className="w-100">
+        <Col>
+          <Row>
+            <Col>
+              <FormGroup>
+                <Label>Volume</Label>
+                <Input type="number" value={volume} onChange={({ target }) => handleVolumeChange(target.value)} />
+              </FormGroup>
+            </Col>
+            <Col>
+              <FormGroup>
+                <Label>Price</Label>
+                <Input type="number" value={price} onChange={({ target }) => handlePriceChange(target.value)} />
+              </FormGroup>
+            </Col>
+          </Row>
         </Col>
       </Row>
     </Row>

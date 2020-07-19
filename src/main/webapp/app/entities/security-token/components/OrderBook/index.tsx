@@ -15,10 +15,10 @@ const OrderBook = (props: OrderBookProps) => {
   }, [props.id]);
 
   return (
-    <div className="mt-2 px-2 pb-2 bg-white" style={{ height: '55%', overflowY: 'scroll' }}>
+    <div className="mt-2 px-2 pb-2 bg-white" style={{ height: '44%', overflowY: 'scroll' }}>
       <small>Order book</small>
       <div className="w-100">
-        <div className=" d-flex justify-content-between text-secondary " style={{ fontSize: '12px' }}>
+        <div className="d-flex justify-content-between text-secondary" style={{ fontSize: '12px' }}>
           <span>Total</span>
           <span>Size</span>
           <span>Prices</span>
