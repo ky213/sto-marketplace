@@ -1,10 +1,37 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Row, Col, Card, CardHeader, CardBody, Button, CardFooter } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FlexibleXYPlot, YAxis, XAxis, RadialChart, VerticalBarSeries, HorizontalGridLines } from 'react-vis';
 import moment from 'moment';
+import { connect } from 'react-redux';
 
-const Chart = () => {
+import { IRootState } from 'app/shared/reducers';
+import { getAssetAllocation } from '../home-customer.reducer';
+
+export interface UserChartProps extends StateProps, DispatchProps {}
+
+const Charts = (props: UserChartProps) => {
+  const assetAllocation = [];
+  const colors = {
+    EQUITY: '#0b2662',
+    FUNDS: '#28a745',
+    REAL_ESTATE: '#de4251',
+    DERIVATIVE: '#fb8c00'
+  };
+
+  useEffect(() => {
+    props.getAssetAllocation();
+  }, []);
+
+  for (const key in props.assetAllocation) {
+    if (key)
+      assetAllocation.push({
+        angle: props.assetAllocation[key],
+        label: key,
+        style: { fill: colors[key], stroke: colors[key] }
+      });
+  }
+
   return (
     <Row className="pl-1 pr-2 pt-2">
       <Col xs="9" className="px-0">
@@ -115,11 +142,14 @@ const Chart = () => {
             <Row>
               <RadialChart
                 className="m-auto"
-                data={[{ angle: 0.1 }, { angle: 0.5 }, { angle: 0.2 }, { angle: 0.3 }]}
-                colorRange={['#0b2662', '#28a745', '#de4251', '#fb8c00']}
-                showLabels={true}
+                data={assetAllocation}
+                showLabels={false}
                 width={250}
                 height={250}
+                labelsRadiusMultiplier={0.6}
+                labelsStyle={{
+                  fontSize: 10
+                }}
               />
             </Row>
             <Row className=" ">
@@ -130,7 +160,7 @@ const Chart = () => {
                 <p className="py-0 my-0" style={{ fontSize: '12px' }}>
                   Equity
                 </p>
-                <b className="py-0 my-0 text-primary"> 33%</b>
+                <b className="py-0 my-0 text-primary"> {(props.assetAllocation.EQUITY || 0) * 10}%</b>
               </Col>
               <Col className="text-center text-muted p-0">
                 <p className="py-0 my-0">
@@ -139,7 +169,7 @@ const Chart = () => {
                 <p className="py-0 my-0" style={{ fontSize: '12px' }}>
                   Funds
                 </p>
-                <b className="py-0 my-0 text-success"> 30%</b>
+                <b className="py-0 my-0 text-success"> {(props.assetAllocation.FUNDS || 0) * 100}%</b>
               </Col>
               <Col className="text-center text-muted p-0">
                 <p className="py-0 my-0">
@@ -148,7 +178,7 @@ const Chart = () => {
                 <p className="py-0 my-0" style={{ fontSize: '12px' }}>
                   Real Estate
                 </p>
-                <b className="py-0 my-0 text-danger"> 15%</b>
+                <b className="py-0 my-0 text-danger"> {(props.assetAllocation.REAL_ESTATE || 0) * 100}%</b>
               </Col>
               <Col className="text-center text-muted p-0">
                 <p className="py-0 my-0">
@@ -157,8 +187,8 @@ const Chart = () => {
                 <p className="py-0 my-0" style={{ fontSize: '12px' }}>
                   Derivative
                 </p>
-                <b className="py-0 my-0" style={{ color: '#fb8c00' }}>
-                  23%
+                <b className="py-0 my-0" style={{ color: colors.DERIVATIVE }}>
+                  {(props.assetAllocation.DERIVATIVE || 0) * 100}%
                 </b>
               </Col>
             </Row>
@@ -169,4 +199,15 @@ const Chart = () => {
   );
 };
 
-export default Chart;
+const mapStateToProps = ({ homeCustomer }: IRootState) => ({
+  assetAllocation: homeCustomer.assetAllocation
+});
+
+const mapDispatchToProps = {
+  getAssetAllocation
+};
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+type DispatchProps = typeof mapDispatchToProps;
+
+export default connect(mapStateToProps, mapDispatchToProps)(Charts);

@@ -10,6 +10,7 @@ export const ACTION_TYPES = {
   SEARCH_HOMECUSTOMERS: 'homeCustomer/SEARCH_HOMECUSTOMERS',
   FETCH_HOMECUSTOMER_LIST: 'homeCustomer/FETCH_HOMECUSTOMER_LIST',
   FETCH_HOMECUSTOMER: 'homeCustomer/FETCH_HOMECUSTOMER',
+  FETCH_ASSET_ALLOCATION: 'homeCustomer/FETCH_ASSET_ALLOCATION',
   CREATE_HOMECUSTOMER: 'homeCustomer/CREATE_HOMECUSTOMER',
   UPDATE_HOMECUSTOMER: 'homeCustomer/UPDATE_HOMECUSTOMER',
   DELETE_HOMECUSTOMER: 'homeCustomer/DELETE_HOMECUSTOMER',
@@ -23,7 +24,8 @@ const initialState = {
   entity: defaultValue,
   updating: false,
   totalItems: 0,
-  updateSuccess: false
+  updateSuccess: false,
+  assetAllocation: {} as { [key: string]: number }
 };
 
 export type HomeCustomerState = Readonly<typeof initialState>;
@@ -35,6 +37,7 @@ export default (state: HomeCustomerState = initialState, action): HomeCustomerSt
     case REQUEST(ACTION_TYPES.SEARCH_HOMECUSTOMERS):
     case REQUEST(ACTION_TYPES.FETCH_HOMECUSTOMER_LIST):
     case REQUEST(ACTION_TYPES.FETCH_HOMECUSTOMER):
+    case REQUEST(ACTION_TYPES.FETCH_ASSET_ALLOCATION):
       return {
         ...state,
         errorMessage: null,
@@ -53,6 +56,7 @@ export default (state: HomeCustomerState = initialState, action): HomeCustomerSt
     case FAILURE(ACTION_TYPES.SEARCH_HOMECUSTOMERS):
     case FAILURE(ACTION_TYPES.FETCH_HOMECUSTOMER_LIST):
     case FAILURE(ACTION_TYPES.FETCH_HOMECUSTOMER):
+    case FAILURE(ACTION_TYPES.FETCH_ASSET_ALLOCATION):
     case FAILURE(ACTION_TYPES.CREATE_HOMECUSTOMER):
     case FAILURE(ACTION_TYPES.UPDATE_HOMECUSTOMER):
     case FAILURE(ACTION_TYPES.DELETE_HOMECUSTOMER):
@@ -76,6 +80,12 @@ export default (state: HomeCustomerState = initialState, action): HomeCustomerSt
         ...state,
         loading: false,
         entity: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_ASSET_ALLOCATION):
+      return {
+        ...state,
+        loading: false,
+        assetAllocation: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.CREATE_HOMECUSTOMER):
     case SUCCESS(ACTION_TYPES.UPDATE_HOMECUSTOMER):
@@ -151,6 +161,13 @@ export const deleteEntity: ICrudDeleteAction<IHomeCustomer> = id => async dispat
     payload: axios.delete(requestUrl)
   });
   return result;
+};
+
+export const getAssetAllocation: any = () => {
+  return {
+    type: ACTION_TYPES.FETCH_ASSET_ALLOCATION,
+    payload: axios.get<any>('/api/security-tokens/assets')
+  };
 };
 
 export const reset = () => ({
