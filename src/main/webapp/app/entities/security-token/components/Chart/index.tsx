@@ -4,7 +4,7 @@ import { Card, CardHeader, CardBody, Button, CardFooter } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { FlexibleXYPlot, YAxis, XAxis, VerticalGridLines, HorizontalGridLines, LineSeries } from 'react-vis';
+import { FlexibleXYPlot, YAxis, XAxis, VerticalGridLines, HorizontalGridLines, LineMarkSeries } from 'react-vis';
 
 import { getChartData } from '../../security-token.reducer';
 import { IRootState } from 'app/shared/reducers';
@@ -18,7 +18,7 @@ const Chart = (props: ChartProps) => {
     .subtract(7, 'days')
     .toISOString();
   const endDate = moment().toISOString();
-  const data = props.chartData.map(({ price, createDate }) => ({ x: createDate, y: price }));
+  const data = props.chartData.map(({ price, createDate }) => ({ x: new Date(createDate).getTime(), y: price }));
 
   useEffect(() => {
     if (props.securityTokenName) props.getChartData(props.securityTokenName, startDate, endDate);
@@ -34,16 +34,16 @@ const Chart = (props: ChartProps) => {
             attr="x"
             attrAxis="y"
             orientation="bottom"
-            tickTotal={7}
             tickFormat={(t, i) =>
               moment()
+                .add(1, 'days')
                 .subtract(7 - i, 'days')
                 .format('DD MMM')
             }
           />
           <VerticalGridLines />
           <HorizontalGridLines />
-          <LineSeries data={[{ x: 1, y: 1 }, ...data]} />
+          <LineMarkSeries data={[...data]} curve="curveBasis" />
         </FlexibleXYPlot>
       </CardBody>
       <CardFooter className="d-flex py-0">
