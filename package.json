@@ -33,6 +33,7 @@
     "react-switch": "^5.0.1",
     "react-toastify": "4.5.2",
     "react-transition-group": "2.7.0",
+    "react-vis": "^1.11.7",
     "reactstrap": "7.1.0",
     "redux": "4.0.4",
     "redux-devtools": "3.5.0",

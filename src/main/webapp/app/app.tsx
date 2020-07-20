@@ -3,7 +3,6 @@ import './app.scss';
 
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Card } from 'reactstrap';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import { hot } from 'react-hot-loader';
@@ -12,7 +11,6 @@ import { IRootState } from 'app/shared/reducers';
 import { getSession } from 'app/shared/reducers/authentication';
 import { getProfile } from 'app/shared/reducers/application-profile';
 import Header from 'app/shared/layout/header/header';
-import Footer from 'app/shared/layout/footer/footer';
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import ErrorBoundary from 'app/shared/error/error-boundary';
 import { AUTHORITIES } from 'app/config/constants';
@@ -46,12 +44,9 @@ export const App = (props: IAppProps) => {
           />
         </ErrorBoundary>
         <div className="container-fluid view-container p-0" id="app-view-container" style={{ height: '100%' }}>
-          {/* <Card className="jh-card"> */}
           <ErrorBoundary>
             <AppRoutes />
           </ErrorBoundary>
-          {/* </Card> */}
-          {/* <Footer /> */}
         </div>
       </div>
     </Router>
