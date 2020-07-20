@@ -40,7 +40,7 @@ public interface OrderService {
      * @param orderId the entity to cancel.
      * @return the cancelled entity.
      */
-    Order cancel(Long orderId);
+    Order cancel(Long orderId) throws Exception;
 
     /**
      * Update fillToken and fillAmount orders of trade.
@@ -98,6 +98,20 @@ public interface OrderService {
      * @return the list of entities.
      */
     Page<Order> findUserOrders(Long userId, Pageable pageable);
+
+    /**
+     * Get all user Orders.
+     *
+     * @return the list of entities.
+     */
+    List<Order> findUserOrders(Long userId);
+
+    /**
+     * Get all user Orders.
+     *
+     * @return the list of entities.
+     */
+    Page<Order> findUserOrdersByStatus(List<STATUS> statuses, Long userId, Pageable pageable);
 
     /**
      * export orders.

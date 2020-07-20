@@ -35,6 +35,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -130,10 +131,13 @@ public class OrderServiceImpl implements OrderService {
      * @return the cancelled entity.
      */
     @Override
-    public Order cancel(Long orderId) {
+    public Order cancel(Long orderId) throws Exception {
         authentication = this.getAuth();
         log.debug("Request to cancel Order by orderId : {}", orderId);
         Order orderToCancel = orderRepository.findById(orderId).get();
+        if (Arrays.asList(STATUS.SUCCESS, STATUS.FAIL, STATUS.REMOVE).contains(orderToCancel.getStatus())) {
+            throw new Exception("Order is already completed");
+        }
         orderToCancel.setStatus(STATUS.REMOVE);
         orderToCancel.setUpdateBy(authentication.getName());
         Order result = orderRepository.save(orderToCancel);
@@ -257,6 +261,32 @@ public class OrderServiceImpl implements OrderService {
     }
 
     /**
+     * Get all user Orders.
+     *
+     * @return the list of entities.
+     */
+    @Override
+    public Page<Order> findUserOrdersByStatus(List<STATUS> statuses, Long userId, Pageable pageable) {
+        log.debug("Request to get list of user Orders by statuses");
+        List<Order> orderList = orderRepository.findAllByUserId(userId)
+            .stream()
+            .filter(item -> statuses.contains(item.getStatus()))
+            .collect(Collectors.toList());
+        return convertListToPage(orderList, pageable);
+    }
+
+    /**
+     * Get all user Orders.
+     *
+     * @return the list of entities.
+     */
+    @Override
+    public List<Order> findUserOrders(Long userId) {
+        log.debug("Request to get list of user Orders");
+        return orderRepository.findAllByUserId(userId);
+    }
+
+    /**
      * export orders.
      *
      * @param beginDate .
@@ -318,11 +348,7 @@ public class OrderServiceImpl implements OrderService {
         List<Order> orderList = IteratorUtils.toList(orderSearchRepository.search(QueryBuilders.boolQuery()
             .must(queryStringQuery(query))
             .must(matchQuery("user.id", userId))).iterator());
-        Page<Order> ordersPage = new PageImpl<Order>(
-            orderList,
-            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
-            orderList.size());
-        return ordersPage;
+        return convertListToPage(orderList, pageable);
     }
 
     private Authentication getAuth() {
@@ -341,6 +367,14 @@ public class OrderServiceImpl implements OrderService {
             return true;
         }
         return false;
+    }
+
+    private Page<Order> convertListToPage(List<Order> orderList, Pageable pageable) {
+        Page<Order> orderPage = new PageImpl<Order>(
+            orderList,
+            PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), pageable.getSort()),
+            orderList.size());
+        return orderPage;
     }
 
 }

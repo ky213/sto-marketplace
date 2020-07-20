@@ -9,9 +9,7 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import swiss.alpinetech.exchange.domain.Order;
-import swiss.alpinetech.exchange.domain.OrderBookWrapper;
-import swiss.alpinetech.exchange.domain.SecurityTokenOrderBook;
+import swiss.alpinetech.exchange.domain.*;
 import swiss.alpinetech.exchange.domain.enumeration.ACTIONTYPE;
 import swiss.alpinetech.exchange.domain.enumeration.CATEGORY;
 import swiss.alpinetech.exchange.domain.enumeration.STSTATUS;
@@ -19,8 +17,8 @@ import swiss.alpinetech.exchange.repository.WhiteListingRepository;
 import swiss.alpinetech.exchange.repository.search.WhiteListingSearchRepository;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.OrderBookService;
+import swiss.alpinetech.exchange.service.OrderService;
 import swiss.alpinetech.exchange.service.SecurityTokenService;
-import swiss.alpinetech.exchange.domain.SecurityToken;
 import swiss.alpinetech.exchange.repository.SecurityTokenRepository;
 import swiss.alpinetech.exchange.repository.search.SecurityTokenSearchRepository;
 import org.slf4j.Logger;
@@ -34,9 +32,8 @@ import swiss.alpinetech.exchange.service.UserService;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import static java.util.stream.Collectors.counting;
-import static java.util.stream.Collectors.groupingBy;
 
+import static java.util.stream.Collectors.*;
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
@@ -57,6 +54,9 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private OrderService orderService;
 
     @Autowired
     private WhiteListingRepository whiteListingRepository;
@@ -202,6 +202,58 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     }
 
     /**
+     * get Total amounts of securityTokens.
+     *
+     * @return Total amounts of securityTokens.
+     */
+    @Override
+    public Map<String, Double> getTotalAmount() {
+        authentication = getAuth();
+        Long userId = this.userService.getUserWithAuthoritiesByLogin(authentication.getName()).get().getId();
+        List<Order> orderList = orderService.findUserOrders(userId);
+        Map<String, Double> output = new HashMap<>();
+        List<Long> securityTokenPermittedList = this.getSecurityTokensForUserWhiteList()
+            .stream()
+            .map(st -> st.getId())
+            .collect(Collectors.toList());
+        orderList
+            .stream()
+            .filter(item -> {
+                if (securityTokenPermittedList.contains(item.getSecurityToken().getId())) {
+                    return true;
+                }
+                return false;
+            })
+            .collect(groupingBy(Order::getSecurityToken, summingDouble(Order::getTotalAmount)))
+            .forEach( (k, v) -> output.put(k.getName(), v));
+        return output
+            .entrySet()
+            .stream()
+            .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+    }
+
+    /**
+     * get last 5 Security Token whitelisted on the marketplace by the bank for current user.
+     *
+     * @return securityTokens list.
+     */
+    @Override
+    public List<SecurityToken> getLastSTOWhitelisted() {
+        List<SecurityToken> securityTokenList = IteratorUtils.toList(this.whiteListingRepository.findByUserIsCurrentUser().iterator())
+            .stream()
+            .sorted(Comparator.comparing(wl -> wl.getDateEvent()))
+            .filter(wl -> wl.getSecuritytoken().getStatus().equals(STSTATUS.ACTIVE) && wl.isActive())
+            .map(wl -> wl.getSecuritytoken())
+            .collect(Collectors.toList());
+        if (securityTokenList.size() >= 5) {
+            return securityTokenList.subList(0,5);
+        }
+        return securityTokenList;
+    }
+
+    /**
      * Get one securityToken by id.
      *
      * @param id the id of the entity.
@@ -267,6 +319,7 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
                 .collect(Collectors.toList());
             return securityTokenList;
         }
+        User user = this.userService.getUserWithAuthorities(userId).get();
         List<Long> securityTokensPermitted = IteratorUtils.toList(this.whiteListingSearchRepository.search(QueryBuilders.boolQuery()
             .must(matchQuery("user.id", userId))).iterator())
             .stream()
@@ -277,7 +330,12 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
         List<SecurityToken> securityTokenList = IteratorUtils.toList(securityTokenSearchRepository.search(queryStringQuery(query+"*").field("name"))
             .iterator())
             .stream()
-            .filter(st -> securityTokensPermitted.contains(st.getId()) && st.getStatus().equals(STSTATUS.ACTIVE))
+            .filter(st ->
+                        securityTokensPermitted.contains(st.getId()) &&
+                        st.getStatus().equals(STSTATUS.ACTIVE) &&
+                        !st.getRestrictionCounty().equals(user.getSetting().getCountry().name()) &&
+                        !st.getRestrictionNationality().equals(user.getSetting().getNationality())
+            )
             .collect(Collectors.toList());
 
         return securityTokenList;

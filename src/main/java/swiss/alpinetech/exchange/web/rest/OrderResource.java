@@ -3,6 +3,7 @@ package swiss.alpinetech.exchange.web.rest;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import swiss.alpinetech.exchange.domain.Order;
+import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.OrderService;
 import swiss.alpinetech.exchange.web.rest.errors.BadRequestAlertException;
@@ -122,7 +123,7 @@ public class OrderResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/cancel-order")
-    public ResponseEntity<Order> cancelOrder(@Valid @RequestParam Long orderId) throws URISyntaxException {
+    public ResponseEntity<Order> cancelOrder(@Valid @RequestParam Long orderId) throws Exception {
         log.debug("REST request to cancel Order by Id : {}", orderId);
         if (orderId == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -216,6 +217,20 @@ public class OrderResource {
     public ResponseEntity<List<Order>> getUserOrders(@RequestParam Long userId, Pageable pageable) {
         log.debug("REST request to get User Orders");
         Page<Order> page = orderService.findUserOrders(userId, pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /user-orders} : get user orders.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the user orders, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/user-orders/status")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<List<Order>> getUserOrdersByStatus(@RequestParam Long userId, @RequestParam List<STATUS> statuses, Pageable pageable) {
+        log.debug("REST request to get User Orders by statuses");
+        Page<Order> page = orderService.findUserOrdersByStatus(statuses, userId, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
