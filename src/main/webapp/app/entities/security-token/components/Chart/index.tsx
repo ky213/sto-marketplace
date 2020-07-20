@@ -71,6 +71,7 @@ const Chart = (props: ChartProps) => {
 const mapStateToProps = ({ securityToken }: IRootState) => ({
   chartData: securityToken.chartData
 });
+
 const mapDispatchToProps = {
   getChartData
 };

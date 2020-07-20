@@ -29,50 +29,6 @@ const PieChart = () => {
       <div className=" flex-grow-1">
         <Doughnut data={data} options={options} height={90} width={100} />
       </div>
-      <Row className="mt-4 ">
-        <Col className="text-center text-muted p-0">
-          <p className="py-0 my-0">
-            <FontAwesomeIcon icon="user-tag" />
-          </p>
-          <p className="py-0 my-0" style={{ fontSize: '12px' }}>
-            Equity
-          </p>
-          <b className="py-0 my-0 text-primary"> 33%</b>
-        </Col>
-        <Col className="text-center text-muted p-0">
-          <p className="py-0 my-0">
-            <FontAwesomeIcon icon="university" />
-          </p>
-          <p className="py-0 my-0" style={{ fontSize: '12px' }}>
-            {' '}
-            Funds
-          </p>
-          <b className="py-0 my-0 text-success"> 30%</b>
-        </Col>
-        <Col className="text-center text-muted p-0">
-          <p className="py-0 my-0">
-            <FontAwesomeIcon icon="building" />
-          </p>
-          <p className="py-0 my-0" style={{ fontSize: '12px' }}>
-            {' '}
-            Real Estate
-          </p>
-          <b className="py-0 my-0 text-danger"> 15%</b>
-        </Col>
-        <Col className="text-center text-muted p-0">
-          <p className="py-0 my-0">
-            <FontAwesomeIcon icon="cubes" />
-          </p>
-          <p className="py-0 my-0" style={{ fontSize: '12px' }}>
-            {' '}
-            Derivative
-          </p>
-          <b className="py-0 my-0" style={{ color: '#fb8c00' }}>
-            {' '}
-            23%
-          </b>
-        </Col>
-      </Row>
     </div>
   );
 };

@@ -27,7 +27,7 @@ const Header = () => {
             <p className="mt-3 mb-0 text-muted text-sm">
               <span className="text-danger mr-2">
                 <FontAwesomeIcon icon="arrow-down" /> 12%
-              </span>{' '}
+              </span>
               <span className="text-nowrap">Since last month</span>
             </p>
           </CardBody>
