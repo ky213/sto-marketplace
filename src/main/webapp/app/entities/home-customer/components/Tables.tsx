@@ -1,141 +1,70 @@
 import React, { useEffect } from 'react';
 import { Row, Table, Card, CardHeader, CardBody, CardFooter, Button, Badge } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getUserOrders } from 'app/entities/order/order.reducer';
 import { connect } from 'react-redux';
 import moment from 'moment';
-import { Alert } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
+import { getUserOrders } from 'app/entities/order/order.reducer';
+import { getLastSecurityTokens, reset } from 'app/entities/security-token/security-token.reducer';
 import { IRootState } from 'app/shared/reducers';
 import { APP_DATE_FORMAT } from 'app/config/constants';
 
 export interface TablesProps extends StateProps, DispatchProps {}
 
 const Tables = (props: TablesProps) => {
-  const { user, orders } = props;
+  const { user, orders, securityTokens } = props;
 
   useEffect(() => {
     props.getUserOrders(user.id);
+    props.getLastSecurityTokens();
+
+    return () => {
+      props.resetSecurityTokens();
+    };
   }, []);
 
   return (
     <Row className="my-3 pr-2 justify-content-between">
       <Card className="p-0 col-4">
-        <CardHeader className="py-3">Latest Token Added</CardHeader>
+        <CardHeader className="py-3">Latest Tokens Added</CardHeader>
         <CardBody className="p-0">
           <Table>
             <tbody>
-              <tr className="border-top-0">
-                <td className="d-flex border-top-0">
-                  <div className="pr-3 d-flex align-items-center" style={{ fontSize: '35px' }}>
-                    <FontAwesomeIcon icon="file-contract" />
-                  </div>
-                  <div>
-                    <p className="m-0" style={{ fontSize: '16px' }}>
-                      Token 1
-                    </p>
-                    <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                      Updated 2 days ago
-                    </p>
-                  </div>
-                </td>
-                <td className="text-right  border-top-0">
-                  <Button color="none">
-                    <FontAwesomeIcon icon="eye" />
-                  </Button>
-                </td>
-              </tr>
-              <tr>
-                <td className="d-flex">
-                  <div className="pr-3 d-flex align-items-center" style={{ fontSize: '35px' }}>
-                    <FontAwesomeIcon icon="file-contract" />
-                  </div>
-                  <div>
-                    <p className="m-0" style={{ fontSize: '16px' }}>
-                      Token 2
-                    </p>
-                    <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                      Updated 2 days ago
-                    </p>
-                  </div>
-                </td>
-                <td className="text-right">
-                  <Button color="none">
-                    <FontAwesomeIcon icon="eye" />
-                  </Button>
-                </td>
-              </tr>
-              <tr>
-                <td className="d-flex">
-                  <div className="pr-3 d-flex align-items-center" style={{ fontSize: '35px' }}>
-                    <FontAwesomeIcon icon="file-contract" />
-                  </div>
-                  <div>
-                    <p className="m-0" style={{ fontSize: '16px' }}>
-                      Token 3
-                    </p>
-                    <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                      Updated 2 days ago
-                    </p>
-                  </div>
-                </td>
-                <td className="text-right">
-                  <Button color="none">
-                    <FontAwesomeIcon icon="eye" />
-                  </Button>
-                </td>
-              </tr>
-              <tr>
-                <td className="d-flex">
-                  <div className="pr-3 d-flex align-items-center" style={{ fontSize: '35px' }}>
-                    <FontAwesomeIcon icon="file-contract" />
-                  </div>
-                  <div>
-                    <p className="m-0" style={{ fontSize: '16px' }}>
-                      Token 4
-                    </p>
-                    <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                      Updated 2 days ago
-                    </p>
-                  </div>
-                </td>
-                <td className="text-right">
-                  <Button color="none">
-                    <FontAwesomeIcon icon="eye" />
-                  </Button>
-                </td>
-              </tr>
-              <tr>
-                <td className="d-flex">
-                  <div className="pr-3 d-flex align-items-center" style={{ fontSize: '35px' }}>
-                    <FontAwesomeIcon icon="file-contract" />
-                  </div>
-                  <div>
-                    <p className="m-0" style={{ fontSize: '16px' }}>
-                      Token 5
-                    </p>
-                    <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                      Updated 2 days ago
-                    </p>
-                  </div>
-                </td>
-                <td className="text-right">
-                  <Button color="none">
-                    <FontAwesomeIcon icon="eye" />
-                  </Button>
-                </td>
-              </tr>
+              {securityTokens.map(st => (
+                <tr className="border-top-0" key={st.id}>
+                  <td className="d-flex border-top-0">
+                    <div className="pr-3 d-flex align-items-center">
+                      <img src={`data:${st.logoContentType};base64,${st.logo}`} style={{ maxHeight: '40px' }} />
+                    </div>
+                    <div>
+                      <p className="m-0" style={{ fontSize: '16px' }}>
+                        {st.name}
+                      </p>
+                      <p className="text-muted m-0" style={{ fontSize: '12px' }}>
+                        {moment(st.registrationDate).format(APP_DATE_FORMAT)}
+                      </p>
+                    </div>
+                  </td>
+                  <td className="border-top-0 pt-3">
+                    <Link to={`/security-token/${st.id}/user`} className="ml-auto text-primary p-2">
+                      <FontAwesomeIcon icon="eye" />
+                    </Link>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </Table>
         </CardBody>
         <CardFooter className="d-flex p-0">
-          <Button className="ml-auto" color="none ">
-            <span className=" mr-2" style={{ fontSize: '14px' }}>
-              view all
-            </span>
-            <FontAwesomeIcon icon="caret-right" />
-          </Button>
+          <Link to="/security-token" className="ml-auto">
+            <Button color="none ">
+              <span className=" mr-2" style={{ fontSize: '14px' }}>
+                view all
+              </span>
+              <FontAwesomeIcon icon="caret-right" />
+            </Button>
+          </Link>
         </CardFooter>
       </Card>
       <Card className="p-0  ml-3 col ">
@@ -256,13 +185,16 @@ const Tables = (props: TablesProps) => {
   );
 };
 
-const mapStateToProps = ({ order, authentication }: IRootState) => ({
+const mapStateToProps = ({ authentication, order, securityToken }: IRootState) => ({
+  user: authentication.account,
   orders: order.entities,
-  user: authentication.account
+  securityTokens: securityToken.entities
 });
 
 const mapDispatchToProps = {
-  getUserOrders
+  getUserOrders,
+  getLastSecurityTokens,
+  resetSecurityTokens: reset
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

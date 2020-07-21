@@ -263,6 +263,13 @@ export const getOrderBook: any = (id: number) => {
   };
 };
 
+export const getLastSecurityTokens: ICrudGetAllAction<ISecurityToken> = () => {
+  return {
+    type: ACTION_TYPES.FETCH_SECURITYTOKEN_LIST,
+    payload: axios.get<ISecurityToken>(`api/security-tokens/last-whitelisted`)
+  };
+};
+
 export const reset = () => ({
   type: ACTION_TYPES.RESET
 });
