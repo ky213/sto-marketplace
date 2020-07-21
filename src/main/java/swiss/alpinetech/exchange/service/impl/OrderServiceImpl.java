@@ -34,9 +34,11 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.groupingBy;
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
@@ -273,6 +275,22 @@ public class OrderServiceImpl implements OrderService {
             .filter(item -> statuses.contains(item.getStatus()))
             .collect(Collectors.toList());
         return convertListToPage(orderList, pageable);
+    }
+
+    /**
+     * Get all user success Orders per day.
+     *
+     * @return the list of entities.
+     */
+    @Override
+    public Map<String, List<Order>> findUserSuccessOrders(Long userId) {
+        log.debug("Request to get list of user success Orders per day");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        Map<String, List<Order>> map = orderRepository.findAllByUserId(userId)
+            .stream()
+            .filter(item -> item.getStatus().equals(STATUS.SUCCESS))
+            .collect(groupingBy(item -> item.getUpdateDate().format(formatter)));
+        return map;
     }
 
     @Override
