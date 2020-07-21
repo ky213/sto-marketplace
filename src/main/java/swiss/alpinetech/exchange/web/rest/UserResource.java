@@ -182,6 +182,17 @@ public class UserResource {
     }
 
     /**
+     * Gets a list of all roles.
+     * @return a string list of all roles.
+     */
+    @GetMapping("/users/total-balance")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
+    public ResponseEntity<List<Object>> getUsersWithBalance() {
+        List<Object> map = userService.getUsersWithBalance();
+        return ResponseEntity.ok().body(map);
+    }
+
+    /**
      * {@code GET /users/:login} : get the "login" user.
      *
      * @param login the login of the user to find.

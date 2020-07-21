@@ -33,4 +33,7 @@ public interface WhiteListingRepository extends JpaRepository<WhiteListing, Long
 
     @Query("select whiteListing from WhiteListing whiteListing where ?1 not member of whiteListing.user.authorities")
     Page<WhiteListing> findWhiteListingForUser(Pageable pageable, Authority authority);
+
+    @Query(value = "SELECT TOP 6 jhi_user.login, SUM (balance) as sum_balance from white_listing INNER JOIN jhi_user ON white_listing.user_id = jhi_user.ID GROUP BY user_id ORDER BY sum_balance DESC", nativeQuery = true)
+    List<Object> findAllGroupByUserSumAmount();
 }

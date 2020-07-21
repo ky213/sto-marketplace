@@ -318,12 +318,19 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public List<UserDTO> getForWhiteListingBySTO(Long securityTokenId) {
-        log.debug("Request to all user whiteliste of this token {}", securityTokenId);
+        log.debug("Request to get all users whitelisted of this token {}", securityTokenId);
         List<UserDTO> usersList = this.whiteListingRepository.findBySecuritytokenId(securityTokenId)
             .stream()
             .map(item -> item.getUser())
             .map(UserDTO::new)
             .collect(Collectors.toList());
+        return usersList;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Object> getUsersWithBalance() {
+        log.debug("Request to get all users with balance");
+        List<Object> usersList = this.whiteListingRepository.findAllGroupByUserSumAmount();
         return usersList;
     }
 
