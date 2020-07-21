@@ -49,6 +49,20 @@ public interface TransactionService {
     Page<Transaction> findAll(Pageable pageable);
 
     /**
+     * Get number of all success transactions.
+     *
+     * @return integer number.
+     */
+    Integer countAllSuccess();
+
+    /**
+     * Get total revenue (sum fee of success transaction).
+     *
+     * @return long number.
+     */
+    Long getSumFee();
+
+    /**
      * Get all the transactions.
      *
      * @param securityTokenName the security token name.

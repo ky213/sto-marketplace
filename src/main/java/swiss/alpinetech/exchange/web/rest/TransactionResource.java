@@ -121,6 +121,30 @@ public class TransactionResource {
     }
 
     /**
+     * {@code GET  /transactions-success} : get number of all success transactions.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the number of all success transactions.
+     */
+    @GetMapping("/transactions-success")
+    public ResponseEntity<Integer> getNumberOfSuccess() {
+        log.debug("REST request to get number of all success transactions");
+        Integer number = transactionService.countAllSuccess();
+        return ResponseEntity.ok().body(number);
+    }
+
+    /**
+     * {@code GET  /transactions-success} : get number of all success transactions.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the number of all success transactions.
+     */
+    @GetMapping("/transactions/total-revenue")
+    public ResponseEntity<Long> getTotalRevenue() {
+        log.debug("REST request to get total revenue");
+        Long number = transactionService.getSumFee();
+        return ResponseEntity.ok().body(number);
+    }
+
+    /**
      * {@code GET  /transactions/:id} : get the "id" transaction.
      *
      * @param id the id of the transaction to retrieve.

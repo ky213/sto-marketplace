@@ -182,6 +182,16 @@ public class TransactionServiceImpl implements TransactionService {
         return transactionsPage;
     }
 
+    @Override
+    public Integer countAllSuccess() {
+        return transactionRepository.countAllByStatus(STATUS.SUCCESS);
+    }
+
+    @Override
+    public Long getSumFee() {
+        return transactionRepository.getSumFee();
+    }
+
     /**
      * Get all the transactions.
      *
