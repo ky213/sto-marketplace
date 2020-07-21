@@ -1,10 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Row, Table, Card, CardHeader, CardBody, CardFooter, Button, Badge } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getUserOrders } from 'app/entities/order/order.reducer';
+import { connect } from 'react-redux';
+import moment from 'moment';
+import { Alert } from 'reactstrap';
+import { Link } from 'react-router-dom';
 
-const Tables = () => {
+import { IRootState } from 'app/shared/reducers';
+import { APP_DATE_FORMAT } from 'app/config/constants';
+
+export interface TablesProps extends StateProps, DispatchProps {}
+
+const Tables = (props: TablesProps) => {
+  const { user, orders } = props;
+
+  useEffect(() => {
+    props.getUserOrders(user.id);
+  }, []);
+
   return (
-    <Row className="mt-3 pr-2 justify-content-between">
+    <Row className="my-3 pr-2 justify-content-between">
       <Card className="p-0 col-4">
         <CardHeader className="py-3">Latest Token Added</CardHeader>
         <CardBody className="p-0">
@@ -203,68 +219,53 @@ const Tables = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  ODR43897{' '}
-                  <Badge color="none" className="btn btn-outline-success">
-                    open
-                  </Badge>
-                </td>
-                <td>AlKAI</td>
-                <td>ALK</td>
-                <td>Equity</td>
-                <td>BUY</td>
-                <td>3000</td>
-                <td>12 CHF</td>
-                <td>36000 CHF</td>
-                <td>{new Date().toLocaleString()}</td>
-              </tr>
-              <tr>
-                <td>
-                  ORD23456{' '}
-                  <Badge color="none" className="btn btn-outline-success">
-                    open
-                  </Badge>
-                </td>
-                <td>Xgeneva</td>
-                <td>XGE</td>
-                <td>Real Estate</td>
-                <td>SELL</td>
-                <td>2000</td>
-                <td>18 CHF</td>
-                <td>36000 CHF</td>
-                <td>{new Date().toLocaleString()}</td>
-              </tr>
-              <tr>
-                <td>
-                  ODR43234{' '}
-                  <Badge color="none" className="btn btn-outline-warning">
-                    Pending
-                  </Badge>
-                </td>
-                <td>Xgeneva</td>
-                <td>XGE</td>
-                <td>Real Estate</td>
-                <td>BUY</td>
-                <td>200</td>
-                <td>8 CHF</td>
-                <td>16000 CHF</td>
-                <td>{new Date().toLocaleString()}</td>
-              </tr>
+              {orders.length !== 0 &&
+                orders.map(order => (
+                  <tr key={order.id}>
+                    <td>
+                      {order.refOrder}
+                      <Badge color="none" className={`ml-2 btn btn-outline-${order.status === 'SUCCESS' ? 'success' : 'danger'}`}>
+                        {order.status.toLocaleLowerCase()}
+                      </Badge>
+                    </td>
+                    <td>{order.securityTokenName}</td>
+                    <td>{order.securityToken.symbol}</td>
+                    <td>{order.categoryToken}</td>
+                    <td>{order.type}</td>
+                    <td>{order.volume}</td>
+                    <td>{order.price.toLocaleString()} CHF</td>
+                    <td>{order.totalAmount.toLocaleString()} CHF</td>
+                    <td>{moment(order.updateDate).format(APP_DATE_FORMAT)}</td>
+                  </tr>
+                ))}
             </tbody>
           </Table>
         </CardBody>
         <CardFooter className="d-flex p-0">
-          <Button className="ml-auto" color="none ">
-            <span className=" mr-2" style={{ fontSize: '14px' }}>
-              view all
-            </span>
-            <FontAwesomeIcon icon="caret-right" />
-          </Button>
+          <Link to="/order" className="ml-auto">
+            <Button color="none ">
+              <span className=" mr-2" style={{ fontSize: '14px' }}>
+                view all
+              </span>
+              <FontAwesomeIcon icon="caret-right" />
+            </Button>
+          </Link>
         </CardFooter>
       </Card>
     </Row>
   );
 };
 
-export default Tables;
+const mapStateToProps = ({ order, authentication }: IRootState) => ({
+  orders: order.entities,
+  user: authentication.account
+});
+
+const mapDispatchToProps = {
+  getUserOrders
+};
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+type DispatchProps = typeof mapDispatchToProps;
+
+export default connect(mapStateToProps, mapDispatchToProps)(Tables);

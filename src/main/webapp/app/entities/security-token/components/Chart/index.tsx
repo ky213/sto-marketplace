@@ -43,7 +43,7 @@ const Chart = (props: ChartProps) => {
           />
           <VerticalGridLines />
           <HorizontalGridLines />
-          <LineMarkSeries data={[...data]} curve="curveBasis" />
+          <LineMarkSeries data={data.length ? data : [{ x: new Date().getTime(), y: props.defaultPrice || 0 }]} curve="curveBasis" />
         </FlexibleXYPlot>
       </CardBody>
       <CardFooter className="d-flex py-0">
@@ -60,7 +60,8 @@ const Chart = (props: ChartProps) => {
 };
 
 const mapStateToProps = ({ securityToken }: IRootState) => ({
-  chartData: securityToken.chartData
+  chartData: securityToken.chartData,
+  defaultPrice: securityToken.entity.lastSellingprice
 });
 
 const mapDispatchToProps = {

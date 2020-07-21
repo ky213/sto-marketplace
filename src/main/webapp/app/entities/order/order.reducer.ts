@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { uniqBy } from 'lodash';
-import { parseHeaderForLinks, loadMoreDataWhenScrolled, ICrudPutAction, ICrudDeleteAction } from 'react-jhipster';
+import { parseHeaderForLinks, loadMoreDataWhenScrolled, ICrudPutAction, ICrudDeleteAction, ICrudGetAction } from 'react-jhipster';
 
 import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
@@ -197,6 +197,11 @@ export const exportOrder: any = (fromDate, toDate, userId) => {
     })
   };
 };
+
+export const getUserOrders: ICrudGetAction<IOrder[]> = (userId: number) => ({
+  type: ACTION_TYPES.FETCH_ORDER_LIST,
+  payload: axios.get<IOrder[]>(`api/user-orders/status?userId=${userId}&statuses=SUCCESS,FAIL&sort=updateDate,desc`)
+});
 
 export const reset = () => ({
   type: ACTION_TYPES.RESET
