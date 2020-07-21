@@ -147,7 +147,7 @@ public class TradeService {
                 }
                 if (sellOrder.getTotalAmount() >= order.getTotalAmount()) {
                     listTrades.add(new Trade(order.getIdOrder(), sellOrder.getIdOrder(), order.getTotalAmount(), sellOrder.getPrice()));
-                    sellOrder = orderService.updateOrderAmount(sellOrder.getId(), sellOrder.getTotalAmount() - order.getTotalAmount());
+                    sellOrder.setTotalAmount(sellOrder.getTotalAmount() - order.getTotalAmount());
                     if (sellOrder.getTotalAmount() == 0) {
                         securityTokenOrderBook = orderBookService.removeFromSecurityTokenSellOrders(sellOrder.getSecurityToken().getId().toString(), sellOrder, securityTokenOrderBook);
                         orderBookService.convertAndSendToTopic(securityTokenOrderBook);
@@ -156,7 +156,7 @@ public class TradeService {
                 }
                 if (sellOrder.getTotalAmount() < order.getTotalAmount()) {
                     listTrades.add(new Trade(order.getIdOrder(), sellOrder.getIdOrder(), sellOrder.getTotalAmount(), sellOrder.getPrice()));
-                    order = orderService.updateOrderAmount(order.getId(), order.getTotalAmount() - sellOrder.getTotalAmount());
+                    order.setTotalAmount(order.getTotalAmount() - sellOrder.getTotalAmount());
                     securityTokenOrderBook = orderBookService.removeFromSecurityTokenSellOrders(sellOrder.getSecurityToken().getId().toString(), sellOrder, securityTokenOrderBook);
                     continue;
                 }
@@ -189,7 +189,7 @@ public class TradeService {
                 }
                 if (buyOrder.getTotalAmount() >= order.getTotalAmount()) {
                     listTrades.add(new Trade(order.getIdOrder(), buyOrder.getIdOrder(), order.getTotalAmount(), buyOrder.getPrice()));
-                    buyOrder = orderService.updateOrderAmount(buyOrder.getId(), buyOrder.getTotalAmount() - order.getTotalAmount());
+                    buyOrder.setTotalAmount(buyOrder.getTotalAmount() - order.getTotalAmount());
                     if (buyOrder.getTotalAmount() == 0) {
                         securityTokenOrderBook = orderBookService.removeFromSecurityTokenBuyOrders(buyOrder.getSecurityToken().getId().toString(), buyOrder, securityTokenOrderBook);
                         orderBookService.convertAndSendToTopic(securityTokenOrderBook);
@@ -198,7 +198,7 @@ public class TradeService {
                 }
                 if (buyOrder.getTotalAmount() < order.getTotalAmount()) {
                     listTrades.add(new Trade(order.getIdOrder(), buyOrder.getIdOrder(), buyOrder.getTotalAmount(), buyOrder.getPrice()));
-                    order = orderService.updateOrderAmount(order.getId(), order.getTotalAmount() - buyOrder.getTotalAmount());
+                    order.setTotalAmount(order.getTotalAmount() - buyOrder.getTotalAmount());
                     securityTokenOrderBook = orderBookService.removeFromSecurityTokenBuyOrders(buyOrder.getSecurityToken().getId().toString(), buyOrder, securityTokenOrderBook);
                     continue;
                 }

@@ -385,7 +385,6 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public boolean isSameUser(Order orderA, Order orderB) {
-        orderA = orderRepository.findById(orderA.getId()).get();
         orderB = orderRepository.findById(orderB.getId()).get();
         if (orderA.getUser().getId().equals(orderB.getUser().getId())) {
             return true;
