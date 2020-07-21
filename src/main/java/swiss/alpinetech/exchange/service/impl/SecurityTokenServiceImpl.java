@@ -254,6 +254,17 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     }
 
     /**
+     * get last 5 Security Token added.
+     *
+     * @return securityTokens list.
+     */
+    @Override
+    public List<SecurityToken> getLastSTOAdded() {
+        List<SecurityToken> securityTokenList = securityTokenRepository.findLast();
+        return securityTokenList;
+    }
+
+    /**
      * Get one securityToken by id.
      *
      * @param id the id of the entity.

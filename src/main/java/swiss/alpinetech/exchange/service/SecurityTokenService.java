@@ -87,6 +87,13 @@ public interface SecurityTokenService {
     List<SecurityToken> getLastSTOWhitelisted();
 
     /**
+     * get last 5 Security Token added.
+     *
+     * @return securityTokens list.
+     */
+    List<SecurityToken> getLastSTOAdded();
+
+    /**
      * Get the "id" securityToken.
      *
      * @param id the id of the entity.
