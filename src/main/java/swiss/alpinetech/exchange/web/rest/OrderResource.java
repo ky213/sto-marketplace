@@ -28,6 +28,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -149,6 +150,19 @@ public class OrderResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
+    /**
+     * {@code GET  /orders/last} : get the 4 last orders added.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the list of orders, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/orders/last")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
+    public ResponseEntity<List<Order>> getLastOrders() {
+        log.debug("REST request to get 5 last Orders added");
+        List<Order> orderList = orderService.getLastOrders();
+        return ResponseEntity.ok().body(orderList);
+    }
+
 
     /**
      * {@code GET  /orders} : get all the orders.
@@ -233,6 +247,19 @@ public class OrderResource {
         Page<Order> page = orderService.findUserOrdersByStatus(statuses, userId, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * {@code GET  /user-orders} : get user orders.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the user orders, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/user-orders/last-success")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<Map<String, List<Order>>> getUserOrdersByStatus(@RequestParam Long userId) {
+        log.debug("REST request to get User success Orders");
+        Map<String, List<Order>> map = orderService.findUserSuccessOrders(userId);
+        return ResponseEntity.ok().body(map);
     }
 
     /**

@@ -11,6 +11,7 @@ import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -112,6 +113,20 @@ public interface OrderService {
      * @return the list of entities.
      */
     Page<Order> findUserOrdersByStatus(List<STATUS> statuses, Long userId, Pageable pageable);
+
+    /**
+     * Get all user success Orders per day.
+     *
+     * @return the list of entities.
+     */
+    Map<String, List<Order>> findUserSuccessOrders(Long userId);
+
+    /**
+     * get last 4 orders added.
+     *
+     * @return orders list.
+     */
+    List<Order> getLastOrders();
 
     /**
      * export orders.
