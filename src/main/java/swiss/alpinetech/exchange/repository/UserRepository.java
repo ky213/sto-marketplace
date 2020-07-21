@@ -1,5 +1,6 @@
 package swiss.alpinetech.exchange.repository;
 
+import swiss.alpinetech.exchange.domain.Authority;
 import swiss.alpinetech.exchange.domain.User;
 
 import org.springframework.cache.annotation.Cacheable;
@@ -33,6 +34,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findOneByEmailIgnoreCase(String email);
 
     Optional<User> findOneByLogin(String login);
+
+    Integer countUserByAuthoritiesContains(Authority authority);
 
 
 

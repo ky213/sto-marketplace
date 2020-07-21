@@ -182,14 +182,25 @@ public class UserResource {
     }
 
     /**
-     * Gets a list of all roles.
-     * @return a string list of all roles.
+     * Gets top 6 users list with their balance.
+     * @return a list object (login, balance)
      */
     @GetMapping("/users/total-balance")
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
     public ResponseEntity<List<Object>> getUsersWithBalance() {
         List<Object> map = userService.getUsersWithBalance();
         return ResponseEntity.ok().body(map);
+    }
+
+    /**
+     * Gets number of users with role ROLE_USER.
+     * @return integer number
+     */
+    @GetMapping("/users/number-of-role-user")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
+    public ResponseEntity<Integer> getUsersNumberWithRoleUser() {
+        Integer number = userService.getUsersWithRoleUser();
+        return ResponseEntity.ok().body(number);
     }
 
     /**

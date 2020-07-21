@@ -335,6 +335,14 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    public Integer getUsersWithRoleUser() {
+        log.debug("Request to get number of users with role USER");
+        Authority authority = new Authority().name("ROLE_USER");
+        Integer number = this.userRepository.countUserByAuthoritiesContains(authority);
+        return number;
+    }
+
+    @Transactional(readOnly = true)
     public Optional<User> getUserWithAuthoritiesByLogin(String login) {
         return userRepository.findOneWithAuthoritiesByLogin(login);
     }
