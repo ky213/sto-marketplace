@@ -149,6 +149,19 @@ public class OrderResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
+    /**
+     * {@code GET  /orders/last} : get the 4 last orders added.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the list of orders, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/orders/last")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
+    public ResponseEntity<List<Order>> getLastOrders() {
+        log.debug("REST request to get 5 last Orders added");
+        List<Order> orderList = orderService.getLastOrders();
+        return ResponseEntity.ok().body(orderList);
+    }
+
 
     /**
      * {@code GET  /orders} : get all the orders.

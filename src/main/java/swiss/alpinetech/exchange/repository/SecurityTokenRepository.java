@@ -19,6 +19,6 @@ public interface SecurityTokenRepository extends JpaRepository<SecurityToken, Lo
     @Query("select securityToken from SecurityToken securityToken where securityToken.status = 'ACTIVE'")
     Page<SecurityToken> findAllByStatusACTIVE(Pageable pageable);
 
-    @Query(value = "SELECT TOP 5 * from security_token WHERE status <> 'DRAFT' ORDER BY registration_date DESC", nativeQuery = true)
+    @Query(value = "SELECT TOP 5 * from security_token WHERE status <> 'DRAFT' ORDER BY update_date DESC", nativeQuery = true)
     List<SecurityToken> findLast();
 }

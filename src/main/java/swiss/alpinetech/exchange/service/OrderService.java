@@ -114,6 +114,13 @@ public interface OrderService {
     Page<Order> findUserOrdersByStatus(List<STATUS> statuses, Long userId, Pageable pageable);
 
     /**
+     * get last 4 orders added.
+     *
+     * @return orders list.
+     */
+    List<Order> getLastOrders();
+
+    /**
      * export orders.
      *
      * @param beginDate .

@@ -216,14 +216,14 @@ public class SecurityTokenResource {
     }
 
     /**
-     * {@code GET  /security-tokens/assets} : get the securityTokens assets.
+     * {@code GET  /security-tokens/last} : get the 5 last securityTokens added.
      *
-     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the assets, or with status {@code 404 (Not Found)}.
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the list of sto, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/security-tokens/last")
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
     public ResponseEntity<List<SecurityToken>> getLastSTO() {
-        log.debug("REST request to get SecurityTokens total amounts");
+        log.debug("REST request to get 5 last SecurityTokens added");
         List<SecurityToken> securityTokenList = securityTokenService.getLastSTOAdded();
         return ResponseEntity.ok().body(securityTokenList);
     }

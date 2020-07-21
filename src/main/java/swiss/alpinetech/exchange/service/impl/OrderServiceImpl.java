@@ -275,6 +275,12 @@ public class OrderServiceImpl implements OrderService {
         return convertListToPage(orderList, pageable);
     }
 
+    @Override
+    public List<Order> getLastOrders() {
+        List<Order> orderList = orderRepository.findLast();
+        return orderList;
+    }
+
     /**
      * Get all user Orders.
      *

@@ -36,4 +36,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     Optional<Order> findOneForUser(String login, Long orderId);
 
     Optional<Order> findByIdOrder(String idOrder);
+
+    @Query(value = "SELECT TOP 4 * from jhi_order ORDER BY create_date DESC", nativeQuery = true)
+    List<Order> findLast();
 }
