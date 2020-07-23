@@ -1,21 +1,37 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Row, Col, Card, CardTitle, CardBody } from 'reactstrap';
+import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { getTotalSTAmount } from '../home-customer.reducer';
+import { IRootState } from 'app/shared/reducers';
 import 'app/shared/components/home/card-header.scss';
 
-const Header = () => {
+export interface HeaderProps extends StateProps, DispatchProps {}
+
+const Header = (props: HeaderProps) => {
+  const { user, totalSTAmount } = props;
+
+  useEffect(() => {
+    props.getTotalSTAmount(user.id);
+  }, []);
+
   return (
     <Row className="row pr-1">
       <Col className="px-1">
-        <Card className="p-0 mb-4 mb-xl-0">
+        <Card className="px-0 py-2 mb-4 mb-xl-0">
           <CardBody className="py-2">
             <Row>
               <Col>
                 <CardTitle tag="p" className="text-muted mb-1">
                   Total Tokens Value
                 </CardTitle>
-                <h6 className="font-weight-bold mb-0 text-primary">CHF {"250'782.90"}</h6>
+                <h6 className="font-weight-bold mb-0 text-primary">
+                  CHF{' '}
+                  {Object.values(totalSTAmount)
+                    .reduce((t: number, v: number) => t + v, 0.0)
+                    .toLocaleString()}
+                </h6>
               </Col>
               <Col className="col-3 p-0">
                 <div className="icon ml-auto mr-1 bg-danger  rounded-circle shadow">
@@ -23,71 +39,33 @@ const Header = () => {
                 </div>
               </Col>
             </Row>
-
-            <p className="mt-3 mb-0 text-muted text-sm">
-              <span className="text-danger mr-2">
-                <FontAwesomeIcon icon="arrow-down" /> 12%
-              </span>
-              <span className="text-nowrap">Since last month</span>
-            </p>
           </CardBody>
         </Card>
       </Col>
+      {Object.keys(totalSTAmount).map((k, i) => (
+        <Col className="px-1" key={i}>
+          <Card className="px-0 py-2 mb-4 mb-xl-0">
+            <CardBody className="py-2">
+              <Row>
+                <Col>
+                  <CardTitle tag="p" className="text-muted mb-1">
+                    {k}
+                  </CardTitle>
+                  <h6 className="font-weight-bold mb-0 text-primary">CHF {totalSTAmount[k]?.toLocaleString()}</h6>
+                </Col>
+                <Col className="col-3 p-0">
+                  <div className="icon ml-auto mr-1 bg-success  rounded-circle shadow">
+                    <FontAwesomeIcon icon="chart-bar" color="white" />
+                  </div>
+                </Col>
+              </Row>
+            </CardBody>
+          </Card>
+        </Col>
+      ))}
       <Col className="px-1">
-        <Card className="p-0 mb-4 mb-xl-0">
-          <CardBody className="py-2">
-            <Row>
-              <Col>
-                <CardTitle tag="p" className="text-muted mb-1">
-                  Mont Pelerin
-                </CardTitle>
-                <h6 className="font-weight-bold mb-0 text-primary">CHF {"250'782.90"}</h6>
-              </Col>
-              <Col className="col-3 p-0">
-                <div className="icon ml-auto mr-1 bg-success  rounded-circle shadow">
-                  <FontAwesomeIcon icon="chart-bar" color="white" />
-                </div>
-              </Col>
-            </Row>
-
-            <p className="mt-3 mb-0 text-muted text-sm">
-              <span className="text-success mr-2">
-                <FontAwesomeIcon icon="arrow-up" /> 10%
-              </span>{' '}
-              <span className="text-nowrap">Since last month</span>
-            </p>
-          </CardBody>
-        </Card>
-      </Col>
-      <Col className="px-1">
-        <Card className="p-0 mb-4 mb-xl-0">
-          <CardBody className="py-2">
-            <Row>
-              <Col>
-                <CardTitle tag="p" className="text-muted mb-1">
-                  Constantin Lapiere
-                </CardTitle>
-                <h6 className="font-weight-bold mb-0 text-primary">CHF {"250'782.90"}</h6>
-              </Col>
-              <Col className="col-3 p-0">
-                <div className="icon ml-auto mr-1 bg-success  rounded-circle shadow">
-                  <FontAwesomeIcon icon="chart-bar" color="white" />
-                </div>
-              </Col>
-            </Row>
-
-            <p className="mt-3 mb-0 text-muted text-sm">
-              <span className="text-success mr-2">
-                <FontAwesomeIcon icon="arrow-up" /> 5%
-              </span>{' '}
-              <span className="text-nowrap">Since last month</span>
-            </p>
-          </CardBody>
-        </Card>
-      </Col>
-      <Col className="px-1">
-        <Card className="p-0 mb-4 mb-xl-0">
-          <CardBody className="py-2 bg-primary">
+        <Card className="px-0 py-2 mb-4 mb-xl-0 bg-primary">
+          <CardBody className="py-2 ">
             <Row>
               <Col>
                 <CardTitle tag="p" className="text-white mb-1">
@@ -101,11 +79,6 @@ const Header = () => {
                 </div>
               </Col>
             </Row>
-
-            <p className="mt-3 mb-0 text-muted text-sm">
-              <span className="text-danger mr-2">{/* <FontAwesomeIcon icon="arrow-up" /> 12% */}</span>{' '}
-              {/* <span className="text-nowrap">Since last month</span> */}
-            </p>
           </CardBody>
         </Card>
       </Col>
@@ -113,4 +86,16 @@ const Header = () => {
   );
 };
 
-export default Header;
+const mapStateToProps = ({ homeCustomer, authentication }: IRootState) => ({
+  user: authentication.account,
+  totalSTAmount: homeCustomer.totalSTAmounts
+});
+
+const mapDispatchToProps = {
+  getTotalSTAmount
+};
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+type DispatchProps = typeof mapDispatchToProps;
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);
