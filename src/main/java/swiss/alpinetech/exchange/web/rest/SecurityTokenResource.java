@@ -6,6 +6,8 @@ import swiss.alpinetech.exchange.domain.SecurityToken;
 import swiss.alpinetech.exchange.domain.enumeration.CATEGORY;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.SecurityTokenService;
+import swiss.alpinetech.exchange.service.dto.AssetsDistributionDTO;
+import swiss.alpinetech.exchange.service.dto.AssetsHeldDTO;
 import swiss.alpinetech.exchange.web.rest.errors.BadRequestAlertException;
 
 import io.github.jhipster.web.util.HeaderUtil;
@@ -183,10 +185,36 @@ public class SecurityTokenResource {
      */
     @GetMapping("/security-tokens/assets")
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
-    public ResponseEntity<Map<CATEGORY, Long>> getSecurityTokenOrderBook() {
+    public ResponseEntity<Map<CATEGORY, Long>> getSecurityTokenAssets() {
         log.debug("REST request to get SecurityTokens assets");
         Map<CATEGORY, Long> map = securityTokenService.getAssets();
         return ResponseEntity.ok().body(map);
+    }
+
+    /**
+     * {@code GET  /security-tokens/assets} : get the securityTokens assets.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the assets, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/security-tokens/assets-distribution")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
+    public ResponseEntity<List<AssetsDistributionDTO>> getSecurityTokenAssetsDistribution() {
+        log.debug("REST request to get SecurityTokens assets distribution");
+        List<AssetsDistributionDTO> assetsDistributionList = securityTokenService.getDistributionAssets();
+        return ResponseEntity.ok().body(assetsDistributionList);
+    }
+
+    /**
+     * {@code GET  /security-tokens/top-total-amount} : all list 5 of security Token oder by total amount for user.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the assets, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/security-tokens/top-total-amount")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<List<AssetsHeldDTO>> getTopSTOByTotalAmount(@RequestParam Long userId) {
+        log.debug("REST request to get SecurityTokens assets distribution");
+        List<AssetsHeldDTO> assetsDistributionList = securityTokenService.getTopSTOByTotalAmount(userId);
+        return ResponseEntity.ok().body(assetsDistributionList);
     }
 
     /**

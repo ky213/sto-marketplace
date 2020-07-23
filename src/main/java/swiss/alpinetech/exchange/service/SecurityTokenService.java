@@ -7,6 +7,8 @@ import swiss.alpinetech.exchange.domain.SecurityToken;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import swiss.alpinetech.exchange.domain.enumeration.CATEGORY;
+import swiss.alpinetech.exchange.service.dto.AssetsDistributionDTO;
+import swiss.alpinetech.exchange.service.dto.AssetsHeldDTO;
 
 import java.util.List;
 import java.util.Map;
@@ -71,6 +73,20 @@ public interface SecurityTokenService {
      * @return Assets.
      */
     Map<CATEGORY, Long> getAssets();
+
+    /**
+     * get distribution (type of token) about Asset allocation of all token of all users.
+     *
+     * @return distribution Assets list.
+     */
+    List<AssetsDistributionDTO> getDistributionAssets();
+
+    /**
+     * get all list 5 of security Token oder by total amount for user.
+     *
+     * @return sto tuple list.
+     */
+    List<AssetsHeldDTO> getTopSTOByTotalAmount(Long userId);
 
     /**
      * get Total amounts of securityTokens.

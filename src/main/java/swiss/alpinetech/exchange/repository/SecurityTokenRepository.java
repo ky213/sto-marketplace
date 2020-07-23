@@ -21,4 +21,7 @@ public interface SecurityTokenRepository extends JpaRepository<SecurityToken, Lo
 
     @Query(value = "SELECT TOP 5 * from security_token WHERE status <> 'DRAFT' ORDER BY update_date DESC", nativeQuery = true)
     List<SecurityToken> findLast();
+
+    @Query(value = "SELECT TOP 5 * from security_token ORDER BY update_date DESC", nativeQuery = true)
+    List<SecurityToken> findTopTotalAmount();
 }

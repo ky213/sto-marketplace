@@ -29,6 +29,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import swiss.alpinetech.exchange.service.UserService;
+import swiss.alpinetech.exchange.service.dto.AssetsDistributionDTO;
+import swiss.alpinetech.exchange.service.dto.AssetsHeldDTO;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -199,6 +201,39 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
         List<SecurityToken> securityTokenList = getSecurityTokensForUserWhiteList();
         Map<CATEGORY, Long> map = securityTokenList.stream().collect(groupingBy(SecurityToken::getCategory, counting()));
         return map;
+    }
+
+    /**
+     * get distribution (type of token) about Asset allocation of all token of all users.
+     *
+     * @return distribution Assets list.
+     */
+    @Override
+    public List<AssetsDistributionDTO> getDistributionAssets() {
+        List<AssetsDistributionDTO> distributionAssetsList = this.whiteListingRepository.findAssetsDistribution()
+            .stream()
+            .map(item -> new AssetsDistributionDTO( CATEGORY.valueOf((String) item.get(0)), (Double) item.get(1), (Double) item.get(2)))
+            .collect(toList());
+        return distributionAssetsList;
+    }
+
+    /**
+     * get all list 5 of security Token oder by total amount for user.
+     *
+     * @return sto tuple list.
+     */
+    @Override
+    public List<AssetsHeldDTO> getTopSTOByTotalAmount(Long userId) {
+        List<AssetsHeldDTO> list = this.whiteListingRepository.findWhiteListedSTOforUserTopAmount(userId)
+            .stream()
+            .map(item -> new AssetsHeldDTO(
+                (String) item.get(0),
+                (Double) item.get(1),
+                (Double) item.get(2),
+                (Double) item.get(3)
+            ))
+            .collect(Collectors.toList());
+        return list;
     }
 
     /**
