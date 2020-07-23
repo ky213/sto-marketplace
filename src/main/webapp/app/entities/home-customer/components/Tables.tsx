@@ -7,17 +7,19 @@ import { Link } from 'react-router-dom';
 
 import { getUserOrders } from 'app/entities/order/order.reducer';
 import { getLastSecurityTokens, reset } from 'app/entities/security-token/security-token.reducer';
+import { getTopTotalSTAmounts } from 'app/entities/home-customer/home-customer.reducer';
 import { IRootState } from 'app/shared/reducers';
 import { APP_DATE_FORMAT } from 'app/config/constants';
 
 export interface TablesProps extends StateProps, DispatchProps {}
 
 const Tables = (props: TablesProps) => {
-  const { user, orders, securityTokens } = props;
+  const { user, orders, securityTokens, topTotalSTAmounts } = props;
 
   useEffect(() => {
     props.getUserOrders(user.id);
     props.getLastSecurityTokens();
+    props.getTopTotalSTAmounts(user.id);
 
     return () => {
       props.resetSecurityTokens();
@@ -70,64 +72,39 @@ const Tables = (props: TablesProps) => {
       <Card className="p-0  ml-3 col ">
         <CardHeader className="py-2 d-flex align-items-center">
           <span>List of Assets Held</span>
-          <button className="btn btn-outline-primary ml-auto  ">Buy Token</button>
+          <Link to="/security-token" className=" btn btn-outline-primary ml-auto " style={{ fontSize: '14px' }}>
+            Buy Token
+          </Link>
         </CardHeader>
         <CardBody className="p-0">
           <Table>
             <thead>
               <tr className="border-0">
                 <th>Symbol</th>
-                <th>Amount</th>
+                <th>Volume</th>
                 <th>Price</th>
                 <th>Total</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>TK1</td>
-                <td>153</td>
-                <td>5.50 CHF</td>
-                <td>841.50 CHF</td>
-              </tr>
-              <tr>
-                <td>TK2</td>
-                <td>1025</td>
-                <td>105 CHF</td>
-                <td>841.50 CHF</td>
-              </tr>
-              <tr>
-                <td>ALK</td>
-                <td>25</td>
-                <td>122 CHF</td>
-                <td>5643.50 CHF</td>
-              </tr>
-              <tr>
-                <td>XGE</td>
-                <td>200</td>
-                <td>175 CHF</td>
-                <td>7654.50 CHF</td>
-              </tr>
-              <tr>
-                <td>TK3</td>
-                <td>12</td>
-                <td>355.80 CHF</td>
-                <td>4269.96 CHF</td>
-              </tr>
-              <tr>
-                <td>TK4</td>
-                <td>7</td>
-                <td>1250 CHF</td>
-                <td>8750.50 CHF</td>
-              </tr>
+              {topTotalSTAmounts.map(st => (
+                <tr key={st.symbol}>
+                  <td>{st.symbol}</td>
+                  <td>{st.balance.toLocaleString()}</td>
+                  <td>CHF {st.lastBuyingPrice}</td>
+                  <td>CHF {st.totalAmount.toLocaleString()}</td>
+                </tr>
+              ))}
             </tbody>
           </Table>
         </CardBody>
         <CardFooter className="d-flex p-0">
           <Button className="ml-auto" color="none ">
-            <span className=" mr-2" style={{ fontSize: '14px' }}>
-              view all
-            </span>
-            <FontAwesomeIcon icon="caret-right" />
+            <Link to="/white-listing" className=" mr-2" style={{ fontSize: '14px' }}>
+              <span className="text-primary">
+                view all <FontAwesomeIcon icon="caret-right" />
+              </span>
+            </Link>
           </Button>
         </CardFooter>
       </Card>
@@ -185,15 +162,17 @@ const Tables = (props: TablesProps) => {
   );
 };
 
-const mapStateToProps = ({ authentication, order, securityToken }: IRootState) => ({
+const mapStateToProps = ({ authentication, order, securityToken, homeCustomer }: IRootState) => ({
   user: authentication.account,
   orders: order.entities,
-  securityTokens: securityToken.entities
+  securityTokens: securityToken.entities,
+  topTotalSTAmounts: homeCustomer.topTotalSTAmounts
 });
 
 const mapDispatchToProps = {
   getUserOrders,
   getLastSecurityTokens,
+  getTopTotalSTAmounts,
   resetSecurityTokens: reset
 };
 

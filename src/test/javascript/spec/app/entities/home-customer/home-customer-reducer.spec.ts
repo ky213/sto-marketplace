@@ -35,7 +35,9 @@ describe('Entities reducer tests', () => {
     totalItems: 0,
     updating: false,
     updateSuccess: false,
-    assetAllocation: {} as { [key: string]: number }
+    assetAllocation: {} as { [key: string]: number },
+    totalSTAmounts: {} as { [key: string]: any },
+    topTotalSTAmounts: [] as { [key: string]: any }[]
   };
 
   function testInitialState(state) {
