@@ -44,7 +44,7 @@ const Tables = (props: TablesProps) => {
                         {st.name}
                       </p>
                       <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                        {moment(st.registrationDate).format(APP_DATE_FORMAT)}
+                        {moment(st.dueDiligenceDate).format(APP_DATE_FORMAT)}
                       </p>
                     </div>
                   </td>
@@ -125,25 +125,24 @@ const Tables = (props: TablesProps) => {
               </tr>
             </thead>
             <tbody>
-              {orders.length !== 0 &&
-                orders.map(order => (
-                  <tr key={order.id}>
-                    <td>
-                      {order.refOrder}
-                      <Badge color="none" className={`ml-2 btn btn-outline-${order.status === 'SUCCESS' ? 'success' : 'danger'}`}>
-                        {order.status.toLocaleLowerCase()}
-                      </Badge>
-                    </td>
-                    <td>{order.securityTokenName}</td>
-                    <td>{order.securityToken.symbol}</td>
-                    <td>{order.categoryToken}</td>
-                    <td>{order.type}</td>
-                    <td>{order.volume}</td>
-                    <td>{order.price.toLocaleString()} CHF</td>
-                    <td>{order.totalAmount.toLocaleString()} CHF</td>
-                    <td>{moment(order.updateDate).format(APP_DATE_FORMAT)}</td>
-                  </tr>
-                ))}
+              {orders.map(order => (
+                <tr key={order.id}>
+                  <td>
+                    {order.refOrder}
+                    <Badge color="none" className={`ml-2 btn btn-outline-${order.status === 'SUCCESS' ? 'success' : 'danger'}`}>
+                      {order.status.toLocaleLowerCase()}
+                    </Badge>
+                  </td>
+                  <td>{order.securityTokenName}</td>
+                  <td>{order.securityToken.symbol}</td>
+                  <td>{order.categoryToken}</td>
+                  <td>{order.type}</td>
+                  <td>{order.volume}</td>
+                  <td>{order.price.toLocaleString()} CHF</td>
+                  <td>{order.totalAmount.toLocaleString()} CHF</td>
+                  <td>{moment(order.updateDate).format(APP_DATE_FORMAT)}</td>
+                </tr>
+              ))}
             </tbody>
           </Table>
         </CardBody>

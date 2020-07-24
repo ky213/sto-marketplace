@@ -6,11 +6,13 @@ import moment from 'moment';
 import { connect } from 'react-redux';
 
 import { IRootState } from 'app/shared/reducers';
-import { getAssetAllocation } from '../home-customer.reducer';
+import { getAssetAllocation, getLatestOrders } from '../home-customer.reducer';
 
 export interface UserChartProps extends StateProps, DispatchProps {}
 
 const Charts = (props: UserChartProps) => {
+  const { latestOrders, user } = props;
+
   const assetAllocation = [];
   const colors = {
     EQUITY: '#0b2662',
@@ -21,6 +23,7 @@ const Charts = (props: UserChartProps) => {
 
   useEffect(() => {
     props.getAssetAllocation();
+    props.getLatestOrders(user.id);
   }, []);
 
   for (const key in props.assetAllocation) {
@@ -160,7 +163,7 @@ const Charts = (props: UserChartProps) => {
                 <p className="py-0 my-0" style={{ fontSize: '12px' }}>
                   Equity
                 </p>
-                <b className="py-0 my-0 text-primary"> {(props.assetAllocation.EQUITY || 0) * 10}%</b>
+                <b className="py-0 my-0 text-primary"> {(props.assetAllocation.EQUITY || 0) * 100}%</b>
               </Col>
               <Col className="text-center text-muted p-0">
                 <p className="py-0 my-0">
@@ -199,12 +202,15 @@ const Charts = (props: UserChartProps) => {
   );
 };
 
-const mapStateToProps = ({ homeCustomer }: IRootState) => ({
-  assetAllocation: homeCustomer.assetAllocation
+const mapStateToProps = ({ authentication, homeCustomer }: IRootState) => ({
+  user: authentication.account,
+  assetAllocation: homeCustomer.assetAllocation,
+  latestOrders: homeCustomer.latestOrders
 });
 
 const mapDispatchToProps = {
-  getAssetAllocation
+  getAssetAllocation,
+  getLatestOrders
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

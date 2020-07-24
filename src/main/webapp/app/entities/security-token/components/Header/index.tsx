@@ -15,7 +15,7 @@ const Header = (props: HeaderProps) => {
   const { name, status, logo, logoContentType, account } = props;
 
   const isAdmin = account.authorities.includes(AUTHORITIES.ADMIN);
-  const isBank = account.authorities.includes(AUTHORITIES.ADMIN);
+  const isBank = account.authorities.includes(AUTHORITIES.BANK);
 
   const handleChange = (checked: boolean) => {
     let newStatus: STSTATUS;

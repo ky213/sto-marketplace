@@ -17,6 +17,7 @@ import reducer, {
 } from 'app/entities/home-customer/home-customer.reducer';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 import { IHomeCustomer, defaultValue } from 'app/shared/model/home-customer.model';
+import { IOrder } from 'app/shared/model/order.model';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {
@@ -37,7 +38,8 @@ describe('Entities reducer tests', () => {
     updateSuccess: false,
     assetAllocation: {} as { [key: string]: number },
     totalSTAmounts: {} as { [key: string]: any },
-    topTotalSTAmounts: [] as { [key: string]: any }[]
+    topTotalSTAmounts: [] as { [key: string]: any }[],
+    latestOrders: [] as ReadonlyArray<IOrder>
   };
 
   function testInitialState(state) {
