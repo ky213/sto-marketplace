@@ -224,7 +224,7 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
      */
     @Override
     public List<AssetsHeldDTO> getTopSTOByTotalAmount(Long userId) {
-        List<AssetsHeldDTO> list = this.whiteListingRepository.findWhiteListedSTOforUserTopAmount(userId)
+        List<AssetsHeldDTO> list = this.whiteListingRepository.findWhiteListedSTOforUserTopAmount(userId, 5)
             .stream()
             .map(item -> new AssetsHeldDTO(
                 (String) item.get(0),
@@ -245,28 +245,10 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     public Map<String, Double> getTotalAmount() {
         authentication = getAuth();
         Long userId = this.userService.getUserWithAuthoritiesByLogin(authentication.getName()).get().getId();
-        List<Order> orderList = orderService.findUserOrders(userId);
-        Map<String, Double> output = new HashMap<>();
-        List<Long> securityTokenPermittedList = this.getSecurityTokensForUserWhiteList()
+        Map<String, Double> map = this.whiteListingRepository.findWhiteListedSTOforUserTopAmount(userId, 3)
             .stream()
-            .map(st -> st.getId())
-            .collect(Collectors.toList());
-        orderList
-            .stream()
-            .filter(item -> {
-                if (securityTokenPermittedList.contains(item.getSecurityToken().getId())) {
-                    return true;
-                }
-                return false;
-            })
-            .collect(groupingBy(Order::getSecurityToken, summingDouble(Order::getTotalAmount)))
-            .forEach( (k, v) -> output.put(k.getName(), v));
-        return output
-            .entrySet()
-            .stream()
-            .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+            .collect(Collectors.toMap(item -> (String) item.get(0), item -> (Double) item.get(3)));
+        return map;
     }
 
     /**
@@ -366,7 +348,7 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
             return securityTokenList;
         }
         User user = this.userService.getUserWithAuthorities(userId).get();
-        List<Long> securityTokensPermitted = IteratorUtils.toList(this.whiteListingSearchRepository.search(QueryBuilders.boolQuery()
+        List<Long> securityTokensWhitelisted = IteratorUtils.toList(this.whiteListingSearchRepository.search(QueryBuilders.boolQuery()
             .must(matchQuery("user.id", userId))).iterator())
             .stream()
             .filter(wl -> wl.isActive())
@@ -377,10 +359,10 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
             .iterator())
             .stream()
             .filter(st ->
-                        securityTokensPermitted.contains(st.getId()) &&
-                        st.getStatus().equals(STSTATUS.ACTIVE) &&
-                        !st.getRestrictionCounty().equals(user.getSetting().getCountry().name()) &&
-                        !st.getRestrictionNationality().equals(user.getSetting().getNationality())
+                !securityTokensWhitelisted.contains(st.getId()) &&
+                !st.getRestrictionCounty().equals(user.getSetting().getCountry().name()) &&
+                !st.getRestrictionNationality().equals(user.getSetting().getNationality()) &&
+                st.getStatus().equals(STSTATUS.ACTIVE)
             )
             .collect(Collectors.toList());
 

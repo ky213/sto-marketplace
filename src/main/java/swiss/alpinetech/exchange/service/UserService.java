@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.client.RestTemplate;
 import swiss.alpinetech.exchange.config.Constants;
 import swiss.alpinetech.exchange.domain.Authority;
+import swiss.alpinetech.exchange.domain.SecurityToken;
 import swiss.alpinetech.exchange.domain.User;
 import swiss.alpinetech.exchange.domain.UserSetting;
 import swiss.alpinetech.exchange.repository.AuthorityRepository;
@@ -75,6 +76,9 @@ public class UserService {
 
     @Autowired
     private WhiteListingRepository whiteListingRepository;
+
+    @Autowired
+    private SecurityTokenService securityTokenService;
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserSearchRepository userSearchRepository, AuthorityRepository authorityRepository, CacheManager cacheManager) {
         this.userRepository = userRepository;
@@ -426,6 +430,7 @@ public class UserService {
         if (securityTokenId == null)  {
             return this.standardSearch(query);
         }
+        SecurityToken securityToken = this.securityTokenService.findOne(securityTokenId).get();
         List<Long> usersPermitted = IteratorUtils.toList(this.whiteListingSearchRepository.search(QueryBuilders.boolQuery()
             .must(matchQuery("securitytoken.id", securityTokenId))).iterator())
             .stream()
@@ -434,7 +439,12 @@ public class UserService {
 
         List<UserDTO> usersList = IteratorUtils.toList(userSearchRepository.search(queryStringQuery(query+"*").field("login")).iterator())
             .stream()
-            .filter(us -> !usersPermitted.contains(us.getId()))
+            .filter(
+                us ->
+                        !usersPermitted.contains(us.getId()) &&
+                        !securityToken.getRestrictionCounty().equals(us.getSetting().getCountry().name()) &&
+                        !securityToken.getRestrictionNationality().equals(us.getSetting().getNationality())
+            )
             .map(UserDTO::new)
             .collect(Collectors.toList());
 

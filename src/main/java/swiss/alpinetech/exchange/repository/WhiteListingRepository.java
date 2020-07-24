@@ -49,11 +49,11 @@ public interface WhiteListingRepository extends JpaRepository<WhiteListing, Long
         ")", nativeQuery = true)
     List<Tuple> findAssetsDistribution();
 
-    @Query(value = "SELECT TOP 5 security_token.symbol, balance, security_token.LAST_BUYING_PRICE, balance * security_token.LAST_BUYING_PRICE as total_amount\n" +
+    @Query(value = "SELECT TOP ?2 security_token.symbol, balance, security_token.LAST_BUYING_PRICE, balance * security_token.LAST_BUYING_PRICE as total_amount\n" +
         "FROM WHITE_LISTING \n" +
         "INNER JOIN security_token ON white_listing.SECURITYTOKEN_ID = security_token.ID\n" +
-        "WHERE USER_ID = ?1\n" +
+        "WHERE USER_ID = ?1 AND ACTIVE = TRUE AND security_token.STATUS = 'ACTIVE'\n" +
         "ORDER BY total_amount DESC ", nativeQuery = true)
-    List<Tuple> findWhiteListedSTOforUserTopAmount(Long userId);
+    List<Tuple> findWhiteListedSTOforUserTopAmount(Long userId, int top);
 
 }
