@@ -204,6 +204,18 @@ public class UserResource {
     }
 
     /**
+     * Gets user balance from avaloq API
+     * @param userLogin
+     * @return double number
+     */
+    @GetMapping("/user/avaloq-balance")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<Double> getUserBalance(@RequestParam String userLogin) {
+        Double balance = userService.getAndUpdateBalanceAccountFromAvaloq(userLogin);
+        return ResponseEntity.ok().body(balance);
+    }
+
+    /**
      * {@code GET /users/:login} : get the "login" user.
      *
      * @param login the login of the user to find.

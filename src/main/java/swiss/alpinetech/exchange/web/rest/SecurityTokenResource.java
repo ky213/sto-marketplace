@@ -197,7 +197,7 @@ public class SecurityTokenResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the assets, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/security-tokens/assets-distribution")
-    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
     public ResponseEntity<List<AssetsDistributionDTO>> getSecurityTokenAssetsDistribution() {
         log.debug("REST request to get SecurityTokens assets distribution");
         List<AssetsDistributionDTO> assetsDistributionList = securityTokenService.getDistributionAssets();

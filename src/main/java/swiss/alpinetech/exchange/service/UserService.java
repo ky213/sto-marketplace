@@ -1,9 +1,8 @@
 package swiss.alpinetech.exchange.service;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
 import org.apache.commons.collections4.IteratorUtils;
-import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
@@ -69,7 +68,7 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
-    RestTemplate restTemplate;
+    RestTemplate restTemplate = new RestTemplate();
 
     @Autowired
     private WhiteListingSearchRepository whiteListingSearchRepository;
@@ -463,26 +462,35 @@ public class UserService {
     public Double getAndUpdateBalanceAccountFromAvaloq(String login) {
         User user = this.userRepository.findOneByLogin(login).get();
         String sandboxHost = "https://api-qwgzy.emea.sandbox.avaloq.com";
-        String token = "";
-        String accountID = user.getSetting().getIban();
-        if (accountID == null || accountID == "") {
+        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzUxMiJ9.eyJhdWQiOiJzYW5kYm94Iiwic3ViIjoieHNlY2F6Iiwiand0IjoiZXlKMGVYQWlPaUpLVjFRaUxDSmhiR2NpT2lKU1V6VXhNaUo5LmV5SmhkV1FpT2lKQlZrRk1UMUVpTENKemRXSWlPaUpEU1UwaUxDSmhkbkZmY205c1pYTWlPbHNpY205c1pWOWhkM05mZFhObGNpSmRMQ0pwYzNNaU9pSktWMVJRY205MmFXUmxjaUlzSW1WNGNDSTZNVFU1TlRZNE5qZzNNeXdpYVdGMElqb3hOVGsxTmpjeU5EY3pMQ0poZG1Gc2IzRmZZblZmYVdRaU9pSTVJaXdpYW5ScElqb2lVV05OYVVJNGVqZEZPVmh4VW5ob1FUQlFXVWQwZHlJc0ltRjJjVjlpZFNJNklrRkJRU0o5LnEwWExLWTJxek43d0hsRm1tZWk4R3NnVm9JX19fREVpMnVWNFRJVmt0MGV1cFRUUjFPR1pjUFZpUDBmTW5qaW5IVFo3aVhtQm51b3k2NU81UkM2Y0JtcWFSdGI0VXBDOVpfR1JWM1QydThpSlAtSDNhcEQxRUZPVjdjbmgzVEgycE9tVFBaYm5ISUQ5MDFUYnVaZXRmQnBsOTlweDRQZTY5WFB3ajZEQ1hieFV0VkRsTk91REJaWmpBcm5EU3NSS2d4S3ZWMk1idnQzSHNoSnpQaEdRNnYwQlVFeU5nb2xTR2VqZFZXMi1uMnNNa09VcjhJLWJ5ZlI3YXdBSzMyRjhES19tTFQ3T1NPQWhhcjQ4TkE2SlRRT3R5NkVSQThiNjl5czVQcmFXZ19IRnFOZnJsUXo3N2oxMkNiNkxzdV94eFVwUFpKbThTVzByV1JWMXZ0UlR3dyIsImlzcyI6IkpXVFByb3ZpZGVyIiwic2ItaWQiOiJxd2d6eSIsImV4cCI6MTU5NTY4Njg3MywiaWF0IjoxNTk1NjcyNDczLCJqdGkiOiJfY2pCRm5zVHB4MDNSVFhvVTJHdGZnIn0.kKmJekg0oOBrq3jiHKUHwRTvbu3M3r0YaD6C_-2txdMpHQTsavEjCk4DQGb7t34-CgAv7RLkuUIO97df_QlfWU52GjyMDJm_EzwNmE1xWiK3oxFoAPFTUKm15grvPtSHoI9pSGEctsjBVJMps9oOKVLqpYZe-Duted01iJf7-NKPBbGrcSTXV5pRbOYZ_3n5tLjp802tBOvlty7m6DPabij45dRYXvKf7WsQJ4oNAucD7qqE8PSYhK7nuCKFT2z9ETpebuaFgXeviIIk6ys15Gk4bGcpUCTNRKUQvKhPmw2n_O3h_ahUeLfhvxG-teeGxsm4wcFKACP9wW2E1w6DZg";
+        String accountNR = user.getSetting().getIban();
+        if (user.getSetting().getBalance() == null) {
             UserSetting userSetting = user.getSetting();
             userSetting.setBalance(0.0);
             user.setSetting(userSetting);
-            userRepository.save(user);
-            return 0.0;
+            user = userRepository.save(user);
         }
-        String calUrl = sandboxHost + "/account-management/accounts/" + accountID + "?with_balance=true";
+        if (accountNR == null || accountNR == "") {
+            return user.getSetting().getBalance();
+        }
+        String calUrl = sandboxHost + "/account-management/accounts" + "?account_nr=" + accountNR + "&with_balance=true&currency=CHF&account_type=Current";
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         headers.setBearerAuth(token);
         HttpEntity request = new HttpEntity(headers);
         String stringReturnObject = this.restTemplate.exchange(calUrl, HttpMethod.GET, request, String.class).getBody();
         if (stringReturnObject == null) {
-            return null;
+            return user.getSetting().getBalance();
         }
-        JsonObject convertedObject = new Gson().fromJson(stringReturnObject, JsonObject.class);
-        Double balance = convertedObject
+        JsonArray convertedObject = new Gson().fromJson(stringReturnObject, JsonArray.class);
+        if (convertedObject.size() == 0) {
+            UserSetting userSetting = user.getSetting();
+            userSetting.setBalance(0.0);
+            user.setSetting(userSetting);
+            userRepository.save(user);
+            return 0.0;
+        }
+        Double balance = convertedObject.get(0).getAsJsonObject()
             .get("balance")
             .getAsJsonObject()
             .get("amount")
