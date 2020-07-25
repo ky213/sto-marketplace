@@ -6,6 +6,7 @@ import swiss.alpinetech.exchange.domain.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import swiss.alpinetech.exchange.domain.Trade;
+import swiss.alpinetech.exchange.domain.enumeration.ACTIONTYPE;
 import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 
 import java.io.IOException;
@@ -119,7 +120,7 @@ public interface OrderService {
      *
      * @return the list of entities.
      */
-    Map<String, List<Order>> findUserSuccessOrders(Long userId);
+    Map<String, Map<ACTIONTYPE, Long>> findUserSuccessOrdersForTwoWeeks(Long userId);
 
     /**
      * get last 4 orders added.

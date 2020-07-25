@@ -3,6 +3,7 @@ package swiss.alpinetech.exchange.web.rest;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import swiss.alpinetech.exchange.domain.Order;
+import swiss.alpinetech.exchange.domain.enumeration.ACTIONTYPE;
 import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
 import swiss.alpinetech.exchange.service.OrderService;
@@ -256,9 +257,9 @@ public class OrderResource {
      */
     @GetMapping("/user-orders/last-success")
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.USER+"\")")
-    public ResponseEntity<Map<String, List<Order>>> getUserOrdersByStatus(@RequestParam Long userId) {
+    public ResponseEntity<Map<String, Map<ACTIONTYPE, Long>>> getUserOrdersByStatus(@RequestParam Long userId) {
         log.debug("REST request to get User success Orders");
-        Map<String, List<Order>> map = orderService.findUserSuccessOrders(userId);
+        Map<String, Map<ACTIONTYPE, Long>> map = orderService.findUserSuccessOrdersForTwoWeeks(userId);
         return ResponseEntity.ok().body(map);
     }
 

@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import swiss.alpinetech.exchange.domain.*;
+import swiss.alpinetech.exchange.domain.enumeration.ACTIONTYPE;
 import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 import swiss.alpinetech.exchange.repository.UserRepository;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
@@ -32,12 +33,10 @@ import java.io.*;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -283,14 +282,32 @@ public class OrderServiceImpl implements OrderService {
      * @return the list of entities.
      */
     @Override
-    public Map<String, List<Order>> findUserSuccessOrders(Long userId) {
+    public Map<String, Map<ACTIONTYPE, Long>> findUserSuccessOrdersForTwoWeeks(Long userId) {
         log.debug("Request to get list of user success Orders per day");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        ZonedDateTime today = ZonedDateTime.now();
+        ZonedDateTime before2Week = today.minusWeeks(2);
         Map<String, List<Order>> map = orderRepository.findAllByUserId(userId)
             .stream()
-            .filter(item -> item.getStatus().equals(STATUS.SUCCESS))
+            .filter(
+                item ->
+                    item.getStatus().equals(STATUS.SUCCESS) &&
+                        (
+                                item.getUpdateDate().isEqual(today) ||
+                                item.getUpdateDate().isEqual(before2Week) ||
+                                 (
+                                     item.getUpdateDate().isAfter(before2Week) &&
+                                     item.getUpdateDate().isBefore(today)
+                                 )
+                        )
+            )
             .collect(groupingBy(item -> item.getUpdateDate().format(formatter)));
-        return map;
+
+        Map<String, Map<ACTIONTYPE, Long>> map2 = new HashMap<>();
+        map.forEach((s, list) ->
+            map2.put(s, list.stream().collect(groupingBy(Order::getType, counting())))
+        );
+        return map2;
     }
 
     @Override
