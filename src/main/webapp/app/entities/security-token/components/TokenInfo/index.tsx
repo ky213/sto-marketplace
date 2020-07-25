@@ -10,11 +10,39 @@ function Info(props: ISecurityToken) {
     <Card className="p-0 h-100">
       <CardBody>
         <Row>
-          <Col md="8">
+          <Col md="7">
+            <Row>
+              <Col>
+                <small className="text-muted ">idRed: </small>
+                <small>{props.idRed}</small>
+              </Col>
+            </Row>
             <Row>
               <Col>
                 <small className="text-muted ">Name: </small>
                 <small>{props.name}</small>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Symbol: </small>
+                <small>{props.symbol}</small>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Registration Date: </small>
+                <small>
+                  <TextFormat value={props.registrationDate} type="date" format={APP_DATE_FORMAT} />
+                </small>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Due Deligence Date: </small>
+                <small>
+                  <TextFormat value={props.dueDiligenceDate} type="date" format={APP_DATE_FORMAT} />
+                </small>
               </Col>
             </Row>
             <Row>
@@ -27,8 +55,10 @@ function Info(props: ISecurityToken) {
             </Row>
             <Row>
               <Col>
-                <small className="text-muted ">Symbol: </small>
-                <small>{props.symbol}</small>
+                <small className="text-muted ">Update Date: </small>
+                <small>
+                  <TextFormat value={props.updateDate} type="date" format={APP_DATE_FORMAT} />
+                </small>
               </Col>
             </Row>
             <Row>
@@ -65,8 +95,20 @@ function Info(props: ISecurityToken) {
           <Col>
             <Row>
               <Col>
+                <small className="text-muted ">Smart Contract Address: </small>
+                <small>{props.smartcontractAddress}</small>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
                 <small className="text-muted ">KYC Provider Name: </small>
                 <small>{props.kycProviderName}</small>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">KYC Address: </small>
+                <small>{props.kycAddress}</small>
               </Col>
             </Row>
             <Row>
@@ -91,6 +133,12 @@ function Info(props: ISecurityToken) {
               <Col>
                 <small className="text-muted ">STO Type: </small>
                 <small>{props.category}</small>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <small className="text-muted ">Website: </small>
+                <small>{props.website}</small>
               </Col>
             </Row>
           </Col>
