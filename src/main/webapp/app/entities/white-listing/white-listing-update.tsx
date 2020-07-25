@@ -52,8 +52,8 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
     setUser(selectedUser);
   };
 
-  const handleSelectSecurityToken = (idRed: { [value: string]: string }) => {
-    const selectedSecurityToken = suggestedSecurityTokens.find((st: ISecurityToken) => st.idRed.trim() === idRed?.value?.trim());
+  const handleSelectSecurityToken = (name: { [value: string]: string }) => {
+    const selectedSecurityToken = suggestedSecurityTokens.find((st: ISecurityToken) => st.name.trim() === name?.value?.trim());
 
     setSecurityToken(selectedSecurityToken);
   };
@@ -120,9 +120,9 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                   <AutoComplete
                     inputId="white-listing-stName"
                     resultId="white-listing-results"
-                    initialItem={{ value: securityToken?.idRed }}
-                    initialValue={whiteListingEntity?.securitytoken?.idRed}
-                    items={suggestedSecurityTokens.map((st: ISecurityToken) => ({ value: st.idRed }))}
+                    initialItem={{ value: securityToken?.name }}
+                    initialValue={whiteListingEntity?.securitytoken?.name}
+                    items={suggestedSecurityTokens.map((st: ISecurityToken) => ({ value: st.name }))}
                     selectItem={handleSelectSecurityToken}
                     suggestItems={value => props.suggestSecurityTokens(value, user?.id)}
                   />
