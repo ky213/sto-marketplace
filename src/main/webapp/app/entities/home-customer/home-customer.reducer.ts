@@ -15,6 +15,7 @@ export const ACTION_TYPES = {
   FETCH_TOP_TOTAL_ST_AMOUNT: 'homeCustomer/FETCH_TOP_TOTAL_ST_AMOUNT',
   FETCH_ASSET_ALLOCATION: 'homeCustomer/FETCH_ASSET_ALLOCATION',
   FETCH_LATEST_ORDERS: 'homeCustomer/FETCH_LATEST_ORDERS',
+  FETCH_USER_BALANCE: 'homeCustomer/FETCH_USER_BALANCE',
   CREATE_HOMECUSTOMER: 'homeCustomer/CREATE_HOMECUSTOMER',
   UPDATE_HOMECUSTOMER: 'homeCustomer/UPDATE_HOMECUSTOMER',
   DELETE_HOMECUSTOMER: 'homeCustomer/DELETE_HOMECUSTOMER',
@@ -32,7 +33,8 @@ const initialState = {
   assetAllocation: {} as { [key: string]: number },
   totalSTAmounts: {} as { [key: string]: any },
   topTotalSTAmounts: [] as { [key: string]: any }[],
-  latestOrders: [] as ReadonlyArray<IOrder>
+  latestOrders: [] as ReadonlyArray<IOrder>,
+  bankAccountBalance: null
 };
 
 export type HomeCustomerState = Readonly<typeof initialState>;
@@ -47,6 +49,7 @@ export default (state: HomeCustomerState = initialState, action): HomeCustomerSt
     case REQUEST(ACTION_TYPES.FETCH_ASSET_ALLOCATION):
     case REQUEST(ACTION_TYPES.FETCH_TOTAL_ST_AMOUNT):
     case REQUEST(ACTION_TYPES.FETCH_LATEST_ORDERS):
+    case REQUEST(ACTION_TYPES.FETCH_USER_BALANCE):
       return {
         ...state,
         errorMessage: null,
@@ -69,6 +72,7 @@ export default (state: HomeCustomerState = initialState, action): HomeCustomerSt
     case FAILURE(ACTION_TYPES.FETCH_TOTAL_ST_AMOUNT):
     case FAILURE(ACTION_TYPES.FETCH_TOP_TOTAL_ST_AMOUNT):
     case FAILURE(ACTION_TYPES.FETCH_LATEST_ORDERS):
+    case FAILURE(ACTION_TYPES.FETCH_USER_BALANCE):
     case FAILURE(ACTION_TYPES.CREATE_HOMECUSTOMER):
     case FAILURE(ACTION_TYPES.UPDATE_HOMECUSTOMER):
     case FAILURE(ACTION_TYPES.DELETE_HOMECUSTOMER):
@@ -116,6 +120,12 @@ export default (state: HomeCustomerState = initialState, action): HomeCustomerSt
         ...state,
         loading: false,
         latestOrders: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_USER_BALANCE):
+      return {
+        ...state,
+        loading: false,
+        bankAccountBalance: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.CREATE_HOMECUSTOMER):
     case SUCCESS(ACTION_TYPES.UPDATE_HOMECUSTOMER):
@@ -218,6 +228,13 @@ export const getLatestOrders: any = (userId: number) => {
   return {
     type: ACTION_TYPES.FETCH_LATEST_ORDERS,
     payload: axios.get<any>(`api/user-orders/last-success?userId=${userId}`)
+  };
+};
+
+export const getBankAccountBalance: any = (userLogin: string) => {
+  return {
+    type: ACTION_TYPES.FETCH_USER_BALANCE,
+    payload: axios.get<any>(`api/user/avaloq-balance?userLogin=${userLogin}`)
   };
 };
 

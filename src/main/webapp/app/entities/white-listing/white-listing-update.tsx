@@ -104,7 +104,7 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
               ) : null}
               <Row>
                 <AvGroup className="col-md-6">
-                  <Label for="white-listing-user">User</Label>
+                  <Label for="white-listing-user">User login</Label>
                   <AutoComplete
                     inputId="white-listing-customerName"
                     resultId="user-results"
@@ -116,7 +116,7 @@ export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
                   />
                 </AvGroup>
                 <AvGroup className="col-md-6">
-                  <Label for="white-listing-securitytoken">Security token</Label>
+                  <Label for="white-listing-securitytoken">Security token name</Label>
                   <AutoComplete
                     inputId="white-listing-stName"
                     resultId="white-listing-results"

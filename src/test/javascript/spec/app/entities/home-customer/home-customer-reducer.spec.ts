@@ -39,7 +39,8 @@ describe('Entities reducer tests', () => {
     assetAllocation: {} as { [key: string]: number },
     totalSTAmounts: {} as { [key: string]: any },
     topTotalSTAmounts: [] as { [key: string]: any }[],
-    latestOrders: [] as ReadonlyArray<IOrder>
+    latestOrders: [] as ReadonlyArray<IOrder>,
+    bankAccountBalance: null
   };
 
   function testInitialState(state) {

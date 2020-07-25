@@ -3,17 +3,18 @@ import { Row, Col, Card, CardTitle, CardBody } from 'reactstrap';
 import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { getTotalSTAmount } from '../home-customer.reducer';
+import { getTotalSTAmount, getBankAccountBalance } from '../home-customer.reducer';
 import { IRootState } from 'app/shared/reducers';
 import 'app/shared/components/home/card-header.scss';
 
 export interface HeaderProps extends StateProps, DispatchProps {}
 
 const Header = (props: HeaderProps) => {
-  const { user, totalSTAmount } = props;
+  const { user, totalSTAmount, bankAccountBalance } = props;
 
   useEffect(() => {
     props.getTotalSTAmount(user.id);
+    props.getBankAccountBalance(user.login);
   }, []);
 
   return (
@@ -73,7 +74,11 @@ const Header = (props: HeaderProps) => {
                 <CardTitle tag="p" className="text-white mb-1">
                   Bank Account Balance
                 </CardTitle>
-                <h6 className="font-weight-bold mb-0 text-white">CHF {"250'782.90"}</h6>
+                {bankAccountBalance ? (
+                  <h6 className="font-weight-bold mb-0 text-white">CHF {bankAccountBalance.toLocaleString()}</h6>
+                ) : (
+                  <h6 className="mb-0 text-white">loading...</h6>
+                )}
               </Col>
               <Col className="col-3 p-0">
                 <div className="icon ml-auto mr-1 bg-white  rounded-circle shadow">
@@ -90,11 +95,13 @@ const Header = (props: HeaderProps) => {
 
 const mapStateToProps = ({ homeCustomer, authentication }: IRootState) => ({
   user: authentication.account,
-  totalSTAmount: homeCustomer.totalSTAmounts
+  totalSTAmount: homeCustomer.totalSTAmounts,
+  bankAccountBalance: homeCustomer.bankAccountBalance
 });
 
 const mapDispatchToProps = {
-  getTotalSTAmount
+  getTotalSTAmount,
+  getBankAccountBalance
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
