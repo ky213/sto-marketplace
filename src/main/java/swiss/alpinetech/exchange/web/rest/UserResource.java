@@ -153,6 +153,7 @@ public class UserResource {
     @GetMapping("/users")
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
     public ResponseEntity<List<UserDTO>> getAllUsers(Pageable pageable) {
+        log.debug("REST request to get all users");
         final Page<UserDTO> page = userService.getAllManagedUsers(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
@@ -167,6 +168,7 @@ public class UserResource {
     @GetMapping("/users-sto-whitelists")
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
     public ResponseEntity<List<UserDTO>> getAllUsersForWhiteListing(@RequestParam Long securityTokenId) {
+        log.debug("REST request to get all users whitelisted for sto {}",securityTokenId);
         final List<UserDTO> userDTOList = userService.getForWhiteListingBySTO(securityTokenId);
         return ResponseEntity.ok().body(userDTOList);
     }
@@ -178,6 +180,7 @@ public class UserResource {
     @GetMapping("/users/authorities")
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
     public List<String> getAuthorities() {
+        log.debug("REST request to get all authorities");
         return userService.getAuthorities();
     }
 
@@ -188,6 +191,7 @@ public class UserResource {
     @GetMapping("/users/total-balance")
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
     public ResponseEntity<List<Object>> getUsersWithBalance() {
+        log.debug("REST request to get all users with their balances from whitelist");
         List<Object> map = userService.getUsersWithBalance();
         return ResponseEntity.ok().body(map);
     }
@@ -199,6 +203,7 @@ public class UserResource {
     @GetMapping("/users/number-of-role-user")
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
     public ResponseEntity<Integer> getUsersNumberWithRoleUser() {
+        log.debug("REST request to get count users with role USER");
         Integer number = userService.getUsersWithRoleUser();
         return ResponseEntity.ok().body(number);
     }
@@ -211,6 +216,7 @@ public class UserResource {
     @GetMapping("/user/avaloq-balance")
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
     public ResponseEntity<Double> getUserBalance(@RequestParam String userLogin) {
+        log.debug("REST request to get user balance from AVALOQ API");
         Double balance = userService.getAndUpdateBalanceAccountFromAvaloq(userLogin);
         return ResponseEntity.ok().body(balance);
     }
