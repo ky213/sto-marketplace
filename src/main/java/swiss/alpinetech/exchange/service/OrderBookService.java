@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,12 +42,12 @@ public class OrderBookService {
         return securityTokenOrderBook;
     };
 
-//    @JmsListener(destination = "inbound.orderBook.topic")
-//    @SendTo("outbound.orderBook.topic")
-//    public Map<String, Map<String, List<String>>> receiveOrderBook(Map<String, Map<String, List<String>>> orderBook) {
-//        log.debug("send orderBook {} to outbound.orderBook.topic", orderBook);
-//        return orderBook;
-//    }
+    @JmsListener(destination = "outbound.orderBook.topic")
+    void getSecurityTokenOrderBookFromTopic(Map<String, Map<String, List<String>>> message) {
+        log.debug("consume securityTokenOrderBook {} from security token service", message);
+        this.securityTokenOrderBook = readAndConvertFromTopic(message);
+        log.debug("new securityTokenOrderBook {} from topic", securityTokenOrderBook.toString());
+    };
 
     public Set<Order> getSellOrdersBySecurityToken(String securityTokenId, SecurityTokenOrderBook securityTokenOrderBook) {
         log.debug("get SellOrders by securityToken Id {}", securityTokenId);
@@ -88,6 +89,24 @@ public class OrderBookService {
         log.debug("remove buy order {} from securityToken Id {} order's book", order, securityTokenId);
         securityTokenOrderBook.removeFromBuyOrders(securityTokenId, order);
         return securityTokenOrderBook;
+    }
+
+    public Double getLowestSellingPrice(String securityTokenId) {
+        log.debug("get lowest selling price from order book by security token {}", securityTokenId);
+        Set<Order> sellOrders = getSellOrdersBySecurityToken(securityTokenId, this.securityTokenOrderBook);
+        if (!sellOrders.isEmpty()) {
+            return sellOrders.stream().min(Comparator.comparing(Order::getPrice)).get().getPrice();
+        }
+        return null;
+    }
+
+    public Double getHighestBuyingPrice(String securityTokenId) {
+        log.debug("get highest buying price from order book by security token {}", securityTokenId);
+        Set<Order> buyOrders = getBuyOrdersBySecurityToken(securityTokenId, this.securityTokenOrderBook);
+        if (!buyOrders.isEmpty()) {
+            return buyOrders.stream().max(Comparator.comparing(Order::getPrice)).get().getPrice();
+        }
+        return null;
     }
 
     public void convertAndSendToTopic(SecurityTokenOrderBook securityTokenOrderBook) {

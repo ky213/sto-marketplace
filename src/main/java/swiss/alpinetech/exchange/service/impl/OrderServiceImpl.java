@@ -13,9 +13,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import swiss.alpinetech.exchange.domain.*;
 import swiss.alpinetech.exchange.domain.enumeration.ACTIONTYPE;
+import swiss.alpinetech.exchange.domain.enumeration.ORDERTYPE;
 import swiss.alpinetech.exchange.domain.enumeration.STATUS;
 import swiss.alpinetech.exchange.repository.UserRepository;
 import swiss.alpinetech.exchange.security.AuthoritiesConstants;
+import swiss.alpinetech.exchange.service.OrderBookService;
 import swiss.alpinetech.exchange.service.OrderService;
 import swiss.alpinetech.exchange.repository.OrderRepository;
 import swiss.alpinetech.exchange.repository.search.OrderSearchRepository;
@@ -67,6 +69,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     JmsTemplate jmsTemplate;
 
+    @Autowired
+    private OrderBookService orderBookService;
+
     public OrderServiceImpl(OrderRepository orderRepository, OrderSearchRepository orderSearchRepository) {
         this.orderRepository = orderRepository;
         this.orderSearchRepository = orderSearchRepository;
@@ -111,6 +116,9 @@ public class OrderServiceImpl implements OrderService {
         order.setUser(user);
         order.setSecurityToken(newSecurityToken);
         order.setCategoryToken(order.getSecurityToken().getCategory());
+        if (order.getLimitOrMarket().equals(ORDERTYPE.MARKET)) {
+            order = this.updateMarketOrderPrice(order);
+        }
         order.setActive(true);
         order.setIdOrder(""+order.getSecurityToken().getSymbol()+""+formattedString);
         order.setCreateDate(ZonedDateTime.now(ZoneId.systemDefault()).withNano(0));
@@ -123,6 +131,22 @@ public class OrderServiceImpl implements OrderService {
         this.messagingTemplate.convertAndSend("/topic/tracker", result);
         this.jmsTemplate.convertAndSend("inbound.order.topic", result);
         return result;
+    }
+
+    Order updateMarketOrderPrice(Order order) {
+        log.debug("Update market order price : {}", order);
+        String stoId = ""+order.getSecurityToken().getId();
+        Double marketPrice = order.getType() == ACTIONTYPE.BUY ? orderBookService.getLowestSellingPrice(stoId) : orderBookService.getHighestBuyingPrice(stoId);
+        if (marketPrice != null) {
+            order.setPrice(marketPrice);
+            order.setTotalAmount(order.getPrice() * order.getVolume());
+            return order;
+        }
+        order.setPrice(
+            order.getType() == ACTIONTYPE.BUY ? order.getSecurityToken().getLastBuyingPrice() : order.getSecurityToken().getLastSellingprice()
+        );
+        order.setTotalAmount(order.getPrice() * order.getVolume());
+        return order;
     }
 
     /**
@@ -302,10 +326,12 @@ public class OrderServiceImpl implements OrderService {
                         )
             )
             .collect(groupingBy(item -> item.getUpdateDate().format(formatter)));
-
         Map<String, Map<ACTIONTYPE, Long>> map2 = new HashMap<>();
-        map.forEach((s, list) ->
-            map2.put(s, list.stream().collect(groupingBy(Order::getType, counting())))
+        map.forEach((s, list) -> {
+            map2.put(s, list.stream().collect(groupingBy(Order::getType, counting())));
+            map2.get(s).putIfAbsent(ACTIONTYPE.BUY, 0L);
+            map2.get(s).putIfAbsent(ACTIONTYPE.SELL, 0L);
+            }
         );
         return map2;
     }

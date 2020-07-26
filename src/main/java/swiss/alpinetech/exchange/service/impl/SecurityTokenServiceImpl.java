@@ -77,7 +77,7 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
 
     @JmsListener(destination = "outbound.orderBook.topic")
     void getSecurityTokenOrderBookFromTopic(Map<String, Map<String, List<String>>> message) {
-        log.debug("consume securityTokenOrderBook {} from topic", message);
+        log.debug("consume securityTokenOrderBook {} from security token service", message);
         this.securityTokenOrderBook = orderBookService.readAndConvertFromTopic(message);
         log.debug("new securityTokenOrderBook {} from topic", securityTokenOrderBook.toString());
     };
