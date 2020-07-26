@@ -1,14 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Row, Col, Card, CardTitle, CardBody, Progress } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { IRootState } from 'app/shared/reducers';
+import { connect } from 'react-redux';
 
+import { getNumberOfUsers, getTotalTransactions, getTotalRevenue } from 'app/entities/home-bank/home-bank.reducer';
 import 'app/shared/components/home/card-header.scss';
 
-const Header = () => {
+export interface HeaderProps extends StateProps, DispatchProps {}
+
+const Header = (props: HeaderProps) => {
+  const { totalUsers, totalRevenue, totalTransactions } = props;
+
+  useEffect(() => {
+    props.getNumberOfUsers();
+    props.getTotalRevenue();
+    props.getTotalTransactions();
+  }, []);
+
   return (
     <Row className="row pr-1">
       <Col className="px-1">
-        <Card className="p-0 mb-4 mb-xl-0">
+        <Card className="p-0 py-2 mb-4 mb-xl-0">
           <CardBody className="py-2">
             <Row>
               <Col>
@@ -23,25 +36,18 @@ const Header = () => {
                 </div>
               </Col>
             </Row>
-
-            <p className="mt-3 mb-0 text-muted text-sm">
-              <span className="text-danger mr-2">
-                <FontAwesomeIcon icon="arrow-down" /> 12%
-              </span>{' '}
-              <span className="text-nowrap">Since last month</span>
-            </p>
           </CardBody>
         </Card>
       </Col>
       <Col className="px-1">
-        <Card className="p-0 mb-4 mb-xl-0">
+        <Card className="p-0 py-2 mb-4 mb-xl-0">
           <CardBody className="py-2">
             <Row>
               <Col>
                 <CardTitle tag="p" className="text-muted mb-1">
                   Total Users
                 </CardTitle>
-                <h6 className="font-weight-bold mb-0 text-primary">786</h6>
+                <h6 className="font-weight-bold mb-0 text-primary">{totalUsers}</h6>
               </Col>
               <Col className="col-3 p-0">
                 <div className="icon ml-auto mr-1 bg-success  rounded-circle shadow">
@@ -49,25 +55,18 @@ const Header = () => {
                 </div>
               </Col>
             </Row>
-
-            <p className="mt-3 mb-0 text-muted text-sm">
-              <span className="text-success mr-2">
-                <FontAwesomeIcon icon="arrow-up" /> 10%
-              </span>{' '}
-              <span className="text-nowrap">Since last month</span>
-            </p>
           </CardBody>
         </Card>
       </Col>
       <Col className="px-1">
-        <Card className="p-0 mb-4 mb-xl-0">
+        <Card className="p-0 py-2 mb-4 mb-xl-0">
           <CardBody className="py-2">
             <Row>
               <Col>
                 <CardTitle tag="p" className="text-muted mb-1">
-                  Volume
+                  Total Transactions
                 </CardTitle>
-                <h6 className="font-weight-bold mb-0 text-primary">95%</h6>
+                <h6 className="font-weight-bold mb-0 text-primary">{totalTransactions}</h6>
               </Col>
               <Col className="col-3 p-0">
                 <div className="icon ml-auto mr-1 bg-primary  rounded-circle shadow">
@@ -75,19 +74,18 @@ const Header = () => {
                 </div>
               </Col>
             </Row>
-            <Progress className="p-0 mt-4 mb-2" color="primary" value="95" style={{ height: '7px' }} />
           </CardBody>
         </Card>
       </Col>
-      <Col className="px-1">
-        <Card className="p-0 mb-4 mb-xl-0">
-          <CardBody className="py-2 bg-primary">
+      <Col className="px-1 ">
+        <Card className="p-0 py-2 mb-4 mb-xl-0 bg-primary">
+          <CardBody className="py-2 ">
             <Row>
               <Col>
                 <CardTitle tag="p" className="text-white mb-1">
                   Total Revenue{' '}
                 </CardTitle>
-                <h6 className="font-weight-bold mb-0 text-white">CHF {"2'250'782.90"}</h6>
+                <h6 className="font-weight-bold mb-0 text-white">CHF {totalRevenue?.toLocaleString()}</h6>
               </Col>
               <Col className="col-3 p-0">
                 <div className="icon ml-auto mr-1 bg-white  rounded-circle shadow">
@@ -95,13 +93,6 @@ const Header = () => {
                 </div>
               </Col>
             </Row>
-
-            <p className="mt-3 mb-0 text-muted text-sm">
-              <span className="text-success mr-2">
-                <FontAwesomeIcon icon="arrow-up" /> 2.6%
-              </span>{' '}
-              <span className="text-nowrap">Since last month</span>
-            </p>
           </CardBody>
         </Card>
       </Col>
@@ -109,4 +100,19 @@ const Header = () => {
   );
 };
 
-export default Header;
+const mapStateToProps = ({ homeBank }: IRootState) => ({
+  totalUsers: homeBank.numberOfUsers,
+  totalTransactions: homeBank.totalTransactions,
+  totalRevenue: homeBank.totalRevenue
+});
+
+const mapDispatchToProps = {
+  getNumberOfUsers,
+  getTotalTransactions,
+  getTotalRevenue
+};
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+type DispatchProps = typeof mapDispatchToProps;
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header);

@@ -1,131 +1,85 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Row, Table, Card, CardHeader, CardBody, CardFooter, Button, Badge } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
+import moment from 'moment';
+import { connect } from 'react-redux';
 
-const Tables = () => {
+import { APP_DATE_FORMAT } from 'app/config/constants';
+import { IRootState } from 'app/shared/reducers';
+import { getLastSecurityTokens, reset } from 'app/entities/security-token/security-token.reducer';
+import { getUsersBalance, getLastOrders } from 'app/entities/home-bank/home-bank.reducer';
+
+export interface TablesProps extends StateProps, DispatchProps {}
+
+const Tables = (props: TablesProps) => {
+  const { securityTokens, usersBalance, lastOrders } = props;
+
+  useEffect(() => {
+    props.getLastSecurityTokens();
+    props.getUsersBalance();
+    props.getLastOrders();
+
+    return () => {
+      props.resetSecurityTokens();
+    };
+  }, []);
+
+  const orderStatus = {
+    INIT: 'primary',
+    PENDING: 'warning',
+    SUCCESS: 'success',
+    REMOVE: 'danger',
+    FAIL: 'danger',
+    NONE: 'info'
+  };
+
   return (
     <Row className="mt-3 pr-2 justify-content-between">
-      <Card className="p-0 col-5">
-        <CardHeader className="py-3">Latest Token Added</CardHeader>
+      <Card className="p-0 col-4">
+        <CardHeader className="py-3">Latest Tokens Added</CardHeader>
         <CardBody className="p-0">
           <Table>
             <tbody>
-              <tr className="border-top-0">
-                <td className="d-flex border-top-0">
-                  <div className="pr-3 d-flex align-items-center" style={{ fontSize: '35px' }}>
-                    <FontAwesomeIcon icon="file-contract" />
-                  </div>
-                  <div>
-                    <p className="m-0" style={{ fontSize: '16px' }}>
-                      Token 1
-                    </p>
-                    <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                      Updated 2 days ago
-                    </p>
-                  </div>
-                </td>
-                <td className="text-right  border-top-0">
-                  <Button color="none">
-                    <FontAwesomeIcon icon="eye" />
-                  </Button>
-                </td>
-              </tr>
-              <tr>
-                <td className="d-flex">
-                  <div className="pr-3 d-flex align-items-center" style={{ fontSize: '35px' }}>
-                    <FontAwesomeIcon icon="file-contract" />
-                  </div>
-                  <div>
-                    <p className="m-0" style={{ fontSize: '16px' }}>
-                      Token 2
-                    </p>
-                    <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                      Updated 2 days ago
-                    </p>
-                  </div>
-                </td>
-                <td className="text-right">
-                  <Button color="none">
-                    <FontAwesomeIcon icon="eye" />
-                  </Button>
-                </td>
-              </tr>
-              <tr>
-                <td className="d-flex">
-                  <div className="pr-3 d-flex align-items-center" style={{ fontSize: '35px' }}>
-                    <FontAwesomeIcon icon="file-contract" />
-                  </div>
-                  <div>
-                    <p className="m-0" style={{ fontSize: '16px' }}>
-                      Token 3
-                    </p>
-                    <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                      Updated 2 days ago
-                    </p>
-                  </div>
-                </td>
-                <td className="text-right">
-                  <Button color="none">
-                    <FontAwesomeIcon icon="eye" />
-                  </Button>
-                </td>
-              </tr>
-              <tr>
-                <td className="d-flex">
-                  <div className="pr-3 d-flex align-items-center" style={{ fontSize: '35px' }}>
-                    <FontAwesomeIcon icon="file-contract" />
-                  </div>
-                  <div>
-                    <p className="m-0" style={{ fontSize: '16px' }}>
-                      Token 4
-                    </p>
-                    <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                      Updated 2 days ago
-                    </p>
-                  </div>
-                </td>
-                <td className="text-right">
-                  <Button color="none">
-                    <FontAwesomeIcon icon="eye" />
-                  </Button>
-                </td>
-              </tr>
-              <tr>
-                <td className="d-flex">
-                  <div className="pr-3 d-flex align-items-center" style={{ fontSize: '35px' }}>
-                    <FontAwesomeIcon icon="file-contract" />
-                  </div>
-                  <div>
-                    <p className="m-0" style={{ fontSize: '16px' }}>
-                      Token 5
-                    </p>
-                    <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                      Updated 2 days ago
-                    </p>
-                  </div>
-                </td>
-                <td className="text-right">
-                  <Button color="none">
-                    <FontAwesomeIcon icon="eye" />
-                  </Button>
-                </td>
-              </tr>
+              {securityTokens.map(st => (
+                <tr className="border-top-0" key={st.id}>
+                  <td className="d-flex border-top-0">
+                    <div className="pr-3 d-flex align-items-center">
+                      <img src={`data:${st.logoContentType};base64,${st.logo}`} style={{ maxHeight: '40px' }} />
+                    </div>
+                    <div>
+                      <p className="m-0" style={{ fontSize: '16px' }}>
+                        {st.name}
+                      </p>
+                      <p className="text-muted m-0" style={{ fontSize: '12px' }}>
+                        {moment(st.dueDiligenceDate).format(APP_DATE_FORMAT)}
+                      </p>
+                    </div>
+                  </td>
+                  <td className="border-top-0 pt-3">
+                    <Link to={`/security-token/${st.id}/user`} className="ml-auto text-primary p-2">
+                      <FontAwesomeIcon icon="eye" />
+                    </Link>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </Table>
         </CardBody>
         <CardFooter className="d-flex p-0">
-          <Button className="ml-auto" color="none ">
-            <span className=" mr-2" style={{ fontSize: '14px' }}>
-              view all
-            </span>
-            <FontAwesomeIcon icon="caret-right" />
-          </Button>
+          <Link to="/security-token" className="ml-auto">
+            <Button color="none ">
+              <span className=" mr-2" style={{ fontSize: '14px' }}>
+                view all
+              </span>
+              <FontAwesomeIcon icon="caret-right" />
+            </Button>
+          </Link>
         </CardFooter>
       </Card>
       <Card className="p-0  ml-3 col ">
         <CardHeader className="py-2 d-flex align-items-center">
-          <span>List of Assets Held User</span>
-          <button className="btn btn-outline-primary ml-auto  ">Buy Token</button>
+          <span>Users balance</span>
         </CardHeader>
         <CardBody className="p-0">
           <Table>
@@ -136,30 +90,12 @@ const Tables = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Marcelo Sprott</td>
-                <td>{"234'432.54 CHF"}</td>
-              </tr>
-              <tr>
-                <td>Kean Liddell</td>
-                <td>{"324'345.23 CHF"}</td>
-              </tr>
-              <tr>
-                <td>Daniela Stuehmeier</td>
-                <td>{"323'322.23 CHF"}</td>
-              </tr>
-              <tr>
-                <td>Smitty Librey</td>
-                <td>{"232'112.34 CHF"}</td>
-              </tr>
-              <tr>
-                <td>Yance Bazell</td>
-                <td>{"442'234.43 CHF"}</td>
-              </tr>
-              <tr>
-                <td>Phillip Syddall</td>
-                <td>{"123'432.44 CHF"}</td>
-              </tr>
+              {usersBalance.map((b, i) => (
+                <tr key={i}>
+                  <td>{b[0]}</td>
+                  <td>CHF {b[1].toLocaleString()}</td>
+                </tr>
+              ))}
             </tbody>
           </Table>
         </CardBody>
@@ -189,68 +125,56 @@ const Tables = () => {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  ODR43897{' '}
-                  <Badge color="none" className="btn btn-outline-success">
-                    open
-                  </Badge>
-                </td>
-                <td>AlKAI</td>
-                <td>ALK</td>
-                <td>Equity</td>
-                <td>BUY</td>
-                <td>3000</td>
-                <td>12 CHF</td>
-                <td>36000 CHF</td>
-                <td>{new Date().toLocaleString()}</td>
-              </tr>
-              <tr>
-                <td>
-                  ORD23456{' '}
-                  <Badge color="none" className="btn btn-outline-success">
-                    open
-                  </Badge>
-                </td>
-                <td>Xgeneva</td>
-                <td>XGE</td>
-                <td>Real Estate</td>
-                <td>SELL</td>
-                <td>2000</td>
-                <td>18 CHF</td>
-                <td>36000 CHF</td>
-                <td>{new Date().toLocaleString()}</td>
-              </tr>
-              <tr>
-                <td>
-                  ODR43234{' '}
-                  <Badge color="none" className="btn btn-outline-warning">
-                    Pending
-                  </Badge>
-                </td>
-                <td>Xgeneva</td>
-                <td>XGE</td>
-                <td>Real Estate</td>
-                <td>BUY</td>
-                <td>200</td>
-                <td>8 CHF</td>
-                <td>16000 CHF</td>
-                <td>{new Date().toLocaleString()}</td>
-              </tr>
+              {lastOrders.map(order => (
+                <tr key={order.id}>
+                  <td>
+                    {order.refOrder} <br />
+                    <Badge color="none" className={`ml-2 btn btn-outline-${orderStatus[order.status]}`}>
+                      {order.status.toLocaleLowerCase()}
+                    </Badge>
+                  </td>
+                  <td>{order.securityTokenName}</td>
+                  <td>{order.securityToken.symbol}</td>
+                  <td>{order.categoryToken}</td>
+                  <td>{order.type}</td>
+                  <td>{order.volume}</td>
+                  <td>{order.price.toLocaleString()} CHF</td>
+                  <td>{order.totalAmount.toLocaleString()} CHF</td>
+                  <td>{moment(order.updateDate).format(APP_DATE_FORMAT)}</td>
+                </tr>
+              ))}
             </tbody>
           </Table>
         </CardBody>
         <CardFooter className="d-flex p-0">
-          <Button className="ml-auto" color="none ">
-            <span className=" mr-2" style={{ fontSize: '14px' }}>
-              view all
-            </span>
-            <FontAwesomeIcon icon="caret-right" />
-          </Button>
+          <Link to="/order" className="ml-auto">
+            <Button color="none ">
+              <span className=" mr-2" style={{ fontSize: '14px' }}>
+                view all
+              </span>
+              <FontAwesomeIcon icon="caret-right" />
+            </Button>
+          </Link>
         </CardFooter>
       </Card>
     </Row>
   );
 };
 
-export default Tables;
+const mapStateToProps = ({ homeBank, securityToken }: IRootState) => ({
+  usersBalance: homeBank.usersBalance,
+  lastOrders: homeBank.lastOrders,
+  securityTokens: securityToken.entities
+});
+
+const mapDispatchToProps = {
+  getLastSecurityTokens,
+  getUsersBalance,
+  getLastOrders,
+  resetSecurityTokens: reset
+};
+
+type StateProps = ReturnType<typeof mapStateToProps>;
+type DispatchProps = typeof mapDispatchToProps;
+
+export default connect(mapStateToProps, mapDispatchToProps)(Tables);

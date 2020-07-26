@@ -5,16 +5,30 @@ import { cleanEntity } from 'app/shared/util/entity-utils';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 
 import { IHomeBank, defaultValue } from 'app/shared/model/home-bank.model';
+import { IOrder } from 'app/shared/model/order.model';
+import { CATEGORY } from 'app/shared/model/enumerations/category.model';
 
 export const ACTION_TYPES = {
   SEARCH_HOMEBANKS: 'homeBank/SEARCH_HOMEBANKS',
   FETCH_HOMEBANK_LIST: 'homeBank/FETCH_HOMEBANK_LIST',
   FETCH_HOMEBANK: 'homeBank/FETCH_HOMEBANK',
+  FETCH_LAST_ORDERS: 'homeBank/FETCH_LAST_ORDERS',
+  FETCH_USERS_BALANCE: 'homeBank/FETCH_USERS_BALANCE',
+  FETCH_NUMBER_OF_USERS: 'homeBank/FETCH_NUMBER_OF_USERS',
+  FETCH_TOTAL_REVENUE: 'homeBank/FETCH_TOTAL_REVENUE',
+  FETCH_ASSET_DISTRIBUTION: 'homeBank/FETCH_ASSET_DISTRIBUTION',
+  FETCH_TOTAL_TRANSACTIONS: 'homeBank/FETCH_VOLUME',
   CREATE_HOMEBANK: 'homeBank/CREATE_HOMEBANK',
   UPDATE_HOMEBANK: 'homeBank/UPDATE_HOMEBANK',
   DELETE_HOMEBANK: 'homeBank/DELETE_HOMEBANK',
   RESET: 'homeBank/RESET'
 };
+
+export interface AssetDistribution {
+  category: CATEGORY;
+  percentage: number;
+  totalAmount: number;
+}
 
 const initialState = {
   loading: false,
@@ -23,7 +37,13 @@ const initialState = {
   entity: defaultValue,
   updating: false,
   totalItems: 0,
-  updateSuccess: false
+  updateSuccess: false,
+  lastOrders: [] as ReadonlyArray<IOrder>,
+  usersBalance: [] as ReadonlyArray<{ [key: string]: number }>,
+  numberOfUsers: 0,
+  totalRevenue: 0,
+  assetDistribution: [] as ReadonlyArray<AssetDistribution>,
+  totalTransactions: 0
 };
 
 export type HomeBankState = Readonly<typeof initialState>;
@@ -35,6 +55,12 @@ export default (state: HomeBankState = initialState, action): HomeBankState => {
     case REQUEST(ACTION_TYPES.SEARCH_HOMEBANKS):
     case REQUEST(ACTION_TYPES.FETCH_HOMEBANK_LIST):
     case REQUEST(ACTION_TYPES.FETCH_HOMEBANK):
+    case REQUEST(ACTION_TYPES.FETCH_LAST_ORDERS):
+    case REQUEST(ACTION_TYPES.FETCH_USERS_BALANCE):
+    case REQUEST(ACTION_TYPES.FETCH_NUMBER_OF_USERS):
+    case REQUEST(ACTION_TYPES.FETCH_TOTAL_REVENUE):
+    case REQUEST(ACTION_TYPES.FETCH_ASSET_DISTRIBUTION):
+    case REQUEST(ACTION_TYPES.FETCH_TOTAL_TRANSACTIONS):
       return {
         ...state,
         errorMessage: null,
@@ -53,6 +79,12 @@ export default (state: HomeBankState = initialState, action): HomeBankState => {
     case FAILURE(ACTION_TYPES.SEARCH_HOMEBANKS):
     case FAILURE(ACTION_TYPES.FETCH_HOMEBANK_LIST):
     case FAILURE(ACTION_TYPES.FETCH_HOMEBANK):
+    case FAILURE(ACTION_TYPES.FETCH_LAST_ORDERS):
+    case FAILURE(ACTION_TYPES.FETCH_USERS_BALANCE):
+    case FAILURE(ACTION_TYPES.FETCH_NUMBER_OF_USERS):
+    case FAILURE(ACTION_TYPES.FETCH_TOTAL_REVENUE):
+    case FAILURE(ACTION_TYPES.FETCH_ASSET_DISTRIBUTION):
+    case FAILURE(ACTION_TYPES.FETCH_TOTAL_TRANSACTIONS):
     case FAILURE(ACTION_TYPES.CREATE_HOMEBANK):
     case FAILURE(ACTION_TYPES.UPDATE_HOMEBANK):
     case FAILURE(ACTION_TYPES.DELETE_HOMEBANK):
@@ -76,6 +108,42 @@ export default (state: HomeBankState = initialState, action): HomeBankState => {
         ...state,
         loading: false,
         entity: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_LAST_ORDERS):
+      return {
+        ...state,
+        loading: false,
+        lastOrders: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_USERS_BALANCE):
+      return {
+        ...state,
+        loading: false,
+        usersBalance: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_NUMBER_OF_USERS):
+      return {
+        ...state,
+        loading: false,
+        numberOfUsers: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_TOTAL_REVENUE):
+      return {
+        ...state,
+        loading: false,
+        totalRevenue: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_ASSET_DISTRIBUTION):
+      return {
+        ...state,
+        loading: false,
+        assetDistribution: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_TOTAL_TRANSACTIONS):
+      return {
+        ...state,
+        loading: false,
+        totalTransactions: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.CREATE_HOMEBANK):
     case SUCCESS(ACTION_TYPES.UPDATE_HOMEBANK):
@@ -151,6 +219,48 @@ export const deleteEntity: ICrudDeleteAction<IHomeBank> = id => async dispatch =
     payload: axios.delete(requestUrl)
   });
   return result;
+};
+
+export const getLastOrders: ICrudGetAllAction<IOrder> = () => {
+  return {
+    type: ACTION_TYPES.FETCH_LAST_ORDERS,
+    payload: axios.get<IOrder>(`api/orders/last`)
+  };
+};
+
+export const getUsersBalance: ICrudGetAllAction<{ [key: string]: string }> = () => {
+  return {
+    type: ACTION_TYPES.FETCH_USERS_BALANCE,
+    payload: axios.get<{ [key: string]: string }>(`api/users/total-balance`)
+  };
+};
+
+export const getNumberOfUsers: ICrudGetAllAction<number> = () => {
+  return {
+    type: ACTION_TYPES.FETCH_NUMBER_OF_USERS,
+    payload: axios.get<number>(`api/users/number-of-role-user`)
+  };
+};
+
+export const getTotalRevenue: ICrudGetAllAction<number> = () => {
+  return {
+    type: ACTION_TYPES.FETCH_TOTAL_REVENUE,
+    payload: axios.get<number>(`api/transactions/total-revenue`)
+  };
+};
+
+export const getAssetDistribution: ICrudGetAllAction<AssetDistribution> = () => {
+  return {
+    type: ACTION_TYPES.FETCH_ASSET_DISTRIBUTION,
+    payload: axios.get<AssetDistribution>(`api/security-tokens/assets-distribution`)
+  };
+};
+
+export const getTotalTransactions: ICrudGetAllAction<number> = () => {
+  return {
+    type: ACTION_TYPES.FETCH_TOTAL_TRANSACTIONS,
+    payload: axios.get<number>(`api/transactions-success`)
+  };
 };
 
 export const reset = () => ({

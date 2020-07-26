@@ -17,6 +17,8 @@ import reducer, {
 } from 'app/entities/home-bank/home-bank.reducer';
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 import { IHomeBank, defaultValue } from 'app/shared/model/home-bank.model';
+import { IOrder } from 'app/shared/model/order.model';
+import { CATEGORY } from 'app/shared/model/enumerations/category.model';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {
@@ -27,14 +29,26 @@ describe('Entities reducer tests', () => {
     }
   }
 
+  interface AssetDistribution {
+    category: CATEGORY;
+    percentage: number;
+    totalAmount: number;
+  }
+
   const initialState = {
     loading: false,
     errorMessage: null,
     entities: [] as ReadonlyArray<IHomeBank>,
     entity: defaultValue,
-    totalItems: 0,
     updating: false,
-    updateSuccess: false
+    totalItems: 0,
+    updateSuccess: false,
+    lastOrders: [] as ReadonlyArray<IOrder>,
+    usersBalance: [] as ReadonlyArray<{ [key: string]: number }>,
+    numberOfUsers: 0,
+    totalRevenue: 0,
+    assetDistribution: [] as ReadonlyArray<AssetDistribution>,
+    totalTransactions: 0
   };
 
   function testInitialState(state) {
