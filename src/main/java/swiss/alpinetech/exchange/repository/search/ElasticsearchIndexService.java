@@ -48,8 +48,6 @@ import swiss.alpinetech.exchange.repository.search.*;
 @Transactional(readOnly = true)
 public class ElasticsearchIndexService {
 
-
-
     private static final Lock reindexLock = new ReentrantLock();
 
     private final Environment env;
