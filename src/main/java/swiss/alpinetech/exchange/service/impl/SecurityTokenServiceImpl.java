@@ -205,10 +205,14 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
      * @return Assets.
      */
     @Override
-    public Map<CATEGORY, Long> getAssets() {
-        List<SecurityToken> securityTokenList = getSecurityTokensForUserWhiteList();
-        Map<CATEGORY, Long> map = securityTokenList.stream().collect(groupingBy(SecurityToken::getCategory, counting()));
-        return map;
+    public List<AssetsDistributionDTO> getAssets() {
+        authentication = getAuth();
+        Long userId = this.userService.getUserWithAuthoritiesByLogin(authentication.getName()).get().getId();
+        List<AssetsDistributionDTO> distributionAssetsList = this.whiteListingRepository.findAssetsDistributionForUser(userId)
+            .stream()
+            .map(item -> new AssetsDistributionDTO( CATEGORY.valueOf((String) item.get(0)), (Double) item.get(1), (Double) item.get(2)))
+            .collect(toList());
+        return distributionAssetsList;
     }
 
     /**

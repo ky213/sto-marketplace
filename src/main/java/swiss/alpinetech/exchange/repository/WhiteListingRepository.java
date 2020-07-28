@@ -45,9 +45,27 @@ public interface WhiteListingRepository extends JpaRepository<WhiteListing, Long
         "SELECT \n" +
         "security_token.category,\n" +
         "SUM (balance * security_token.LAST_BUYING_PRICE) as total_amount\n" +
-        "from white_listing INNER JOIN security_token ON white_listing.SECURITYTOKEN_ID = security_token.ID GROUP BY security_token.category ORDER BY total_amount DESC\n" +
+        "from " +
+        "white_listing INNER JOIN security_token ON white_listing.SECURITYTOKEN_ID = security_token.ID " +
+        "WHERE white_listing.ACTIVE = true and security_token.STATUS = 'ACTIVE'\n" +
+        "GROUP BY security_token.category " +
+        "ORDER BY total_amount DESC\n" +
         ")", nativeQuery = true)
     List<Tuple> findAssetsDistribution();
+
+    @Query(value = "SELECT \n" +
+        "category, \n" +
+        "total_amount, \n" +
+        "total_amount / SUM(total_amount) OVER() * 100 as percentage from \n" +
+        "( SELECT \n" +
+        "security_token.category, \n" +
+        "SUM (balance * security_token.LAST_BUYING_PRICE) as total_amount from \n" +
+        "white_listing INNER JOIN security_token ON white_listing.SECURITYTOKEN_ID = security_token.ID\n" +
+        "WHERE white_listing.USER_ID = ?1 and white_listing.ACTIVE = true and security_token.STATUS = 'ACTIVE'\n" +
+        "GROUP BY security_token.category \n" +
+        "ORDER BY total_amount DESC\n" +
+        ")", nativeQuery = true)
+    List<Tuple> findAssetsDistributionForUser(Long userId);
 
     @Query(value = "SELECT TOP ?2 security_token.symbol, balance, security_token.LAST_BUYING_PRICE, balance * security_token.LAST_BUYING_PRICE as total_amount\n" +
         "FROM WHITE_LISTING \n" +
