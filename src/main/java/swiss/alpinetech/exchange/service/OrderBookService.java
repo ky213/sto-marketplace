@@ -109,6 +109,28 @@ public class OrderBookService {
         return null;
     }
 
+    public Order getLowestSellOrder(String securityTokenId) {
+        log.debug("get lowest Sell Order by securityToken Id {} from order book", securityTokenId);
+        if (securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId) != null) {
+            return Optional.of(
+                securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId).getSellOrders().stream().min(Comparator.comparing(Order::getPrice)).get()
+            )
+                .orElse(null);
+        }
+        return null;
+    }
+
+    public Order getHighestBuyOrder(String securityTokenId) {
+        log.debug("get highest Buy Order by securityToken Id {} from order book", securityTokenId);
+        if (securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId) != null) {
+            return Optional.of(
+                securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId).getSellOrders().stream().max(Comparator.comparing(Order::getPrice)).get()
+            )
+                .orElse(null);
+        }
+        return null;
+    }
+
     public void convertAndSendToTopic(SecurityTokenOrderBook securityTokenOrderBook) {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, OrderBookWrapper> orderBook = securityTokenOrderBook.getSecurityTokenOrderBook();

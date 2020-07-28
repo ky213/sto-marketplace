@@ -72,7 +72,7 @@ public interface SecurityTokenService {
      *
      * @return Assets.
      */
-    Map<CATEGORY, Long> getAssets();
+    List<AssetsDistributionDTO> getAssets();
 
     /**
      * get distribution (type of token) about Asset allocation of all token of all users.

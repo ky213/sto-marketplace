@@ -111,15 +111,23 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
         Set<Order> buyOrders = this.orderBookService.getBuyOrdersBySecurityToken(""+securityToken.getId(), this.securityTokenOrderBook);
         Set<Order> sellOrders = this.orderBookService.getSellOrdersBySecurityToken(""+securityToken.getId(), this.securityTokenOrderBook);
 
-        if(order.getType().name().equals(ACTIONTYPE.BUY.name()) && !sellOrders.isEmpty()) {
-            Double maxSellOrdersPrice = sellOrders.stream().max(Comparator.comparing(Order::getPrice)).get().getPrice();
-            if (order.getPrice() >= maxSellOrdersPrice) {
+        if(order.getType().name().equals(ACTIONTYPE.BUY.name())) {
+            if (!sellOrders.isEmpty()) {
+                Double maxSellOrdersPrice = sellOrders.stream().max(Comparator.comparing(Order::getPrice)).get().getPrice();
+                if (order.getPrice() >= maxSellOrdersPrice) {
+                    securityToken.setLastSellingprice(order.getPrice());
+                }
+            } else {
                 securityToken.setLastSellingprice(order.getPrice());
             }
         }
-        if(order.getType().name().equals(ACTIONTYPE.SELL.name()) && !buyOrders.isEmpty()) {
-            Double minBuyOrdersPrice = buyOrders.stream().min(Comparator.comparing(Order::getPrice)).get().getPrice();
-            if (order.getPrice() <= minBuyOrdersPrice) {
+        if(order.getType().name().equals(ACTIONTYPE.SELL.name())) {
+            if (!buyOrders.isEmpty()) {
+                Double minBuyOrdersPrice = buyOrders.stream().min(Comparator.comparing(Order::getPrice)).get().getPrice();
+                if (order.getPrice() <= minBuyOrdersPrice) {
+                    securityToken.setLastBuyingPrice(order.getPrice());
+                }
+            } else {
                 securityToken.setLastBuyingPrice(order.getPrice());
             }
         }
@@ -197,10 +205,14 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
      * @return Assets.
      */
     @Override
-    public Map<CATEGORY, Long> getAssets() {
-        List<SecurityToken> securityTokenList = getSecurityTokensForUserWhiteList();
-        Map<CATEGORY, Long> map = securityTokenList.stream().collect(groupingBy(SecurityToken::getCategory, counting()));
-        return map;
+    public List<AssetsDistributionDTO> getAssets() {
+        authentication = getAuth();
+        Long userId = this.userService.getUserWithAuthoritiesByLogin(authentication.getName()).get().getId();
+        List<AssetsDistributionDTO> distributionAssetsList = this.whiteListingRepository.findAssetsDistributionForUser(userId)
+            .stream()
+            .map(item -> new AssetsDistributionDTO( CATEGORY.valueOf((String) item.get(0)), (Double) item.get(1), (Double) item.get(2)))
+            .collect(toList());
+        return distributionAssetsList;
     }
 
     /**
