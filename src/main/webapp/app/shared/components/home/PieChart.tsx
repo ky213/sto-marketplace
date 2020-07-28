@@ -1,7 +1,5 @@
 import React from 'react';
-import { Row, Col } from 'reactstrap';
 import { Doughnut } from 'react-chartjs-2';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const PieChart = () => {
   const data = {

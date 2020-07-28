@@ -11,7 +11,7 @@ import { getAssetAllocation, getLatestOrders } from '../home-customer.reducer';
 export interface UserChartProps extends StateProps, DispatchProps {}
 
 const Charts = (props: UserChartProps) => {
-  const { latestOrders, user } = props;
+  const { user } = props;
 
   const assetAllocation = [];
   const colors = {
