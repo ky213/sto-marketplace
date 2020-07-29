@@ -143,7 +143,7 @@ export const suggestUsers: any = (query: string, securityTokenId: number) => {
 
   return {
     type: ACTION_TYPES.SUGGEST_USERS,
-    payload: axios.get<IUser>(`${url}?query=${query}&securityTokenId=${securityTokenId || ''}`)
+    payload: axios.get<IUser>(`${url}?query=${query || ''}&securityTokenId=${securityTokenId || ''}`)
   };
 };
 
@@ -152,7 +152,7 @@ export const suggestSecurityTokens: any = (query: string, userId: number) => {
 
   return {
     type: ACTION_TYPES.SUGGEST_SECURITY_TOKENS,
-    payload: axios.get<ISecurityToken>(`${url}?query=${query}&userId=${userId || ''}`)
+    payload: axios.get<ISecurityToken>(`${url}?query=${query || ''}&userId=${userId || ''}`)
   };
 };
 

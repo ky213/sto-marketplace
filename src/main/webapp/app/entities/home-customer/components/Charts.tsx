@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 
 import { IRootState } from 'app/shared/reducers';
 import { getAssetAllocation, getLatestOrders } from '../home-customer.reducer';
+import { CATEGORY } from 'app/shared/model/enumerations/category.model';
 
 export interface UserChartProps extends StateProps, DispatchProps {}
 
@@ -26,12 +27,12 @@ const Charts = (props: UserChartProps) => {
     props.getLatestOrders(user.id);
   }, []);
 
-  for (const key in props.assetAllocation) {
-    if (key)
+  for (const el of props.assetAllocation) {
+    if (el)
       assetAllocation.push({
-        angle: props.assetAllocation[key],
-        label: key,
-        style: { fill: colors[key], stroke: colors[key] }
+        angle: el.percentage,
+        label: el.category,
+        style: { fill: colors[el.category], stroke: colors[el.category] }
       });
   }
 
@@ -163,7 +164,10 @@ const Charts = (props: UserChartProps) => {
                 <p className="py-0 my-0" style={{ fontSize: '12px' }}>
                   Equity
                 </p>
-                <b className="py-0 my-0 text-primary"> {(props.assetAllocation.EQUITY || 0) * 100}%</b>
+                <b className="py-0 my-0 text-primary">
+                  {' '}
+                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.EQUITY)?.percentage?.toPrecision(4) || 0}%
+                </b>
               </Col>
               <Col className="text-center text-muted p-0">
                 <p className="py-0 my-0">
@@ -172,7 +176,10 @@ const Charts = (props: UserChartProps) => {
                 <p className="py-0 my-0" style={{ fontSize: '12px' }}>
                   Funds
                 </p>
-                <b className="py-0 my-0 text-success"> {(props.assetAllocation.FUNDS || 0) * 100}%</b>
+                <b className="py-0 my-0 text-success">
+                  {' '}
+                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.FUNDS)?.percentage?.toPrecision(4) || 0}%
+                </b>
               </Col>
               <Col className="text-center text-muted p-0">
                 <p className="py-0 my-0">
@@ -181,7 +188,10 @@ const Charts = (props: UserChartProps) => {
                 <p className="py-0 my-0" style={{ fontSize: '12px' }}>
                   Real Estate
                 </p>
-                <b className="py-0 my-0 text-danger"> {(props.assetAllocation.REAL_ESTATE || 0) * 100}%</b>
+                <b className="py-0 my-0 text-danger">
+                  {' '}
+                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.REAL_ESTATE)?.percentage?.toPrecision(4) || 0}%
+                </b>
               </Col>
               <Col className="text-center text-muted p-0">
                 <p className="py-0 my-0">
@@ -191,7 +201,7 @@ const Charts = (props: UserChartProps) => {
                   Derivative
                 </p>
                 <b className="py-0 my-0" style={{ color: colors.DERIVATIVE }}>
-                  {(props.assetAllocation.DERIVATIVE || 0) * 100}%
+                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.DERIVATIVE)?.percentage?.toPrecision(4) || 0}%
                 </b>
               </Col>
             </Row>
@@ -204,7 +214,7 @@ const Charts = (props: UserChartProps) => {
 
 const mapStateToProps = ({ authentication, homeCustomer }: IRootState) => ({
   user: authentication.account,
-  assetAllocation: homeCustomer.assetAllocation,
+  assetAllocation: homeCustomer.assetDistribution,
   latestOrders: homeCustomer.latestOrders
 });
 
