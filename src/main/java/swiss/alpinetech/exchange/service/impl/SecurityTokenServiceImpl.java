@@ -113,22 +113,22 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
 
         if(order.getType().name().equals(ACTIONTYPE.BUY.name())) {
             if (!sellOrders.isEmpty()) {
-                Double maxSellOrdersPrice = sellOrders.stream().max(Comparator.comparing(Order::getPrice)).get().getPrice();
-                if (order.getPrice() >= maxSellOrdersPrice) {
+                Double minSellOrdersPrice = sellOrders.stream().min(Comparator.comparing(Order::getPrice)).get().getPrice();
+                if (order.getPrice() >= minSellOrdersPrice) {
                     securityToken.setLastSellingprice(order.getPrice());
                 }
             } else {
-                securityToken.setLastSellingprice(order.getPrice());
+                securityToken.setLastBuyingPrice(order.getPrice());
             }
         }
         if(order.getType().name().equals(ACTIONTYPE.SELL.name())) {
             if (!buyOrders.isEmpty()) {
-                Double minBuyOrdersPrice = buyOrders.stream().min(Comparator.comparing(Order::getPrice)).get().getPrice();
-                if (order.getPrice() <= minBuyOrdersPrice) {
+                Double maxBuyOrdersPrice = buyOrders.stream().max(Comparator.comparing(Order::getPrice)).get().getPrice();
+                if (order.getPrice() <= maxBuyOrdersPrice) {
                     securityToken.setLastBuyingPrice(order.getPrice());
                 }
             } else {
-                securityToken.setLastBuyingPrice(order.getPrice());
+                securityToken.setLastSellingprice(order.getPrice());
             }
         }
         return save(securityToken);

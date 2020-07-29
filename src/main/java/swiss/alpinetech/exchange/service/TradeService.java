@@ -91,7 +91,6 @@ public class TradeService {
             createTransaction(resultListTrades, order);
             orderService.updateOrderFillTokenAndFillAmount(resultListTrades);
             sendTradeListToQueue(resultListTrades);
-            securityTokenService.updateSecurityTokenPrice(order);
             this.messagingTemplate.convertAndSend("/topic/tracker", orderService.findOne(order.getId()).get());
             return resultListTrades;
         }
@@ -100,7 +99,6 @@ public class TradeService {
             createTransaction(resultListTrades, order);
             orderService.updateOrderFillTokenAndFillAmount(resultListTrades);
             sendTradeListToQueue(resultListTrades);
-            securityTokenService.updateSecurityTokenPrice(order);
             this.messagingTemplate.convertAndSend("/topic/tracker", orderService.findOne(order.getId()).get());
             return resultListTrades;
         }
@@ -123,6 +121,7 @@ public class TradeService {
                     orderService.updateOrderStatus(sellOrder.getId(), STATUS.PENDING);
                 });
             }
+            securityTokenService.updateSecurityTokenPrice(order);
             orderService.updateOrderStatus(order.getId(), STATUS.PENDING);
         }
     }

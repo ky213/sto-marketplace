@@ -256,7 +256,7 @@ public class OrderResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the user orders, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/user-orders/last-success")
-    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.USER+"\")")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
     public ResponseEntity<Map<String, Map<ACTIONTYPE, Long>>> getUserOrdersByStatus(@RequestParam Long userId) {
         log.debug("REST request to get User success Orders");
         Map<String, Map<ACTIONTYPE, Long>> map = orderService.findUserSuccessOrdersForTwoWeeks(userId);

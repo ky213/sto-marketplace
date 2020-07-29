@@ -8,6 +8,7 @@ import swiss.alpinetech.exchange.domain.UserSetting;
 
 import javax.validation.constraints.*;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -70,9 +71,11 @@ public class UserDTO {
         this.createdDate = user.getCreatedDate();
         this.lastModifiedBy = user.getLastModifiedBy();
         this.lastModifiedDate = user.getLastModifiedDate();
-        this.authorities = user.getAuthorities().stream()
-            .map(Authority::getName)
-            .collect(Collectors.toSet());
+        Optional.of(user.getAuthorities()).ifPresent(userAuthorities ->
+              this.authorities = userAuthorities.stream()
+                  .map(Authority::getName)
+                  .collect(Collectors.toSet())
+        );
         this.setting = user.getSetting();
     }
 
