@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { Row, Col, Card, CardHeader, CardBody, Button, CardFooter } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FlexibleXYPlot, YAxis, XAxis, RadialChart, VerticalBarSeries, HorizontalGridLines } from 'react-vis';
-import moment from 'moment';
 import { connect } from 'react-redux';
+import moment from 'moment';
 
 import { IRootState } from 'app/shared/reducers';
 import { getAssetAllocation, getLatestOrders } from '../home-customer.reducer';
@@ -12,9 +12,7 @@ import { CATEGORY } from 'app/shared/model/enumerations/category.model';
 export interface UserChartProps extends StateProps, DispatchProps {}
 
 const Charts = (props: UserChartProps) => {
-  const { user } = props;
-
-  const assetAllocation = [];
+  const { user, latestOrders } = props;
   const colors = {
     EQUITY: '#0b2662',
     FUNDS: '#28a745',
@@ -22,19 +20,18 @@ const Charts = (props: UserChartProps) => {
     DERIVATIVE: '#fb8c00'
   };
 
+  const buyOrders = Object.keys(latestOrders).map(key => ({ x: new Date(key).getTime() || 0, y: latestOrders[key].BUY || 0 }));
+  const sellOrders = Object.keys(latestOrders).map(key => ({ x: new Date(key).getTime() || 0, y: latestOrders[key].SELL || 0 }));
+  const assetAllocation = props.assetAllocation.map(el => ({
+    angle: el.percentage,
+    label: el.category,
+    style: { fill: colors[el.category], stroke: colors[el.category] }
+  }));
+
   useEffect(() => {
     props.getAssetAllocation();
     props.getLatestOrders(user.id);
   }, []);
-
-  for (const el of props.assetAllocation) {
-    if (el)
-      assetAllocation.push({
-        angle: el.percentage,
-        label: el.category,
-        style: { fill: colors[el.category], stroke: colors[el.category] }
-      });
-  }
 
   return (
     <Row className="pl-1 pr-2 pt-2">
@@ -43,85 +40,17 @@ const Charts = (props: UserChartProps) => {
           <CardHeader>Latest Orders</CardHeader>
           <CardBody>
             <FlexibleXYPlot>
-              <YAxis attr="y" attrAxis="x" orientation="left" />
+              <YAxis />
               <XAxis
-                attr="x"
-                attrAxis="y"
-                orientation="bottom"
-                tickTotal={7}
                 tickFormat={(t, i) =>
                   moment()
-                    .subtract(7 - i, 'days')
+                    .subtract(7 - i, 'day')
                     .format('DD MMM')
                 }
               />
               <HorizontalGridLines />
-              <VerticalBarSeries
-                data={[
-                  {
-                    x: 0,
-                    y: 10
-                  },
-                  {
-                    x: 1,
-                    y: 8.893112747940398
-                  },
-                  {
-                    x: 2,
-                    y: 7.092587441028026
-                  },
-                  {
-                    x: 3,
-                    y: 7.5792070839981065
-                  },
-                  {
-                    x: 4,
-                    y: 9.104607720321058
-                  },
-                  {
-                    x: 5,
-                    y: 7.95043000658639
-                  },
-                  {
-                    x: 6,
-                    y: 7.238432016488505
-                  }
-                ]}
-                style={{}}
-              />
-              <VerticalBarSeries
-                data={[
-                  {
-                    x: 0,
-                    y: 10
-                  },
-                  {
-                    x: 1,
-                    y: 7.895781270333349
-                  },
-                  {
-                    x: 2,
-                    y: 9.714836076947527
-                  },
-                  {
-                    x: 3,
-                    y: 9.102605793322875
-                  },
-                  {
-                    x: 4,
-                    y: 10.540978540898982
-                  },
-                  {
-                    x: 5,
-                    y: 10.97334005054668
-                  },
-                  {
-                    x: 6,
-                    y: 11.33834158969131
-                  }
-                ]}
-                style={{}}
-              />
+              <VerticalBarSeries data={buyOrders} barWidth={0.05} color={'#28a745'} />
+              <VerticalBarSeries data={sellOrders} barWidth={0.05} color={'#dc3545'} />
             </FlexibleXYPlot>
           </CardBody>
           <CardFooter className="d-flex py-0">

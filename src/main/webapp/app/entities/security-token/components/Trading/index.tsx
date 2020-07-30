@@ -57,6 +57,11 @@ const Trading = (props: TradingProps) => {
       alert('Please set correct value!');
       return;
     }
+
+    const stPrice = type === ACTIONTYPE.BUY ? securityToken.lastBuyingPrice : securityToken.lastSellingprice;
+
+    if (orderType === ORDERTYPE.MARKET) setPrice(stPrice);
+
     setActionType(type);
     setIsOpen(true);
   };
@@ -151,7 +156,12 @@ const Trading = (props: TradingProps) => {
             <Col>
               <FormGroup>
                 <Label>Price</Label>
-                <Input type="number" value={price} onChange={({ target }) => handlePriceChange(target.value)} />
+                <Input
+                  type="number"
+                  value={price}
+                  onChange={({ target }) => handlePriceChange(target.value)}
+                  disabled={orderType === ORDERTYPE.MARKET}
+                />
               </FormGroup>
             </Col>
           </Row>
