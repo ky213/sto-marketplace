@@ -8,6 +8,7 @@ import moment from 'moment';
 import { IRootState } from 'app/shared/reducers';
 import { getAssetAllocation, getLatestOrders } from '../home-customer.reducer';
 import { CATEGORY } from 'app/shared/model/enumerations/category.model';
+import { Link } from 'react-router-dom';
 
 export interface UserChartProps extends StateProps, DispatchProps {}
 
@@ -20,8 +21,12 @@ const Charts = (props: UserChartProps) => {
     DERIVATIVE: '#fb8c00'
   };
 
-  const buyOrders = Object.keys(latestOrders).map(key => ({ x: new Date(key).getTime() || 0, y: latestOrders[key].BUY || 0 }));
-  const sellOrders = Object.keys(latestOrders).map(key => ({ x: new Date(key).getTime() || 0, y: latestOrders[key].SELL || 0 }));
+  const buyOrders = Object.keys(latestOrders)
+    .map(key => ({ x: key || 0, y: latestOrders[key].BUY || 0 }))
+    .reverse();
+  const sellOrders = Object.keys(latestOrders)
+    .map(key => ({ x: key || 0, y: latestOrders[key].SELL || 0 }))
+    .reverse();
   const assetAllocation = props.assetAllocation.map(el => ({
     angle: el.percentage,
     label: el.category,
@@ -39,26 +44,21 @@ const Charts = (props: UserChartProps) => {
         <Card className="p-0" style={{ height: '400px' }}>
           <CardHeader>Latest Orders</CardHeader>
           <CardBody>
-            <FlexibleXYPlot>
+            <FlexibleXYPlot xType="ordinal">
               <YAxis />
-              <XAxis
-                tickFormat={(t, i) =>
-                  moment()
-                    .subtract(7 - i, 'day')
-                    .format('DD MMM')
-                }
-              />
+              <XAxis tickFormat={t => moment(t).format('DD MMM')} />
               <HorizontalGridLines />
-              <VerticalBarSeries data={buyOrders} barWidth={0.05} color={'#28a745'} />
-              <VerticalBarSeries data={sellOrders} barWidth={0.05} color={'#dc3545'} />
+              <VerticalBarSeries data={buyOrders.length ? buyOrders : [{ x: new Date(), y: 0 }]} barWidth={0.1} color={'#28a745'} />
+              <VerticalBarSeries data={sellOrders.length ? sellOrders : [{ x: new Date(), y: 0 }]} barWidth={0.1} color={'#dc3545'} />
             </FlexibleXYPlot>
           </CardBody>
           <CardFooter className="d-flex py-0">
             <Button className="ml-auto" color="none ">
-              <span className=" mr-2" style={{ fontSize: '14px' }}>
-                overview
-              </span>
-              <FontAwesomeIcon icon="caret-right" />
+              <Link to="/order" className=" mr-2" style={{ fontSize: '14px' }}>
+                <span className="text-primary">
+                  view all <FontAwesomeIcon icon="caret-right" />
+                </span>
+              </Link>
             </Button>
           </CardFooter>
         </Card>

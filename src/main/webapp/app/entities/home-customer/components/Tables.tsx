@@ -73,7 +73,7 @@ const Tables = (props: TablesProps) => {
         <CardHeader className="py-2 d-flex align-items-center">
           <span>List of Assets Held</span>
           <Link to="/security-token" className=" btn btn-outline-primary ml-auto " style={{ fontSize: '14px' }}>
-            Buy Token
+            Buy Tokens
           </Link>
         </CardHeader>
         <CardBody className="p-0">
