@@ -54,6 +54,7 @@ export const Order = (props: IOrderProps) => {
 
   useEffect(() => {
     resetAll();
+    return () => props.reset();
   }, []);
 
   const startSearching = () => {
