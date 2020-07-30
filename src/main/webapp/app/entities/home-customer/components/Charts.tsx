@@ -2,18 +2,18 @@ import React, { useEffect } from 'react';
 import { Row, Col, Card, CardHeader, CardBody, Button, CardFooter } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { FlexibleXYPlot, YAxis, XAxis, RadialChart, VerticalBarSeries, HorizontalGridLines } from 'react-vis';
-import moment from 'moment';
 import { connect } from 'react-redux';
+import moment from 'moment';
 
 import { IRootState } from 'app/shared/reducers';
 import { getAssetAllocation, getLatestOrders } from '../home-customer.reducer';
+import { CATEGORY } from 'app/shared/model/enumerations/category.model';
+import { Link } from 'react-router-dom';
 
 export interface UserChartProps extends StateProps, DispatchProps {}
 
 const Charts = (props: UserChartProps) => {
-  const { latestOrders, user } = props;
-
-  const assetAllocation = [];
+  const { user, latestOrders } = props;
   const colors = {
     EQUITY: '#0b2662',
     FUNDS: '#28a745',
@@ -21,19 +21,22 @@ const Charts = (props: UserChartProps) => {
     DERIVATIVE: '#fb8c00'
   };
 
+  const buyOrders = Object.keys(latestOrders)
+    .map(key => ({ x: key || 0, y: latestOrders[key].BUY || 0 }))
+    .reverse();
+  const sellOrders = Object.keys(latestOrders)
+    .map(key => ({ x: key || 0, y: latestOrders[key].SELL || 0 }))
+    .reverse();
+  const assetAllocation = props.assetAllocation.map(el => ({
+    angle: el.percentage,
+    label: el.category,
+    style: { fill: colors[el.category], stroke: colors[el.category] }
+  }));
+
   useEffect(() => {
     props.getAssetAllocation();
     props.getLatestOrders(user.id);
   }, []);
-
-  for (const key in props.assetAllocation) {
-    if (key)
-      assetAllocation.push({
-        angle: props.assetAllocation[key],
-        label: key,
-        style: { fill: colors[key], stroke: colors[key] }
-      });
-  }
 
   return (
     <Row className="pl-1 pr-2 pt-2">
@@ -41,94 +44,21 @@ const Charts = (props: UserChartProps) => {
         <Card className="p-0" style={{ height: '400px' }}>
           <CardHeader>Latest Orders</CardHeader>
           <CardBody>
-            <FlexibleXYPlot>
-              <YAxis attr="y" attrAxis="x" orientation="left" />
-              <XAxis
-                attr="x"
-                attrAxis="y"
-                orientation="bottom"
-                tickTotal={7}
-                tickFormat={(t, i) =>
-                  moment()
-                    .subtract(7 - i, 'days')
-                    .format('DD MMM')
-                }
-              />
+            <FlexibleXYPlot xType="ordinal">
+              <YAxis />
+              <XAxis tickFormat={t => moment(t).format('DD MMM')} />
               <HorizontalGridLines />
-              <VerticalBarSeries
-                data={[
-                  {
-                    x: 0,
-                    y: 10
-                  },
-                  {
-                    x: 1,
-                    y: 8.893112747940398
-                  },
-                  {
-                    x: 2,
-                    y: 7.092587441028026
-                  },
-                  {
-                    x: 3,
-                    y: 7.5792070839981065
-                  },
-                  {
-                    x: 4,
-                    y: 9.104607720321058
-                  },
-                  {
-                    x: 5,
-                    y: 7.95043000658639
-                  },
-                  {
-                    x: 6,
-                    y: 7.238432016488505
-                  }
-                ]}
-                style={{}}
-              />
-              <VerticalBarSeries
-                data={[
-                  {
-                    x: 0,
-                    y: 10
-                  },
-                  {
-                    x: 1,
-                    y: 7.895781270333349
-                  },
-                  {
-                    x: 2,
-                    y: 9.714836076947527
-                  },
-                  {
-                    x: 3,
-                    y: 9.102605793322875
-                  },
-                  {
-                    x: 4,
-                    y: 10.540978540898982
-                  },
-                  {
-                    x: 5,
-                    y: 10.97334005054668
-                  },
-                  {
-                    x: 6,
-                    y: 11.33834158969131
-                  }
-                ]}
-                style={{}}
-              />
+              <VerticalBarSeries data={buyOrders.length ? buyOrders : [{ x: new Date(), y: 0 }]} barWidth={0.1} color={'#28a745'} />
+              <VerticalBarSeries data={sellOrders.length ? sellOrders : [{ x: new Date(), y: 0 }]} barWidth={0.1} color={'#dc3545'} />
             </FlexibleXYPlot>
           </CardBody>
           <CardFooter className="d-flex py-0">
             <Button className="ml-auto" color="none ">
-              <span className=" mr-2" style={{ fontSize: '14px' }}>
-                overview
-              </span>
-              <FontAwesomeIcon icon="caret-right" />
+              <Link to="/order" className=" mr-2" style={{ fontSize: '14px' }}>
+                <span className="text-primary">
+                  view all <FontAwesomeIcon icon="caret-right" />
+                </span>
+              </Link>
             </Button>
           </CardFooter>
         </Card>
@@ -163,7 +93,10 @@ const Charts = (props: UserChartProps) => {
                 <p className="py-0 my-0" style={{ fontSize: '12px' }}>
                   Equity
                 </p>
-                <b className="py-0 my-0 text-primary"> {(props.assetAllocation.EQUITY || 0) * 100}%</b>
+                <b className="py-0 my-0 text-primary">
+                  {' '}
+                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.EQUITY)?.percentage?.toPrecision(4) || 0}%
+                </b>
               </Col>
               <Col className="text-center text-muted p-0">
                 <p className="py-0 my-0">
@@ -172,7 +105,10 @@ const Charts = (props: UserChartProps) => {
                 <p className="py-0 my-0" style={{ fontSize: '12px' }}>
                   Funds
                 </p>
-                <b className="py-0 my-0 text-success"> {(props.assetAllocation.FUNDS || 0) * 100}%</b>
+                <b className="py-0 my-0 text-success">
+                  {' '}
+                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.FUNDS)?.percentage?.toPrecision(4) || 0}%
+                </b>
               </Col>
               <Col className="text-center text-muted p-0">
                 <p className="py-0 my-0">
@@ -181,7 +117,10 @@ const Charts = (props: UserChartProps) => {
                 <p className="py-0 my-0" style={{ fontSize: '12px' }}>
                   Real Estate
                 </p>
-                <b className="py-0 my-0 text-danger"> {(props.assetAllocation.REAL_ESTATE || 0) * 100}%</b>
+                <b className="py-0 my-0 text-danger">
+                  {' '}
+                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.REAL_ESTATE)?.percentage?.toPrecision(4) || 0}%
+                </b>
               </Col>
               <Col className="text-center text-muted p-0">
                 <p className="py-0 my-0">
@@ -191,7 +130,7 @@ const Charts = (props: UserChartProps) => {
                   Derivative
                 </p>
                 <b className="py-0 my-0" style={{ color: colors.DERIVATIVE }}>
-                  {(props.assetAllocation.DERIVATIVE || 0) * 100}%
+                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.DERIVATIVE)?.percentage?.toPrecision(4) || 0}%
                 </b>
               </Col>
             </Row>
@@ -204,7 +143,7 @@ const Charts = (props: UserChartProps) => {
 
 const mapStateToProps = ({ authentication, homeCustomer }: IRootState) => ({
   user: authentication.account,
-  assetAllocation: homeCustomer.assetAllocation,
+  assetAllocation: homeCustomer.assetDistribution,
   latestOrders: homeCustomer.latestOrders
 });
 

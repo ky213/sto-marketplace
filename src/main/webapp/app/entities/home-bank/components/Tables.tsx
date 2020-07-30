@@ -16,7 +16,7 @@ const Tables = (props: TablesProps) => {
   const { securityTokens, usersBalance, lastOrders } = props;
 
   useEffect(() => {
-    props.getLastSecurityTokens();
+    props.getLastSecurityTokens(true);
     props.getUsersBalance();
     props.getLastOrders();
 

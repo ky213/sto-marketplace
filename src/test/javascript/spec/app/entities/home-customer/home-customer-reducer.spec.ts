@@ -18,6 +18,7 @@ import reducer, {
 import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util';
 import { IHomeCustomer, defaultValue } from 'app/shared/model/home-customer.model';
 import { IOrder } from 'app/shared/model/order.model';
+import { AssetDistribution } from 'app/entities/home-bank/home-bank.reducer';
 
 describe('Entities reducer tests', () => {
   function isEmpty(element): boolean {
@@ -36,7 +37,7 @@ describe('Entities reducer tests', () => {
     totalItems: 0,
     updating: false,
     updateSuccess: false,
-    assetAllocation: {} as { [key: string]: number },
+    assetDistribution: [] as ReadonlyArray<AssetDistribution>,
     totalSTAmounts: {} as { [key: string]: any },
     topTotalSTAmounts: [] as { [key: string]: any }[],
     latestOrders: [] as ReadonlyArray<IOrder>,

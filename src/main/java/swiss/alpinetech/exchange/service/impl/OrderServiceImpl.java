@@ -311,7 +311,8 @@ public class OrderServiceImpl implements OrderService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
         ZonedDateTime today = ZonedDateTime.now();
         ZonedDateTime before2Week = today.minusWeeks(2);
-        Map<String, List<Order>> map = orderRepository.findAllByUserId(userId)
+        List<Order> orderList = userId != null ? orderRepository.findAllByUserId(userId) : orderRepository.findAll();
+        Map<String, List<Order>> map =  orderList
             .stream()
             .filter(
                 item ->

@@ -263,10 +263,10 @@ export const getOrderBook: any = (id: number) => {
   };
 };
 
-export const getLastSecurityTokens: ICrudGetAllAction<ISecurityToken> = () => {
+export const getLastSecurityTokens: any = (isAdmin: boolean) => {
   return {
     type: ACTION_TYPES.FETCH_SECURITYTOKEN_LIST,
-    payload: axios.get<ISecurityToken>(`api/security-tokens/last-whitelisted`)
+    payload: axios.get<ISecurityToken>(`api/security-tokens/last${isAdmin ? '' : '-whitelisted'}`)
   };
 };
 

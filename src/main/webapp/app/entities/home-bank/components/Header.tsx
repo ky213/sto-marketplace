@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Row, Col, Card, CardTitle, CardBody, Progress } from 'reactstrap';
+import { Row, Col, Card, CardTitle, CardBody } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 import { connect } from 'react-redux';

@@ -267,11 +267,12 @@ public class UserService {
                 user.setLangKey(userDTO.getLangKey());
                 Set<Authority> managedAuthorities = user.getAuthorities();
                 managedAuthorities.clear();
-                userDTO.getAuthorities().stream()
-                    .map(authorityRepository::findById)
+                Set<Authority> ls = userDTO.getAuthorities().stream()
+                    .map(authorityRepository::findByName)
                     .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .forEach(managedAuthorities::add);
+                    .map(Optional::get).collect(Collectors.toSet());
+                managedAuthorities.addAll(ls);
+                user.setAuthorities(managedAuthorities);
                 user.setSetting(userDTO.getSetting());
                 userRepository.save(user);
                 userSearchRepository.save(user);

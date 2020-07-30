@@ -185,9 +185,9 @@ public class SecurityTokenResource {
      */
     @GetMapping("/security-tokens/assets")
     @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
-    public ResponseEntity<Map<CATEGORY, Long>> getSecurityTokenAssets() {
+    public ResponseEntity<List<AssetsDistributionDTO>> getSecurityTokenAssets() {
         log.debug("REST request to get SecurityTokens assets");
-        Map<CATEGORY, Long> map = securityTokenService.getAssets();
+        List<AssetsDistributionDTO> map = securityTokenService.getAssets();
         return ResponseEntity.ok().body(map);
     }
 

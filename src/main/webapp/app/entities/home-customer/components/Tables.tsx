@@ -5,8 +5,8 @@ import { connect } from 'react-redux';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 
-import { getUserOrders } from 'app/entities/order/order.reducer';
-import { getLastSecurityTokens, reset } from 'app/entities/security-token/security-token.reducer';
+import { getUserOrders, reset as resetOrders } from 'app/entities/order/order.reducer';
+import { getLastSecurityTokens, reset as resetSecurityTokens } from 'app/entities/security-token/security-token.reducer';
 import { getTopTotalSTAmounts } from 'app/entities/home-customer/home-customer.reducer';
 import { IRootState } from 'app/shared/reducers';
 import { APP_DATE_FORMAT } from 'app/config/constants';
@@ -23,6 +23,7 @@ const Tables = (props: TablesProps) => {
 
     return () => {
       props.resetSecurityTokens();
+      props.resetOrders();
     };
   }, []);
 
@@ -73,7 +74,7 @@ const Tables = (props: TablesProps) => {
         <CardHeader className="py-2 d-flex align-items-center">
           <span>List of Assets Held</span>
           <Link to="/security-token" className=" btn btn-outline-primary ml-auto " style={{ fontSize: '14px' }}>
-            Buy Token
+            Buy Tokens
           </Link>
         </CardHeader>
         <CardBody className="p-0">
@@ -172,7 +173,8 @@ const mapDispatchToProps = {
   getUserOrders,
   getLastSecurityTokens,
   getTopTotalSTAmounts,
-  resetSecurityTokens: reset
+  resetSecurityTokens,
+  resetOrders
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

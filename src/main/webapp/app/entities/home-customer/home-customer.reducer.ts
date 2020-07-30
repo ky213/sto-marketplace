@@ -6,6 +6,7 @@ import { REQUEST, SUCCESS, FAILURE } from 'app/shared/reducers/action-type.util'
 
 import { IHomeCustomer, defaultValue } from 'app/shared/model/home-customer.model';
 import { IOrder } from 'app/shared/model/order.model';
+import { CATEGORY } from 'app/shared/model/enumerations/category.model';
 
 export const ACTION_TYPES = {
   SEARCH_HOMECUSTOMERS: 'homeCustomer/SEARCH_HOMECUSTOMERS',
@@ -22,6 +23,12 @@ export const ACTION_TYPES = {
   RESET: 'homeCustomer/RESET'
 };
 
+export interface AssetDistribution {
+  category: CATEGORY;
+  percentage: number;
+  totalAmount: number;
+}
+
 const initialState = {
   loading: false,
   errorMessage: null,
@@ -30,7 +37,7 @@ const initialState = {
   updating: false,
   totalItems: 0,
   updateSuccess: false,
-  assetAllocation: {} as { [key: string]: number },
+  assetDistribution: [] as ReadonlyArray<AssetDistribution>,
   totalSTAmounts: {} as { [key: string]: any },
   topTotalSTAmounts: [] as { [key: string]: any }[],
   latestOrders: [] as ReadonlyArray<IOrder>,
@@ -101,7 +108,7 @@ export default (state: HomeCustomerState = initialState, action): HomeCustomerSt
       return {
         ...state,
         loading: false,
-        assetAllocation: action.payload.data
+        assetDistribution: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.FETCH_TOTAL_ST_AMOUNT):
       return {
