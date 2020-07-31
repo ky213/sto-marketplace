@@ -109,7 +109,7 @@ public class SecurityTokenResource {
 
 
     @PutMapping("/security-tokens/{id}/deactivate")
-    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.ADMIN+"\")")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
     public ResponseEntity<SecurityToken> deactivateSecurityToken(@PathVariable Long id) throws URISyntaxException {
         log.debug("REST request to deactivate SecurityToken status : {}", id);
         if (id == null) {
