@@ -46,6 +46,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
@@ -448,10 +449,15 @@ public class UserService {
         List<UserDTO> usersList = IteratorUtils.toList(userSearchRepository.search(queryStringQuery(query+"*").field("login")).iterator())
             .stream()
             .filter(
-                us ->
-                        !usersPermitted.contains(us.getId()) &&
-                        !securityToken.getRestrictionCounty().equals(us.getSetting().getCountry().name()) &&
-                        !securityToken.getRestrictionNationality().equals(us.getSetting().getNationality())
+                us -> {
+                    if (Optional.ofNullable(us.getSetting()).isPresent()) {
+                        return !usersPermitted.contains(us.getId()) &&
+                            !Stream.of(securityToken.getRestrictionNationality().trim().split("\\s*;\\s*")).collect(Collectors.toList()).contains(us.getSetting().getNationality().name()) &&
+                            !Stream.of(securityToken.getRestrictionCounty().trim().split("\\s*;\\s*")).collect(Collectors.toList()).contains(us.getSetting().getCountry().name());
+                    }
+                    return false;
+                }
+
             )
             .map(UserDTO::new)
             .collect(Collectors.toList());

@@ -96,6 +96,13 @@ public interface SecurityTokenService {
     Map<String, Double> getTotalAmount();
 
     /**
+     * get Total custody of securityTokens.
+     *
+     * @return Total custody of securityTokens.
+     */
+    Double getTotalCustody();
+
+    /**
      * get last 5 Security Token whitelisted on the marketplace by the bank for current user.
      *
      * @return securityTokens list.

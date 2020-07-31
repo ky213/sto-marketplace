@@ -34,6 +34,7 @@ import swiss.alpinetech.exchange.service.dto.AssetsHeldDTO;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -264,6 +265,20 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     }
 
     /**
+     * get Total custody of securityTokens.
+     *
+     * @return Total custody of securityTokens.
+     */
+    @Override
+    public Double getTotalCustody() {
+        Double totalCustody = this.whiteListingRepository.findAll()
+            .stream()
+            .filter(wl -> wl.isActive() && wl.getSecuritytoken().getStatus().equals(STSTATUS.ACTIVE))
+            .mapToDouble(wl -> wl.getBalance() * wl.getSecuritytoken().getLastBuyingPrice()).sum();
+        return totalCustody;
+    }
+
+    /**
      * get last 5 Security Token whitelisted on the marketplace by the bank for current user.
      *
      * @return securityTokens list.
@@ -370,11 +385,16 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
         List<SecurityToken> securityTokenList = IteratorUtils.toList(securityTokenSearchRepository.search(queryStringQuery(query+"*").field("name"))
             .iterator())
             .stream()
-            .filter(st ->
-                !securityTokensWhitelisted.contains(st.getId()) &&
-                !st.getRestrictionCounty().equals(user.getSetting().getCountry().name()) &&
-                !st.getRestrictionNationality().equals(user.getSetting().getNationality()) &&
-                st.getStatus().equals(STSTATUS.ACTIVE)
+            .filter(st -> {
+                if (Optional.ofNullable(user.getSetting()).isPresent()) {
+                    return
+                        !securityTokensWhitelisted.contains(st.getId()) &&
+                        !Stream.of(st.getRestrictionNationality().trim().split("\\s*;\\s*")).collect(Collectors.toList()).contains(user.getSetting().getNationality().name()) &&
+                        !Stream.of(st.getRestrictionCounty().trim().split("\\s*;\\s*")).collect(Collectors.toList()).contains(user.getSetting().getCountry().name()) &&
+                        st.getStatus().equals(STSTATUS.ACTIVE);
+                }
+                return false;
+            }
             )
             .collect(Collectors.toList());
 
