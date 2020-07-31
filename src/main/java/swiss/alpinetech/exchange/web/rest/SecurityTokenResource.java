@@ -231,6 +231,19 @@ public class SecurityTokenResource {
     }
 
     /**
+     * {@code GET  /security-tokens/total-custody} : get the securityTokens total custody.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the assets, or with status {@code 404 (Not Found)}.
+     */
+    @GetMapping("/security-tokens/total-custody")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\", \""+AuthoritiesConstants.USER+"\")")
+    public ResponseEntity<Double> getSecurityTokenTotalCustody() {
+        log.debug("REST request to get SecurityTokens total custody");
+        Double totalCustody = securityTokenService.getTotalCustody();
+        return ResponseEntity.ok().body(totalCustody);
+    }
+
+    /**
      * {@code GET  /security-tokens/assets} : get the securityTokens assets.
      *
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the assets, or with status {@code 404 (Not Found)}.
