@@ -71,7 +71,7 @@ public class UserDTO {
         this.createdDate = user.getCreatedDate();
         this.lastModifiedBy = user.getLastModifiedBy();
         this.lastModifiedDate = user.getLastModifiedDate();
-        Optional.of(user.getAuthorities()).ifPresent(userAuthorities ->
+        Optional.ofNullable(user.getAuthorities()).ifPresent(userAuthorities ->
               this.authorities = userAuthorities.stream()
                   .map(Authority::getName)
                   .collect(Collectors.toSet())
