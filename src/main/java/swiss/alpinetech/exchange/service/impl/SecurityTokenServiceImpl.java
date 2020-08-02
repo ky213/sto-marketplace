@@ -107,7 +107,7 @@ public class SecurityTokenServiceImpl implements SecurityTokenService {
     public SecurityToken updateSecurityTokenPrice(Order order) {
         SecurityToken securityToken = this.securityTokenRepository.findById(order.getSecurityToken().getId()).get();
         if (this.securityTokenOrderBook == null) {
-            return securityToken;
+            return order.getType().equals(ACTIONTYPE.BUY) ? save(securityToken.lastBuyingPrice(order.getPrice())) : save(securityToken.lastSellingprice(order.getPrice()));
         }
         Set<Order> buyOrders = this.orderBookService.getBuyOrdersBySecurityToken(""+securityToken.getId(), this.securityTokenOrderBook);
         Set<Order> sellOrders = this.orderBookService.getSellOrdersBySecurityToken(""+securityToken.getId(), this.securityTokenOrderBook);
