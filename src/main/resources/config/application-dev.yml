@@ -69,6 +69,10 @@ spring:
         http:
           enabled: true
           port: 9200
+          cors.allow-origin: http://localhost:1358
+          cors.enabled: false
+          cors.allow-headers: X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
+          cors.allow-credentials: false
         cluster.routing.allocation.disk.threshold_enabled: false
   liquibase:
     # Remove 'faker' if you do not want the sample data to be loaded automatically

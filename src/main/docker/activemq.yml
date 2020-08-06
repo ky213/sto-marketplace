@@ -1,6 +1,6 @@
 version: "2.1"
 services:
-  activemq:
+  exchange-activemq:
     image: rmohr/activemq:5.15.9
     ports:
       # mqtt
