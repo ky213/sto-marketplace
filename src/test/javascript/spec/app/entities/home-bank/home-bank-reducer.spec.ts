@@ -47,6 +47,7 @@ describe('Entities reducer tests', () => {
     usersBalance: [] as ReadonlyArray<{ [key: string]: number }>,
     numberOfUsers: 0,
     totalRevenue: 0,
+    totalCustodyValue: 0,
     assetDistribution: [] as ReadonlyArray<AssetDistribution>,
     totalTransactions: 0
   };

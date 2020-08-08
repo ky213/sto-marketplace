@@ -16,6 +16,7 @@ export const ACTION_TYPES = {
   FETCH_USERS_BALANCE: 'homeBank/FETCH_USERS_BALANCE',
   FETCH_NUMBER_OF_USERS: 'homeBank/FETCH_NUMBER_OF_USERS',
   FETCH_TOTAL_REVENUE: 'homeBank/FETCH_TOTAL_REVENUE',
+  FETCH_TOTAL_CUSTODY_VALUE: 'homeBank/FETCH_TOTAL_CUSTODY_VALUE',
   FETCH_ASSET_DISTRIBUTION: 'homeBank/FETCH_ASSET_DISTRIBUTION',
   FETCH_TOTAL_TRANSACTIONS: 'homeBank/FETCH_VOLUME',
   CREATE_HOMEBANK: 'homeBank/CREATE_HOMEBANK',
@@ -42,6 +43,7 @@ const initialState = {
   usersBalance: [] as ReadonlyArray<{ [key: string]: number }>,
   numberOfUsers: 0,
   totalRevenue: 0,
+  totalCustodyValue: 0,
   assetDistribution: [] as ReadonlyArray<AssetDistribution>,
   totalTransactions: 0
 };
@@ -49,7 +51,7 @@ const initialState = {
 export type HomeBankState = Readonly<typeof initialState>;
 
 // Reducer
-
+/* eslint complexity:off */
 export default (state: HomeBankState = initialState, action): HomeBankState => {
   switch (action.type) {
     case REQUEST(ACTION_TYPES.SEARCH_HOMEBANKS):
@@ -59,6 +61,7 @@ export default (state: HomeBankState = initialState, action): HomeBankState => {
     case REQUEST(ACTION_TYPES.FETCH_USERS_BALANCE):
     case REQUEST(ACTION_TYPES.FETCH_NUMBER_OF_USERS):
     case REQUEST(ACTION_TYPES.FETCH_TOTAL_REVENUE):
+    case REQUEST(ACTION_TYPES.FETCH_TOTAL_CUSTODY_VALUE):
     case REQUEST(ACTION_TYPES.FETCH_ASSET_DISTRIBUTION):
     case REQUEST(ACTION_TYPES.FETCH_TOTAL_TRANSACTIONS):
       return {
@@ -83,6 +86,7 @@ export default (state: HomeBankState = initialState, action): HomeBankState => {
     case FAILURE(ACTION_TYPES.FETCH_USERS_BALANCE):
     case FAILURE(ACTION_TYPES.FETCH_NUMBER_OF_USERS):
     case FAILURE(ACTION_TYPES.FETCH_TOTAL_REVENUE):
+    case FAILURE(ACTION_TYPES.FETCH_TOTAL_CUSTODY_VALUE):
     case FAILURE(ACTION_TYPES.FETCH_ASSET_DISTRIBUTION):
     case FAILURE(ACTION_TYPES.FETCH_TOTAL_TRANSACTIONS):
     case FAILURE(ACTION_TYPES.CREATE_HOMEBANK):
@@ -132,6 +136,12 @@ export default (state: HomeBankState = initialState, action): HomeBankState => {
         ...state,
         loading: false,
         totalRevenue: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_TOTAL_CUSTODY_VALUE):
+      return {
+        ...state,
+        loading: false,
+        totalCustodyValue: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.FETCH_ASSET_DISTRIBUTION):
       return {
@@ -260,6 +270,13 @@ export const getTotalTransactions: ICrudGetAllAction<number> = () => {
   return {
     type: ACTION_TYPES.FETCH_TOTAL_TRANSACTIONS,
     payload: axios.get<number>(`api/transactions-success`)
+  };
+};
+
+export const getTotalCustodyValue: ICrudGetAllAction<number> = () => {
+  return {
+    type: ACTION_TYPES.FETCH_TOTAL_CUSTODY_VALUE,
+    payload: axios.get<number>(`api/security-tokens/total-custody`)
   };
 };
 

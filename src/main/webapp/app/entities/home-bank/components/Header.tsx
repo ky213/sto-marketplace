@@ -4,18 +4,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { IRootState } from 'app/shared/reducers';
 import { connect } from 'react-redux';
 
-import { getNumberOfUsers, getTotalTransactions, getTotalRevenue } from 'app/entities/home-bank/home-bank.reducer';
+import { getNumberOfUsers, getTotalTransactions, getTotalRevenue, getTotalCustodyValue } from 'app/entities/home-bank/home-bank.reducer';
 import 'app/shared/components/home/card-header.scss';
 
 export interface HeaderProps extends StateProps, DispatchProps {}
 
 const Header = (props: HeaderProps) => {
-  const { totalUsers, totalRevenue, totalTransactions } = props;
+  const { totalUsers, totalRevenue, totalTransactions, totalCustodyValue } = props;
 
   useEffect(() => {
     props.getNumberOfUsers();
     props.getTotalRevenue();
     props.getTotalTransactions();
+    props.getTotalCustodyValue();
   }, []);
 
   return (
@@ -28,7 +29,7 @@ const Header = (props: HeaderProps) => {
                 <CardTitle tag="p" className="text-muted mb-1">
                   Total Custody Value
                 </CardTitle>
-                <h6 className="font-weight-bold mb-0 text-primary">CHF {"250'782.90"}</h6>
+                <h6 className="font-weight-bold mb-0 text-primary">CHF {totalCustodyValue?.toLocaleString()}</h6>
               </Col>
               <Col className="col-3 p-0">
                 <div className="icon ml-auto mr-1 bg-danger  rounded-circle shadow">
@@ -47,7 +48,7 @@ const Header = (props: HeaderProps) => {
                 <CardTitle tag="p" className="text-muted mb-1">
                   Total Users
                 </CardTitle>
-                <h6 className="font-weight-bold mb-0 text-primary">{totalUsers}</h6>
+                <h6 className="font-weight-bold mb-0 text-primary">{totalUsers?.toLocaleString()}</h6>
               </Col>
               <Col className="col-3 p-0">
                 <div className="icon ml-auto mr-1 bg-success  rounded-circle shadow">
@@ -66,7 +67,7 @@ const Header = (props: HeaderProps) => {
                 <CardTitle tag="p" className="text-muted mb-1">
                   Total Transactions
                 </CardTitle>
-                <h6 className="font-weight-bold mb-0 text-primary">{totalTransactions}</h6>
+                <h6 className="font-weight-bold mb-0 text-primary">{totalTransactions?.toLocaleString()}</h6>
               </Col>
               <Col className="col-3 p-0">
                 <div className="icon ml-auto mr-1 bg-primary  rounded-circle shadow">
@@ -103,13 +104,15 @@ const Header = (props: HeaderProps) => {
 const mapStateToProps = ({ homeBank }: IRootState) => ({
   totalUsers: homeBank.numberOfUsers,
   totalTransactions: homeBank.totalTransactions,
-  totalRevenue: homeBank.totalRevenue
+  totalRevenue: homeBank.totalRevenue,
+  totalCustodyValue: homeBank.totalCustodyValue
 });
 
 const mapDispatchToProps = {
   getNumberOfUsers,
   getTotalTransactions,
-  getTotalRevenue
+  getTotalRevenue,
+  getTotalCustodyValue
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
