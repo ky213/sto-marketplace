@@ -22,7 +22,7 @@ import Account from 'app/modules/account';
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 const Routes = ({ account, match }) => (
-  <Container fluid className="h-100 bg-beige ">
+  <Container fluid className="h-100 bg-beige">
     <Row className="h-100 bg-beige pt-3" style={{}}>
       <Col xs="2" className="h-100 pl-0">
         <Card className="h-100 border-0 px-0">
