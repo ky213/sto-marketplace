@@ -234,7 +234,7 @@ export const deleteEntity: ICrudDeleteAction<IHomeBank> = id => async dispatch =
 export const getLastOrders: ICrudGetAllAction<IOrder> = () => {
   return {
     type: ACTION_TYPES.FETCH_LAST_ORDERS,
-    payload: axios.get<IOrder>(`api/orders/last`)
+    payload: axios.get<IOrder>(`api/user-orders/last-success/?userId=`)
   };
 };
 
