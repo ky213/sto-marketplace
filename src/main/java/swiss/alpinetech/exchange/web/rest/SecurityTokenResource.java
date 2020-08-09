@@ -80,7 +80,7 @@ public class SecurityTokenResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect.
      */
     @PutMapping("/security-tokens")
-    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.ADMIN+"\")")
+    @PreAuthorize("hasAnyAuthority(\""+ AuthoritiesConstants.BANK+"\", \""+AuthoritiesConstants.ADMIN+"\")")
     public ResponseEntity<SecurityToken> updateSecurityToken(@Valid @RequestBody SecurityToken securityToken) throws URISyntaxException {
         log.debug("REST request to update SecurityToken : {}", securityToken);
         if (securityToken.getId() == null) {
