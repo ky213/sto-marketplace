@@ -109,10 +109,13 @@ public class OrderServiceImpl implements OrderService {
     public Order create(Order order) {
         log.debug("Request to create Order : {}", order);
         authentication = this.getAuth();
+        SecurityToken newSecurityToken = this.securityTokenService.findOne(order.getSecurityToken().getId()).get();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         String formattedString = ZonedDateTime.now().format(formatter);
         User user = this.userRepository.findOneByLogin(authentication.getName()).get();
-        SecurityToken newSecurityToken = this.securityTokenService.updateSecurityTokenPrice(order);
+        if (this.orderBookService.orderBookIsEmpty(newSecurityToken)) {
+            newSecurityToken = order.getType().equals(ACTIONTYPE.BUY) ? this.securityTokenService.save(newSecurityToken.lastBuyingPrice(order.getPrice())) : this.securityTokenService.save(newSecurityToken.lastSellingprice(order.getPrice()));
+        }
         order.setUser(user);
         order.setSecurityToken(newSecurityToken);
         order.setCategoryToken(order.getSecurityToken().getCategory());

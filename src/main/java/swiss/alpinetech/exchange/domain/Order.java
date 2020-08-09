@@ -8,10 +8,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
-import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.io.Serializable;
 import java.util.Objects;
 import java.time.ZonedDateTime;
+
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import swiss.alpinetech.exchange.domain.enumeration.ACTIONTYPE;
 

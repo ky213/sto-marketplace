@@ -160,6 +160,8 @@
     "mysql:stop": "docker-compose  -f src/main/docker/mysql.yml down",
     "sonar:start": "docker-compose  -f src/main/docker/sonar.yml up -d",
     "sonar:stop": "docker-compose  -f src/main/docker/sonar.yml down",
+    "dejavu:start": "docker-compose  -f src/main/docker/dejavu.yml up -d",
+    "dejavu:stop": "docker-compose  -f src/main/docker/dejavu.yml down",
     "exchange:start": " docker-compose -f src/main/docker/app.yml up -d",
     "exchange:stop": " docker-compose -f src/main/docker/app.yml down",
     "webpack:dev": "npm run webpack-dev-server -- --config webpack/webpack.dev.js --inline --port=9060 --env.stats=minimal",

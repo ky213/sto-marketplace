@@ -1,6 +1,6 @@
 version: '2'
 services:
-  exchange-mail:
+  exchange-maildev:
     image: djfarrelly/maildev
     ports:
       - '1080:80'

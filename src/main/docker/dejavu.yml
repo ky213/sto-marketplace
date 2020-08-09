@@ -1,0 +1,6 @@
+version: '2'
+services:
+  exchange-dejavu:
+    image: appbaseio/dejavu:3.4.7
+    ports:
+      - '1358:1358'

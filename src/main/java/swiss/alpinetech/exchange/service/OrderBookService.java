@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import swiss.alpinetech.exchange.domain.Order;
 import swiss.alpinetech.exchange.domain.OrderBookWrapper;
+import swiss.alpinetech.exchange.domain.SecurityToken;
 import swiss.alpinetech.exchange.domain.SecurityTokenOrderBook;
 import swiss.alpinetech.exchange.service.dto.OrderDTO;
 
@@ -48,6 +49,36 @@ public class OrderBookService {
         this.securityTokenOrderBook = readAndConvertFromTopic(message);
         log.debug("new securityTokenOrderBook {} from topic", securityTokenOrderBook.toString());
     };
+
+    public SecurityTokenOrderBook getOrderBook() {
+        return this.securityTokenOrderBook;
+    }
+
+    public boolean isEmptyBuy(SecurityToken securityToken) {
+        Set<Order> buyOrders = this.getBuyOrdersBySecurityToken(""+securityToken.getId(), this.securityTokenOrderBook);
+        if (buyOrders.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isEmptySell(SecurityToken securityToken) {
+        Set<Order> sellOrders = this.getSellOrdersBySecurityToken(""+securityToken.getId(), this.securityTokenOrderBook);
+        if (sellOrders.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean orderBookIsEmpty(SecurityToken securityToken) {
+        if (!Optional.ofNullable(this.securityTokenOrderBook).isPresent()) {
+            return true;
+        }
+        if (isEmptyBuy(securityToken) && isEmptySell(securityToken)) {
+            return true;
+        }
+        return false;
+    }
 
     public Set<Order> getSellOrdersBySecurityToken(String securityTokenId, SecurityTokenOrderBook securityTokenOrderBook) {
         log.debug("get SellOrders by securityToken Id {}", securityTokenId);
