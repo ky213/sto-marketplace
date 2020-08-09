@@ -28,22 +28,12 @@ const Chart = (props: ChartProps) => {
     <Card className="p-0" style={{ height: '400px' }}>
       <CardHeader>Latest Orders</CardHeader>
       <CardBody className="p-0">
-        <FlexibleXYPlot>
-          <YAxis attr="y" attrAxis="x" orientation="left" />
-          <XAxis
-            attr="x"
-            attrAxis="y"
-            orientation="bottom"
-            tickFormat={(t, i) =>
-              moment()
-                .add(1, 'days')
-                .subtract(7 - i, 'days')
-                .format('DD MMM')
-            }
-          />
+        <FlexibleXYPlot xType="ordinal">
+          <YAxis />
+          <XAxis tickFormat={t => moment(t).format('DD MMM')} />
           <VerticalGridLines />
           <HorizontalGridLines />
-          <LineMarkSeries data={data.length ? data : [{ x: new Date().getTime(), y: props.defaultPrice || 0 }]} curve="curveBasis" />
+          <LineMarkSeries data={data.length ? data : [{ x: new Date(), y: props.defaultPrice || 0 }]} curve="curveBasis" />
         </FlexibleXYPlot>
       </CardBody>
       <CardFooter className="d-flex py-0">

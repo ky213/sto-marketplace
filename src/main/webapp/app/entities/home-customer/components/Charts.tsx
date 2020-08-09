@@ -46,7 +46,7 @@ const Charts = (props: UserChartProps) => {
           <CardBody>
             <FlexibleXYPlot xType="ordinal">
               <YAxis />
-              <XAxis tickFormat={t => moment(t).format('DD MMM')} />
+              <XAxis tickFormat={t => moment(t).format('DD MMM')} tickTotal={14} />
               <HorizontalGridLines />
               <VerticalBarSeries data={buyOrders.length ? buyOrders : [{ x: new Date(), y: 0 }]} barWidth={0.1} color={'#28a745'} />
               <VerticalBarSeries data={sellOrders.length ? sellOrders : [{ x: new Date(), y: 0 }]} barWidth={0.1} color={'#dc3545'} />
@@ -95,7 +95,7 @@ const Charts = (props: UserChartProps) => {
                 </p>
                 <b className="py-0 my-0 text-primary">
                   {' '}
-                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.EQUITY)?.percentage?.toPrecision(4) || 0}%
+                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.EQUITY)?.percentage?.toFixed(2) || 0}%
                 </b>
               </Col>
               <Col className="text-center text-muted p-0">
@@ -107,7 +107,7 @@ const Charts = (props: UserChartProps) => {
                 </p>
                 <b className="py-0 my-0 text-success">
                   {' '}
-                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.FUNDS)?.percentage?.toPrecision(4) || 0}%
+                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.FUNDS)?.percentage?.toFixed(2) || 0}%
                 </b>
               </Col>
               <Col className="text-center text-muted p-0">
@@ -119,7 +119,7 @@ const Charts = (props: UserChartProps) => {
                 </p>
                 <b className="py-0 my-0 text-danger">
                   {' '}
-                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.REAL_ESTATE)?.percentage?.toPrecision(4) || 0}%
+                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.REAL_ESTATE)?.percentage?.toFixed(2) || 0}%
                 </b>
               </Col>
               <Col className="text-center text-muted p-0">
@@ -130,7 +130,7 @@ const Charts = (props: UserChartProps) => {
                   Derivative
                 </p>
                 <b className="py-0 my-0" style={{ color: colors.DERIVATIVE }}>
-                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.DERIVATIVE)?.percentage?.toPrecision(4) || 0}%
+                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.DERIVATIVE)?.percentage?.toFixed(2) || 0}%
                 </b>
               </Col>
             </Row>

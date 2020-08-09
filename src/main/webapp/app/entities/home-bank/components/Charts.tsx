@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom';
 export interface AdminChartsProps extends StateProps, DispatchProps {}
 
 const Chart = (props: AdminChartsProps) => {
+  const { latestOrders } = props;
   const assets = [];
   const colors = {
     EQUITY: '#0b2662',
@@ -20,6 +21,13 @@ const Chart = (props: AdminChartsProps) => {
     REAL_ESTATE: '#de4251',
     DERIVATIVE: '#fb8c00'
   };
+
+  const buyOrders = Object.keys(latestOrders)
+    .map(key => ({ x: key || 0, y: latestOrders[key].BUY || 0 }))
+    .reverse();
+  const sellOrders = Object.keys(latestOrders)
+    .map(key => ({ x: key || 0, y: latestOrders[key].SELL || 0 }))
+    .reverse();
 
   useEffect(() => {
     props.getAssetDistribution();
@@ -41,86 +49,12 @@ const Chart = (props: AdminChartsProps) => {
         <Card className="p-0" style={{ height: '400px' }}>
           <CardHeader>Latest Orders</CardHeader>
           <CardBody>
-            <FlexibleXYPlot>
-              <YAxis attr="y" attrAxis="x" orientation="left" />
-              <XAxis
-                attr="x"
-                attrAxis="y"
-                orientation="bottom"
-                tickTotal={7}
-                tickFormat={(t, i) =>
-                  moment()
-                    .subtract(14 - i, 'days')
-                    .format('DD MMM')
-                }
-              />
+            <FlexibleXYPlot xType="ordinal">
+              <YAxis />
+              <XAxis tickFormat={t => moment(t).format('DD MMM')} tickTotal={14} />
               <HorizontalGridLines />
-              <VerticalBarSeries
-                data={[
-                  {
-                    x: 0,
-                    y: 10
-                  },
-                  {
-                    x: 1,
-                    y: 8.893112747940398
-                  },
-                  {
-                    x: 2,
-                    y: 7.092587441028026
-                  },
-                  {
-                    x: 3,
-                    y: 7.5792070839981065
-                  },
-                  {
-                    x: 4,
-                    y: 9.104607720321058
-                  },
-                  {
-                    x: 5,
-                    y: 7.95043000658639
-                  },
-                  {
-                    x: 6,
-                    y: 7.238432016488505
-                  }
-                ]}
-                style={{}}
-              />
-              <VerticalBarSeries
-                data={[
-                  {
-                    x: 0,
-                    y: 10
-                  },
-                  {
-                    x: 1,
-                    y: 7.895781270333349
-                  },
-                  {
-                    x: 2,
-                    y: 9.714836076947527
-                  },
-                  {
-                    x: 3,
-                    y: 9.102605793322875
-                  },
-                  {
-                    x: 4,
-                    y: 10.540978540898982
-                  },
-                  {
-                    x: 5,
-                    y: 10.97334005054668
-                  },
-                  {
-                    x: 6,
-                    y: 11.33834158969131
-                  }
-                ]}
-                style={{}}
-              />
+              <VerticalBarSeries data={buyOrders.length ? buyOrders : [{ x: new Date(), y: 0 }]} barWidth={0.1} color={'#28a745'} />
+              <VerticalBarSeries data={sellOrders.length ? sellOrders : [{ x: new Date(), y: 0 }]} barWidth={0.1} color={'#dc3545'} />
             </FlexibleXYPlot>
           </CardBody>
           <CardFooter className="d-flex py-0">
@@ -166,7 +100,7 @@ const Chart = (props: AdminChartsProps) => {
                   Equity
                 </p>
                 <span className="py-0 my-0 text-primary">
-                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.EQUITY)?.percentage?.toPrecision(4) || 0}%
+                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.EQUITY)?.percentage?.toFixed(2) || 0}%
                 </span>
               </Col>
               <Col className="text-center text-muted p-0">
@@ -177,7 +111,7 @@ const Chart = (props: AdminChartsProps) => {
                   Funds
                 </p>
                 <span className="py-0 my-0 text-success">
-                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.FUNDS)?.percentage?.toPrecision(4) || 0}%
+                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.FUNDS)?.percentage?.toFixed(2) || 0}%
                 </span>
               </Col>
               <Col className="text-center text-muted p-0">
@@ -188,7 +122,7 @@ const Chart = (props: AdminChartsProps) => {
                   Real Estate
                 </p>
                 <span className="py-0 my-0 text-danger">
-                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.REAL_ESTATE)?.percentage?.toPrecision(4) || 0}%
+                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.REAL_ESTATE)?.percentage?.toFixed(2) || 0}%
                 </span>
               </Col>
               <Col className="text-center text-muted p-0">
@@ -199,7 +133,7 @@ const Chart = (props: AdminChartsProps) => {
                   Derivative
                 </p>
                 <span className="py-0 my-0" style={{ color: '#fb8c00' }}>
-                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.DERIVATIVE)?.percentage?.toPrecision(4) || 0}%
+                  {props.assetAllocation?.find(({ category }) => category === CATEGORY.DERIVATIVE)?.percentage?.toFixed(2) || 0}%
                 </span>
               </Col>
             </Row>
