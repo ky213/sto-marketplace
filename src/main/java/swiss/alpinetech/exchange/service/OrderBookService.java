@@ -142,22 +142,16 @@ public class OrderBookService {
 
     public Order getLowestSellOrder(String securityTokenId) {
         log.debug("get lowest Sell Order by securityToken Id {} from order book", securityTokenId);
-        if (securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId) != null) {
-            return Optional.of(
-                securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId).getSellOrders().stream().min(Comparator.comparing(Order::getPrice)).get()
-            )
-                .orElse(null);
+        if (Optional.ofNullable(securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId)).isPresent() && !securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId).getSellOrders().isEmpty()) {
+            return securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId).getSellOrders().stream().min(Comparator.comparing(Order::getPrice)).get();
         }
         return null;
     }
 
     public Order getHighestBuyOrder(String securityTokenId) {
         log.debug("get highest Buy Order by securityToken Id {} from order book", securityTokenId);
-        if (securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId) != null) {
-            return Optional.of(
-                securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId).getSellOrders().stream().max(Comparator.comparing(Order::getPrice)).get()
-            )
-                .orElse(null);
+        if (Optional.ofNullable(securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId)).isPresent() && !securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId).getBuyOrders().isEmpty()) {
+            return securityTokenOrderBook.getSecurityTokenOrderBook().get(securityTokenId).getBuyOrders().stream().max(Comparator.comparing(Order::getPrice)).get();
         }
         return null;
     }
