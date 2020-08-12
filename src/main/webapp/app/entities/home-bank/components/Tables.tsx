@@ -41,38 +41,35 @@ const Tables = (props: TablesProps) => {
         <CardBody className="p-0">
           <Table>
             <tbody>
-              {securityTokens.length ? (
-                securityTokens.map(st => (
-                  <tr className="border-top-0" key={st.id}>
-                    <td className="d-flex border-top-0">
-                      <div className="pr-3 d-flex align-items-center">
-                        <img src={`data:${st.logoContentType};base64,${st.logo}`} style={{ maxHeight: '40px' }} />
-                      </div>
-                      <div>
-                        <p className="m-0" style={{ fontSize: '16px' }}>
-                          {st.name}
-                        </p>
-                        <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                          {moment(st.dueDiligenceDate).format(APP_DATE_FORMAT)}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="border-top-0 pt-3">
-                      <Link to={`/security-token/${st.id}/user`} className="ml-auto text-primary p-2">
-                        <FontAwesomeIcon icon="eye" />
-                      </Link>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr className="position-relative my-3" style={{ height: '50px' }}>
-                  <Alert color="warning" className="position-absolute text-center" style={{ width: '90%', top: '8px', left: '20px' }}>
-                    no data
-                  </Alert>
+              {securityTokens.map(st => (
+                <tr className="border-top-0" key={st.id}>
+                  <td className="d-flex border-top-0">
+                    <div className="pr-3 d-flex align-items-center">
+                      <img src={`data:${st.logoContentType};base64,${st.logo}`} style={{ maxHeight: '40px' }} />
+                    </div>
+                    <div>
+                      <p className="m-0" style={{ fontSize: '16px' }}>
+                        {st.name}
+                      </p>
+                      <p className="text-muted m-0" style={{ fontSize: '12px' }}>
+                        {moment(st.dueDiligenceDate).format(APP_DATE_FORMAT)}
+                      </p>
+                    </div>
+                  </td>
+                  <td className="border-top-0 pt-3">
+                    <Link to={`/security-token/${st.id}/user`} className="ml-auto text-primary p-2">
+                      <FontAwesomeIcon icon="eye" />
+                    </Link>
+                  </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </Table>
+          {securityTokens.length === 0 && (
+            <Alert color="warning" className="text-center mx-2">
+              no data
+            </Alert>
+          )}
         </CardBody>
         <CardFooter className="d-flex p-0">
           <Link to="/security-token" className="ml-auto">
@@ -98,22 +95,19 @@ const Tables = (props: TablesProps) => {
               </tr>
             </thead>
             <tbody>
-              {usersBalance.length ? (
-                usersBalance.map((b, i) => (
-                  <tr key={i}>
-                    <td>{b[0]}</td>
-                    <td>CHF {b[1].toLocaleString()}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr className="position-relative my-3" style={{ height: '50px' }}>
-                  <Alert color="warning" className="position-absolute text-center" style={{ width: '90%', top: '8px', left: '45px' }}>
-                    no data
-                  </Alert>
+              {usersBalance.map((b, i) => (
+                <tr key={i}>
+                  <td>{b[0]}</td>
+                  <td>CHF {b[1].toLocaleString()}</td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </Table>
+          {usersBalance.length === 0 && (
+            <Alert color="warning" className="text-center mx-3">
+              no data
+            </Alert>
+          )}
         </CardBody>
         <CardFooter className="d-flex p-0">
           <Button className="ml-auto" color="none ">
@@ -141,34 +135,31 @@ const Tables = (props: TablesProps) => {
               </tr>
             </thead>
             <tbody>
-              {lastOrders.length ? (
-                lastOrders.map(order => (
-                  <tr key={order.id}>
-                    <td>
-                      {order.refOrder} <br />
-                      <Badge color="none" className={`ml-2 btn btn-outline-${orderStatus[order.status]}`}>
-                        {order.status.toLocaleLowerCase()}
-                      </Badge>
-                    </td>
-                    <td>{order.securityTokenName}</td>
-                    <td>{order.securityToken.symbol}</td>
-                    <td>{order.categoryToken}</td>
-                    <td>{order.type}</td>
-                    <td>{order.volume}</td>
-                    <td>{order.price.toLocaleString()} CHF</td>
-                    <td>{order.totalAmount.toLocaleString()} CHF</td>
-                    <td>{moment(order.updateDate).format(APP_DATE_FORMAT)}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr className="position-relative my-3" style={{ height: '50px' }}>
-                  <Alert color="warning" className="position-absolute text-center" style={{ width: '90%', top: '8px', left: '60px' }}>
-                    no data
-                  </Alert>
+              {lastOrders.map(order => (
+                <tr key={order.id}>
+                  <td>
+                    {order.refOrder} <br />
+                    <Badge color="none" className={`ml-2 btn btn-outline-${orderStatus[order.status]}`}>
+                      {order.status.toLocaleLowerCase()}
+                    </Badge>
+                  </td>
+                  <td>{order.securityTokenName}</td>
+                  <td>{order.securityToken.symbol}</td>
+                  <td>{order.categoryToken}</td>
+                  <td>{order.type}</td>
+                  <td>{order.volume}</td>
+                  <td>{order.price.toLocaleString()} CHF</td>
+                  <td>{order.totalAmount.toLocaleString()} CHF</td>
+                  <td>{moment(order.updateDate).format(APP_DATE_FORMAT)}</td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </Table>
+          {lastOrders.length === 0 && (
+            <Alert color="warning" className="text-center mx-5">
+              no data
+            </Alert>
+          )}
         </CardBody>
         <CardFooter className="d-flex p-0">
           <Link to="/order" className="ml-auto">
