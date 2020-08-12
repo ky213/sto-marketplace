@@ -34,38 +34,35 @@ const Tables = (props: TablesProps) => {
         <CardBody className="p-0">
           <Table>
             <tbody>
-              {securityTokens.length ? (
-                securityTokens.map(st => (
-                  <tr className="border-top-0" key={st.id}>
-                    <td className="d-flex border-top-0">
-                      <div className="pr-3 d-flex align-items-center">
-                        <img src={`data:${st.logoContentType};base64,${st.logo}`} style={{ maxHeight: '40px' }} />
-                      </div>
-                      <div>
-                        <p className="m-0" style={{ fontSize: '16px' }}>
-                          {st.name}
-                        </p>
-                        <p className="text-muted m-0" style={{ fontSize: '12px' }}>
-                          {moment(st.dueDiligenceDate).format(APP_DATE_FORMAT)}
-                        </p>
-                      </div>
-                    </td>
-                    <td className="border-top-0 pt-3">
-                      <Link to={`/security-token/${st.id}/user`} className="ml-auto text-primary p-2">
-                        <FontAwesomeIcon icon="eye" />
-                      </Link>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr className="position-relative my-3" style={{ height: '50px' }}>
-                  <Alert color="warning" className="position-absolute text-center" style={{ width: '90%', top: '8px', left: '20px' }}>
-                    no data
-                  </Alert>
+              {securityTokens.map(st => (
+                <tr className="border-top-0" key={st.id}>
+                  <td className="d-flex border-top-0">
+                    <div className="pr-3 d-flex align-items-center">
+                      <img src={`data:${st.logoContentType};base64,${st.logo}`} style={{ maxHeight: '40px' }} />
+                    </div>
+                    <div>
+                      <p className="m-0" style={{ fontSize: '16px' }}>
+                        {st.name}
+                      </p>
+                      <p className="text-muted m-0" style={{ fontSize: '12px' }}>
+                        {moment(st.dueDiligenceDate).format(APP_DATE_FORMAT)}
+                      </p>
+                    </div>
+                  </td>
+                  <td className="border-top-0 pt-3">
+                    <Link to={`/security-token/${st.id}/user`} className="ml-auto text-primary p-2">
+                      <FontAwesomeIcon icon="eye" />
+                    </Link>
+                  </td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </Table>
+          {securityTokens.length === 0 && (
+            <Alert color="warning" className="text-center mx-2">
+              no data
+            </Alert>
+          )}
         </CardBody>
         <CardFooter className="d-flex p-0">
           <Link to="/security-token" className="ml-auto">
@@ -96,24 +93,21 @@ const Tables = (props: TablesProps) => {
               </tr>
             </thead>
             <tbody>
-              {topTotalSTAmounts.length ? (
-                topTotalSTAmounts.map(st => (
-                  <tr key={st.symbol}>
-                    <td>{st.symbol}</td>
-                    <td>{st.balance.toLocaleString()}</td>
-                    <td>CHF {st.lastBuyingPrice}</td>
-                    <td>CHF {st.totalAmount.toLocaleString()}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr className="position-relative my-3" style={{ height: '50px' }}>
-                  <Alert color="warning" className="position-absolute text-center" style={{ width: '90%', top: '8px', left: '45px' }}>
-                    no data
-                  </Alert>
+              {topTotalSTAmounts.map(st => (
+                <tr key={st.symbol}>
+                  <td>{st.symbol}</td>
+                  <td>{st.balance.toLocaleString()}</td>
+                  <td>CHF {st.lastBuyingPrice}</td>
+                  <td>CHF {st.totalAmount.toLocaleString()}</td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </Table>
+          {topTotalSTAmounts.length === 0 && (
+            <Alert color="warning" className="text-center mx-2">
+              no data
+            </Alert>
+          )}
         </CardBody>
         <CardFooter className="d-flex p-0">
           <Button className="ml-auto" color="none ">

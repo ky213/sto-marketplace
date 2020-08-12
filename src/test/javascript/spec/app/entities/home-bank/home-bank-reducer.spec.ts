@@ -44,6 +44,7 @@ describe('Entities reducer tests', () => {
     totalItems: 0,
     updateSuccess: false,
     lastOrders: [] as ReadonlyArray<IOrder>,
+    lastSuccessOrders: [] as ReadonlyArray<IOrder>,
     usersBalance: [] as ReadonlyArray<{ [key: string]: number }>,
     numberOfUsers: 0,
     totalRevenue: 0,
