@@ -13,6 +13,7 @@ export const ACTION_TYPES = {
   FETCH_HOMEBANK_LIST: 'homeBank/FETCH_HOMEBANK_LIST',
   FETCH_HOMEBANK: 'homeBank/FETCH_HOMEBANK',
   FETCH_LAST_ORDERS: 'homeBank/FETCH_LAST_ORDERS',
+  FETCH_LAST_SUCCESS_ORDERS: 'homeBank/FETCH_LAST_SUCCESS_ORDERS',
   FETCH_USERS_BALANCE: 'homeBank/FETCH_USERS_BALANCE',
   FETCH_NUMBER_OF_USERS: 'homeBank/FETCH_NUMBER_OF_USERS',
   FETCH_TOTAL_REVENUE: 'homeBank/FETCH_TOTAL_REVENUE',
@@ -40,6 +41,7 @@ const initialState = {
   totalItems: 0,
   updateSuccess: false,
   lastOrders: [] as ReadonlyArray<IOrder>,
+  lastSuccessOrders: [] as ReadonlyArray<IOrder>,
   usersBalance: [] as ReadonlyArray<{ [key: string]: number }>,
   numberOfUsers: 0,
   totalRevenue: 0,
@@ -58,6 +60,7 @@ export default (state: HomeBankState = initialState, action): HomeBankState => {
     case REQUEST(ACTION_TYPES.FETCH_HOMEBANK_LIST):
     case REQUEST(ACTION_TYPES.FETCH_HOMEBANK):
     case REQUEST(ACTION_TYPES.FETCH_LAST_ORDERS):
+    case REQUEST(ACTION_TYPES.FETCH_LAST_SUCCESS_ORDERS):
     case REQUEST(ACTION_TYPES.FETCH_USERS_BALANCE):
     case REQUEST(ACTION_TYPES.FETCH_NUMBER_OF_USERS):
     case REQUEST(ACTION_TYPES.FETCH_TOTAL_REVENUE):
@@ -83,6 +86,7 @@ export default (state: HomeBankState = initialState, action): HomeBankState => {
     case FAILURE(ACTION_TYPES.FETCH_HOMEBANK_LIST):
     case FAILURE(ACTION_TYPES.FETCH_HOMEBANK):
     case FAILURE(ACTION_TYPES.FETCH_LAST_ORDERS):
+    case FAILURE(ACTION_TYPES.FETCH_LAST_SUCCESS_ORDERS):
     case FAILURE(ACTION_TYPES.FETCH_USERS_BALANCE):
     case FAILURE(ACTION_TYPES.FETCH_NUMBER_OF_USERS):
     case FAILURE(ACTION_TYPES.FETCH_TOTAL_REVENUE):
@@ -118,6 +122,12 @@ export default (state: HomeBankState = initialState, action): HomeBankState => {
         ...state,
         loading: false,
         lastOrders: action.payload.data
+      };
+    case SUCCESS(ACTION_TYPES.FETCH_LAST_SUCCESS_ORDERS):
+      return {
+        ...state,
+        loading: false,
+        lastSuccessOrders: action.payload.data
       };
     case SUCCESS(ACTION_TYPES.FETCH_USERS_BALANCE):
       return {
@@ -234,6 +244,13 @@ export const deleteEntity: ICrudDeleteAction<IHomeBank> = id => async dispatch =
 export const getLastOrders: ICrudGetAllAction<IOrder> = () => {
   return {
     type: ACTION_TYPES.FETCH_LAST_ORDERS,
+    payload: axios.get<IOrder>(`api/orders/last`)
+  };
+};
+
+export const getLastSuccessOrders: ICrudGetAllAction<IOrder> = () => {
+  return {
+    type: ACTION_TYPES.FETCH_LAST_SUCCESS_ORDERS,
     payload: axios.get<IOrder>(`api/user-orders/last-success/?userId=`)
   };
 };

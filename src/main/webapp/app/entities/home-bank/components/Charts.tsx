@@ -5,7 +5,7 @@ import { FlexibleXYPlot, YAxis, XAxis, RadialChart, VerticalBarSeries, Horizonta
 import moment from 'moment';
 
 import { IRootState } from 'app/shared/reducers';
-import { getAssetDistribution, getLastOrders } from 'app/entities/home-bank/home-bank.reducer';
+import { getAssetDistribution, getLastSuccessOrders } from 'app/entities/home-bank/home-bank.reducer';
 import { connect } from 'react-redux';
 import { CATEGORY } from 'app/shared/model/enumerations/category.model';
 import { Link } from 'react-router-dom';
@@ -31,7 +31,7 @@ const Chart = (props: AdminChartsProps) => {
 
   useEffect(() => {
     props.getAssetDistribution();
-    props.getLastOrders();
+    props.getLastSuccessOrders();
   }, []);
 
   for (const el of props.assetAllocation) {
@@ -146,12 +146,12 @@ const Chart = (props: AdminChartsProps) => {
 
 const mapStateToProps = ({ homeBank }: IRootState) => ({
   assetAllocation: homeBank.assetDistribution,
-  latestOrders: homeBank.lastOrders
+  latestOrders: homeBank.lastSuccessOrders
 });
 
 const mapDispatchToProps = {
   getAssetDistribution,
-  getLastOrders
+  getLastSuccessOrders
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;

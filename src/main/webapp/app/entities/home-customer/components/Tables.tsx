@@ -128,48 +128,45 @@ const Tables = (props: TablesProps) => {
       <Card className="p-0 my-3 mx-auto ml-3 col-12 ">
         <CardBody className="p-0">
           <Table>
-            <thead>
-              <tr className="border-0 bg-beige">
-                <th>Order ref</th>
-                <th>Token</th>
-                <th>Symbol</th>
-                <th>Category</th>
-                <th>Type</th>
-                <th>Volume</th>
-                <th>Price</th>
-                <th>Total</th>
-                <th>Date</th>
+            <thead style={{ backgroundColor: '#f7f7f7' }}>
+              <tr className="border-0 ">
+                <th className="border-0 ">Order ref</th>
+                <th className="border-0">Token</th>
+                <th className="border-0">Symbol</th>
+                <th className="border-0">Category</th>
+                <th className="border-0">Type</th>
+                <th className="border-0">Volume</th>
+                <th className="border-0">Price</th>
+                <th className="border-0">Total</th>
+                <th className="border-0">Date</th>
               </tr>
             </thead>
             <tbody>
-              {orders.length ? (
-                orders.map(order => (
-                  <tr key={order.id}>
-                    <td>
-                      {order.refOrder}
-                      <Badge color="none" className={`ml-2 btn btn-outline-${order.status === 'SUCCESS' ? 'success' : 'danger'}`}>
-                        {order.status.toLocaleLowerCase()}
-                      </Badge>
-                    </td>
-                    <td>{order.securityTokenName}</td>
-                    <td>{order.securityToken.symbol}</td>
-                    <td>{order.categoryToken}</td>
-                    <td>{order.type}</td>
-                    <td>{order.volume}</td>
-                    <td>{order.price.toLocaleString()} CHF</td>
-                    <td>{order.totalAmount.toLocaleString()} CHF</td>
-                    <td>{moment(order.updateDate).format(APP_DATE_FORMAT)}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr className="position-relative my-3" style={{ height: '50px' }}>
-                  <Alert color="warning" className="position-absolute text-center" style={{ width: '90%', top: '8px', left: '60px' }}>
-                    no data
-                  </Alert>
+              {orders.map(order => (
+                <tr key={order.id}>
+                  <td>
+                    {order.refOrder}
+                    <Badge color="none" className={`ml-2 btn btn-outline-${order.status === 'SUCCESS' ? 'success' : 'danger'}`}>
+                      {order.status.toLocaleLowerCase()}
+                    </Badge>
+                  </td>
+                  <td>{order.securityTokenName}</td>
+                  <td>{order.securityToken.symbol}</td>
+                  <td>{order.categoryToken}</td>
+                  <td>{order.type}</td>
+                  <td>{order.volume}</td>
+                  <td>{order.price.toLocaleString()} CHF</td>
+                  <td>{order.totalAmount.toLocaleString()} CHF</td>
+                  <td>{moment(order.updateDate).format(APP_DATE_FORMAT)}</td>
                 </tr>
-              )}
+              ))}
             </tbody>
           </Table>
+          {orders.length === 0 && (
+            <Alert color="warning" className="text-center mx-5">
+              no data
+            </Alert>
+          )}
         </CardBody>
         <CardFooter className="d-flex p-0">
           <Link to="/order" className="ml-auto">
