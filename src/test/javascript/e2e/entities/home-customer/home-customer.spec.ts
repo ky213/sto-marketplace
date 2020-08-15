@@ -1,18 +1,7 @@
-import { browser, element, by, protractor } from 'protractor';
-
 import NavBarPage from './../../page-objects/navbar-page';
 import SignInPage from './../../page-objects/signin-page';
-import HomeCustomerComponentsPage, { HomeCustomerDeleteDialog } from './home-customer.page-object';
-import HomeCustomerUpdatePage from './home-customer-update.page-object';
-import {
-  waitUntilDisplayed,
-  waitUntilAnyDisplayed,
-  click,
-  getRecordsCount,
-  waitUntilHidden,
-  waitUntilCount,
-  isVisible
-} from '../../util/utils';
+import HomeCustomerComponentsPage from './home-customer.page-object';
+import { waitUntilDisplayed } from '../../util/utils';
 
 const expect = chai.expect;
 
@@ -20,9 +9,6 @@ describe('HomeCustomer e2e test', () => {
   let navBarPage: NavBarPage;
   let signInPage: SignInPage;
   let homeCustomerComponentsPage: HomeCustomerComponentsPage;
-  let homeCustomerUpdatePage: HomeCustomerUpdatePage;
-  let homeCustomerDeleteDialog: HomeCustomerDeleteDialog;
-  let beforeRecordsCount = 0;
 
   before(async () => {
     navBarPage = new NavBarPage();

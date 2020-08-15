@@ -11,8 +11,10 @@ import {
   getRecordsCount,
   waitUntilHidden,
   waitUntilCount,
-  isVisible
+  isVisible,
+  getToastByInnerText
 } from '../../util/utils';
+import SecurityTokenDetailsPage, { OrderConfirmDialog } from '../security-token/security-token-details.page-object';
 
 const expect = chai.expect;
 
@@ -21,7 +23,7 @@ describe('Order e2e test', () => {
   let signInPage: SignInPage;
   let securityTokenPage: SecurityTokenDetailsPage;
   let orderComponentsPage: OrderComponentsPage;
-  let orderUpdatePage: OrderUpdatePage;
+  let orderConfirmDialog: OrderConfirmDialog;
   let orderDeleteDialog: OrderDeleteDialog;
   let beforeRecordsCount = 0;
 
@@ -35,7 +37,6 @@ describe('Order e2e test', () => {
     await signInPage.loginButton.click();
     await signInPage.waitUntilHidden();
     await waitUntilDisplayed(navBarPage.entityMenu);
-    await waitUntilDisplayed(navBarPage.adminMenu);
     await waitUntilDisplayed(navBarPage.accountMenu);
   });
 
@@ -50,80 +51,103 @@ describe('Order e2e test', () => {
     beforeRecordsCount = (await isVisible(orderComponentsPage.noRecords)) ? 0 : await getRecordsCount(orderComponentsPage.table);
   });
 
-  it('should load create Order page', async () => {
-    await orderComponentsPage.createButton.click();
-    orderUpdatePage = new OrderUpdatePage();
-    expect(await orderUpdatePage.getPageTitle().getText()).to.match(/Create or edit a Order/);
-    await orderUpdatePage.cancel();
+  it('should load security token page', async () => {
+    securityTokenPage = new SecurityTokenDetailsPage();
+    await securityTokenPage.get();
+    expect(await securityTokenPage.title.getText()).to.match(/input disintermediate HDD/);
   });
 
-  // it('should create and save Orders', async () => {
-  //   await orderComponentsPage.createButton.click();
-  //   await orderUpdatePage.setIdOrderInput('idOrder');
-  //   expect(await orderUpdatePage.getIdOrderInput()).to.match(/idOrder/);
-  //   await orderUpdatePage.setRefOrderInput('5');
-  //   expect(await orderUpdatePage.getRefOrderInput()).to.eq('5');
-  //   await orderUpdatePage.setCreateDateInput('01/01/2001' + protractor.Key.TAB + '02:30AM');
-  //   expect(await orderUpdatePage.getCreateDateInput()).to.contain('2001-01-01T02:30');
-  //   await orderUpdatePage.setUpdateDateInput('01/01/2001' + protractor.Key.TAB + '02:30AM');
-  //   expect(await orderUpdatePage.getUpdateDateInput()).to.contain('2001-01-01T02:30');
-  //   await orderUpdatePage.setCloseDateInput('01/01/2001' + protractor.Key.TAB + '02:30AM');
-  //   expect(await orderUpdatePage.getCloseDateInput()).to.contain('2001-01-01T02:30');
-  //   await orderUpdatePage.setSecurityTokenNameInput('securityTokenName');
-  //   expect(await orderUpdatePage.getSecurityTokenNameInput()).to.match(/securityTokenName/);
-  //   await orderUpdatePage.setSymbolInput('symbol');
-  //   expect(await orderUpdatePage.getSymbolInput()).to.match(/symbol/);
-  //   await orderUpdatePage.typeSelectLastOption();
-  //   await orderUpdatePage.limitOrMarketSelectLastOption();
-  //   await orderUpdatePage.setVolumeInput('5');
-  //   expect(await orderUpdatePage.getVolumeInput()).to.eq('5');
-  //   await orderUpdatePage.setPriceInput('5');
-  //   expect(await orderUpdatePage.getPriceInput()).to.eq('5');
-  //   await orderUpdatePage.setTotalAmountInput('5');
-  //   expect(await orderUpdatePage.getTotalAmountInput()).to.eq('5');
-  //   await orderUpdatePage.categoryTokenSelectLastOption();
-  //   await orderUpdatePage.statusSelectLastOption();
-  //   const selectedActive = await orderUpdatePage.getActiveInput().isSelected();
-  //   if (selectedActive) {
-  //     await orderUpdatePage.getActiveInput().click();
-  //     expect(await orderUpdatePage.getActiveInput().isSelected()).to.be.false;
-  //   } else {
-  //     await orderUpdatePage.getActiveInput().click();
-  //     expect(await orderUpdatePage.getActiveInput().isSelected()).to.be.true;
-  //   }
-  //   await orderUpdatePage.userSelectLastOption();
-  //   await orderUpdatePage.transactionSelectLastOption();
-  //   await waitUntilDisplayed(orderUpdatePage.saveButton);
-  //   await orderUpdatePage.save();
-  //   await waitUntilHidden(orderUpdatePage.saveButton);
-  //   expect(await isVisible(orderUpdatePage.saveButton)).to.be.false;
+  it('should create a buy order', async () => {
+    securityTokenPage = new SecurityTokenDetailsPage();
+    orderConfirmDialog = new OrderConfirmDialog();
+    await securityTokenPage.get();
+    expect(await securityTokenPage.title.getText()).to.match(/input disintermediate HDD/);
+    await securityTokenPage.setPrice(100);
+    await securityTokenPage.setVolume(10);
+    expect(await securityTokenPage.getPrice()).to.eq('100');
+    expect(await securityTokenPage.getVolume()).to.eq('10');
+    await securityTokenPage.buyButton.click();
+    await waitUntilDisplayed(orderConfirmDialog.orderConfirmModal);
+    expect(await orderConfirmDialog.dialogTitle.getText()).to.match(/Confirm order creation/);
+    await orderConfirmDialog.clickOnConfirmButton();
 
-  //   expect(await orderComponentsPage.createButton.isEnabled()).to.be.true;
+    await waitUntilHidden(orderConfirmDialog.orderConfirmModal);
 
-  //   await waitUntilDisplayed(orderComponentsPage.table);
+    expect(await isVisible(orderConfirmDialog.orderConfirmModal)).to.be.false;
 
-  //   await waitUntilCount(orderComponentsPage.records, beforeRecordsCount + 1);
-  //   expect(await orderComponentsPage.records.count()).to.eq(beforeRecordsCount + 1);
-  // });
+    await waitUntilDisplayed(orderComponentsPage.table);
 
-  // it('should delete last Order', async () => {
-  //   const deleteButton = orderComponentsPage.getDeleteButton(orderComponentsPage.records.last());
-  //   await click(deleteButton);
+    const toast = getToastByInnerText('A new order is created with identifier');
 
-  //   orderDeleteDialog = new OrderDeleteDialog();
-  //   await waitUntilDisplayed(orderDeleteDialog.deleteModal);
-  //   expect(await orderDeleteDialog.getDialogTitle().getAttribute('id')).to.match(/exchangeApp.order.delete.question/);
-  //   await orderDeleteDialog.clickOnConfirmButton();
+    await waitUntilDisplayed(toast);
 
-  //   await waitUntilHidden(orderDeleteDialog.deleteModal);
+    expect(await toast.isPresent()).to.be.true;
+  });
 
-  //   expect(await isVisible(orderDeleteDialog.deleteModal)).to.be.false;
+  it('should create a sell order', async () => {
+    securityTokenPage = new SecurityTokenDetailsPage();
+    orderConfirmDialog = new OrderConfirmDialog();
+    await securityTokenPage.get();
+    expect(await securityTokenPage.title.getText()).to.match(/input disintermediate HDD/);
+    await securityTokenPage.setPrice(100);
+    await securityTokenPage.setVolume(10);
+    expect(await securityTokenPage.getPrice()).to.eq('100');
+    expect(await securityTokenPage.getVolume()).to.eq('10');
+    await securityTokenPage.sellButton.click();
+    await waitUntilDisplayed(orderConfirmDialog.orderConfirmModal);
+    expect(await orderConfirmDialog.dialogTitle.getText()).to.match(/Confirm order creation/);
+    await orderConfirmDialog.clickOnConfirmButton();
 
-  //   await waitUntilAnyDisplayed([orderComponentsPage.noRecords, orderComponentsPage.table]);
+    await waitUntilHidden(orderConfirmDialog.orderConfirmModal);
 
-  //   const afterCount = (await isVisible(orderComponentsPage.noRecords)) ? 0 : await getRecordsCount(orderComponentsPage.table);
-  //   expect(afterCount).to.eq(beforeRecordsCount);
-  // });
+    expect(await isVisible(orderConfirmDialog.orderConfirmModal)).to.be.false;
+
+    await waitUntilDisplayed(orderComponentsPage.table);
+
+    const toast = getToastByInnerText('A new order is created with identifier');
+
+    await waitUntilDisplayed(toast);
+
+    expect(await toast.isPresent()).to.be.true;
+  });
+
+  it('should cancel last sell Order', async () => {
+    const deleteButton = orderComponentsPage.getDeleteButton(orderComponentsPage.records.last());
+    await click(deleteButton);
+
+    orderDeleteDialog = new OrderDeleteDialog();
+    await waitUntilDisplayed(orderDeleteDialog.deleteModal);
+    expect(await orderDeleteDialog.getDialogTitle().getAttribute('id')).to.match(/order-cancel-dialog-title/);
+    await orderDeleteDialog.clickOnConfirmButton();
+
+    await waitUntilHidden(orderDeleteDialog.deleteModal);
+
+    expect(await isVisible(orderDeleteDialog.deleteModal)).to.be.false;
+
+    await waitUntilAnyDisplayed([orderComponentsPage.noRecords, orderComponentsPage.table]);
+
+    const afterCount = (await isVisible(orderComponentsPage.noRecords)) ? 0 : await getRecordsCount(orderComponentsPage.table);
+    expect(afterCount).to.eq(beforeRecordsCount);
+  });
+
+  it('should cancel last buy Order', async () => {
+    const deleteButton = orderComponentsPage.getDeleteButton(orderComponentsPage.records.last());
+    await click(deleteButton);
+
+    orderDeleteDialog = new OrderDeleteDialog();
+    await waitUntilDisplayed(orderDeleteDialog.deleteModal);
+    expect(await orderDeleteDialog.getDialogTitle().getAttribute('id')).to.match(/order-cancel-dialog-title/);
+    await orderDeleteDialog.clickOnConfirmButton();
+
+    await waitUntilHidden(orderDeleteDialog.deleteModal);
+
+    expect(await isVisible(orderDeleteDialog.deleteModal)).to.be.false;
+
+    await waitUntilAnyDisplayed([orderComponentsPage.noRecords, orderComponentsPage.table]);
+
+    const afterCount = (await isVisible(orderComponentsPage.noRecords)) ? 0 : await getRecordsCount(orderComponentsPage.table);
+    expect(afterCount).to.eq(beforeRecordsCount);
+  });
 
   after(async () => {
     await navBarPage.autoSignOut();

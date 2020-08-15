@@ -24,8 +24,8 @@ export default class OrderComponentsPage {
 
 export class OrderDeleteDialog {
   deleteModal = element(by.className('modal'));
-  private dialogTitle: ElementFinder = element(by.id('exchangeApp.order.delete.question'));
-  private confirmButton = element(by.id('jhi-confirm-delete-order'));
+  private dialogTitle: ElementFinder = element(by.id('order-cancel-dialog-title'));
+  private confirmButton = element(by.id('confirm-cancel-order'));
 
   getDialogTitle() {
     return this.dialogTitle;

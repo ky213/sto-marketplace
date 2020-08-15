@@ -1,18 +1,7 @@
-import { browser, element, by, protractor } from 'protractor';
-
 import NavBarPage from './../../page-objects/navbar-page';
 import SignInPage from './../../page-objects/signin-page';
-import HomeBankComponentsPage, { HomeBankDeleteDialog } from './home-bank.page-object';
-import HomeBankUpdatePage from './home-bank-update.page-object';
-import {
-  waitUntilDisplayed,
-  waitUntilAnyDisplayed,
-  click,
-  getRecordsCount,
-  waitUntilHidden,
-  waitUntilCount,
-  isVisible
-} from '../../util/utils';
+import HomeBankComponentsPage from './home-bank.page-object';
+import { waitUntilDisplayed } from '../../util/utils';
 
 const expect = chai.expect;
 
@@ -20,9 +9,6 @@ describe('HomeBank e2e test', () => {
   let navBarPage: NavBarPage;
   let signInPage: SignInPage;
   let homeBankComponentsPage: HomeBankComponentsPage;
-  let homeBankUpdatePage: HomeBankUpdatePage;
-  let homeBankDeleteDialog: HomeBankDeleteDialog;
-  let beforeRecordsCount = 0;
 
   before(async () => {
     navBarPage = new NavBarPage();
