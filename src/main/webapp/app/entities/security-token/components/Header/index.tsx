@@ -35,7 +35,7 @@ const Header = (props: HeaderProps) => {
           </Col>
           <Col className="pl-4">
             <small className="text-muted">Details</small>
-            <p>{name}</p>
+            <p id="st-name">{name}</p>
           </Col>
         </Row>
       </Col>

@@ -3,7 +3,7 @@ import { element, by, ElementFinder, ElementArrayFinder } from 'protractor';
 export default class HomeCustomerComponentsPage {
   createButton: ElementFinder = element(by.id('jh-create-entity'));
   deleteButtons = element.all(by.css('div table .btn-danger'));
-  title: ElementFinder = element(by.id('home-customer-heading'));
+  container: ElementFinder = element(by.id('home-customer'));
   noRecords: ElementFinder = element(by.css('#app-view-container .table-responsive div.alert.alert-warning'));
   table: ElementFinder = element(by.css('#app-view-container div.table-responsive > table'));
 

@@ -69,7 +69,9 @@ const Trading = (props: TradingProps) => {
   return (
     <Row className="px-3">
       <Modal isOpen={isOpen}>
-        <ModalHeader>Confirm order creation</ModalHeader>
+        <ModalHeader>
+          <span id="confirm-order-title">Confirm order creation</span>
+        </ModalHeader>
         <ModalBody id="exchangeApp.securityToken.delete.question">
           <div className="px-5">
             <p>
@@ -91,11 +93,11 @@ const Trading = (props: TradingProps) => {
           </div>
         </ModalBody>
         <ModalFooter>
-          <Button color="danger" onClick={() => setIsOpen(false)}>
+          <Button id="cancel-order" color="danger" onClick={() => setIsOpen(false)}>
             <FontAwesomeIcon icon="ban" />
             &nbsp; Cancel
           </Button>
-          <Button id="jhi-confirm-delete-securityToken" color="primary" onClick={confirmCreate}>
+          <Button id="confirm-order" color="primary" onClick={confirmCreate}>
             <FontAwesomeIcon icon="check" />
             &nbsp; Confirm
           </Button>
@@ -103,7 +105,13 @@ const Trading = (props: TradingProps) => {
       </Modal>
       <Row className="w-100">
         <Col>
-          <Alert color="success" className="py-2 px-4" style={{ cursor: 'pointer' }} onClick={() => handleTrade(ACTIONTYPE.BUY)}>
+          <Alert
+            id="buy-button"
+            color="success"
+            className="py-2 px-4"
+            style={{ cursor: 'pointer' }}
+            onClick={() => handleTrade(ACTIONTYPE.BUY)}
+          >
             <div className="d-flex ">
               <div className="col-3 d-flex flex-column justify-content-between pl-0">
                 <small>
@@ -116,7 +124,13 @@ const Trading = (props: TradingProps) => {
           </Alert>
         </Col>
         <Col>
-          <Alert color="danger" className="py-2 pl-4" style={{ cursor: 'pointer' }} onClick={() => handleTrade(ACTIONTYPE.SELL)}>
+          <Alert
+            id="sell-button"
+            color="danger"
+            className="py-2 pl-4"
+            style={{ cursor: 'pointer' }}
+            onClick={() => handleTrade(ACTIONTYPE.SELL)}
+          >
             <div className="d-flex">
               <h1 className="w-100 text-center">{securityToken.lastSellingprice?.toLocaleString()}</h1>
               <div className="col-3 d-flex flex-column justify-content-between pr-0">
@@ -133,6 +147,7 @@ const Trading = (props: TradingProps) => {
         <Col className="d-flex align-items-center justify-content-center mx-auto">
           <h3 className={`${orderType === ORDERTYPE.MARKET ? 'text-secondary' : ''}`}>Limit </h3>
           <Switch
+            id="order-type-switch"
             onChange={handleChange}
             checked={orderType === ORDERTYPE.MARKET}
             className="mx-2 mb-1"
@@ -150,13 +165,14 @@ const Trading = (props: TradingProps) => {
             <Col>
               <FormGroup>
                 <Label>Volume</Label>
-                <Input type="number" value={volume} onChange={({ target }) => handleVolumeChange(target.value)} />
+                <Input id="volume" type="number" value={volume} onChange={({ target }) => handleVolumeChange(target.value)} />
               </FormGroup>
             </Col>
             <Col>
               <FormGroup>
                 <Label>Price</Label>
                 <Input
+                  id="price"
                   type="number"
                   value={price}
                   onChange={({ target }) => handlePriceChange(target.value)}

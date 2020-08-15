@@ -64,10 +64,10 @@ describe('WhiteListing e2e test', () => {
     await waitUntilDisplayed(whiteListingUpdatePage.userSelect);
     await whiteListingUpdatePage.userSelectFirstOption();
     expect(await whiteListingUpdatePage.getCustomerNameInput()).to.match(/user/);
-    await whiteListingUpdatePage.setStNameInput('primary microchip');
+    await whiteListingUpdatePage.setStNameInput('Hryvnia projection');
     await waitUntilDisplayed(whiteListingUpdatePage.securitytokenSelect);
     await whiteListingUpdatePage.securitytokenSelectFirstOption();
-    expect(await whiteListingUpdatePage.getStNameInput()).to.contains('primary microchip');
+    expect(await whiteListingUpdatePage.getStNameInput()).to.contains('Hryvnia projection');
 
     await waitUntilDisplayed(whiteListingUpdatePage.saveButton);
     await whiteListingUpdatePage.save();
