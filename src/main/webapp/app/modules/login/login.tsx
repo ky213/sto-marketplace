@@ -6,6 +6,7 @@ import { Row, Col } from 'reactstrap';
 import { IRootState } from 'app/shared/reducers';
 import { login } from 'app/shared/reducers/authentication';
 import LoginModal from './login-modal';
+import { AUTHORITIES } from 'app/config/constants';
 
 export interface ILoginProps extends StateProps, DispatchProps, RouteComponentProps<{}> {}
 
@@ -20,12 +21,17 @@ export const Login = (props: ILoginProps) => {
 
   const handleClose = () => {
     setShowModal(false);
-    props.history.push('/');
+    // props.history.push('/');
   };
 
-  const { location, isAuthenticated } = props;
-  const { from } = (location.state as any) || { from: { pathname: '/', search: location.search } };
+  const { location, isAuthenticated, account } = props;
   if (isAuthenticated) {
+    const isAdmin = account.authorities?.includes(AUTHORITIES.ADMIN);
+    const isBank = account.authorities?.includes(AUTHORITIES.BANK);
+    const homeLink = isAdmin || isBank ? '/home-bank' : 'home-customer';
+
+    const { from } = (location.state as any) || { from: { pathname: homeLink, search: location.search } };
+
     return <Redirect to={from} />;
   }
   return (
@@ -39,6 +45,7 @@ export const Login = (props: ILoginProps) => {
 };
 
 const mapStateToProps = ({ authentication }: IRootState) => ({
+  account: authentication.account,
   isAuthenticated: authentication.isAuthenticated,
   loginError: authentication.loginError,
   showModal: authentication.showModalLogin
