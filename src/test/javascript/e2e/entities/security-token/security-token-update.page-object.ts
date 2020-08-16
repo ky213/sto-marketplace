@@ -18,11 +18,11 @@ export default class SecurityTokenUpdatePage {
   kycProviderCountrySelect: ElementFinder = element(by.css('select#security-token-kycProviderCountry'));
   stoPriceInput: ElementFinder = element(by.css('input#security-token-stoPrice'));
   amountRaisedInput: ElementFinder = element(by.css('input#security-token-amountRaised'));
-  categorySelect: ElementFinder = element(by.css('select#security-token-category'));
-  summaryInput: ElementFinder = element(by.css('input#security-token-summary'));
-  descriptionInput: ElementFinder = element(by.css('input#security-token-description'));
-  restrictionCountyInput: ElementFinder = element(by.css('input#security-token-restrictionCounty'));
-  restrictionNationalityInput: ElementFinder = element(by.css('input#security-token-restrictionNationality'));
+  category: ElementFinder = element(by.css('input#radio-category-EQUITY'));
+  summaryInput: ElementFinder = element(by.css('textarea#security-token-summary'));
+  descriptionInput: ElementFinder = element(by.css('textarea#security-token-description'));
+  restrictionCountyInput: ElementFinder = element(by.css('select#security-token-restrictionCounty'));
+  restrictionNationalityInput: ElementFinder = element(by.css('select#security-token-restrictionNationality'));
   prospectusInput: ElementFinder = element(by.css('input#file_prospectus'));
   statusSelect: ElementFinder = element(by.css('select#security-token-status'));
   registrationDateInput: ElementFinder = element(by.css('input#security-token-registrationDate'));
@@ -55,6 +55,7 @@ export default class SecurityTokenUpdatePage {
   }
 
   async setLaucheDateInput(laucheDate) {
+    await this.laucheDateInput.clear();
     await this.laucheDateInput.sendKeys(laucheDate);
   }
 
@@ -175,18 +176,15 @@ export default class SecurityTokenUpdatePage {
   }
 
   async setCategorySelect(category) {
-    await this.categorySelect.sendKeys(category);
+    await this.category.sendKeys(category);
   }
 
   async getCategorySelect() {
-    return this.categorySelect.element(by.css('option:checked')).getText();
+    return this.category.getAttribute('checked');
   }
 
-  async categorySelectLastOption() {
-    await this.categorySelect
-      .all(by.tagName('option'))
-      .last()
-      .click();
+  async categorySelect() {
+    await this.category.click();
   }
   async setSummaryInput(summary) {
     await this.summaryInput.sendKeys(summary);
@@ -205,19 +203,25 @@ export default class SecurityTokenUpdatePage {
   }
 
   async setRestrictionCountyInput(restrictionCounty) {
-    await this.restrictionCountyInput.sendKeys(restrictionCounty);
+    return this.restrictionCountyInput
+      .all(by.tagName('option'))
+      .last()
+      .click();
   }
 
   async getRestrictionCountyInput() {
-    return this.restrictionCountyInput.getAttribute('value');
+    await this.restrictionCountyInput.element(by.css('option:checked')).getText();
   }
 
   async setRestrictionNationalityInput(restrictionNationality) {
-    await this.restrictionNationalityInput.sendKeys(restrictionNationality);
+    return this.restrictionNationalityInput
+      .all(by.tagName('option'))
+      .last()
+      .click();
   }
 
   async getRestrictionNationalityInput() {
-    return this.restrictionNationalityInput.getAttribute('value');
+    return this.restrictionNationalityInput.element(by.css('option:checked')).getText();
   }
 
   async setProspectusInput(prospectus) {

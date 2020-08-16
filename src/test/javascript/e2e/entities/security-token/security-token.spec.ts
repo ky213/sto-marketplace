@@ -14,6 +14,7 @@ import {
   isVisible
 } from '../../util/utils';
 import path from 'path';
+import moment from 'moment';
 
 const expect = chai.expect;
 
@@ -28,17 +29,15 @@ describe('SecurityToken e2e test', () => {
   let beforeRecordsCount = 0;
 
   before(async () => {
-    await browser.get('/');
     navBarPage = new NavBarPage();
-    signInPage = await navBarPage.getSignInPage();
-    await signInPage.waitUntilDisplayed();
+    signInPage = new SignInPage();
 
+    await signInPage.get();
     await signInPage.username.sendKeys('admin');
     await signInPage.password.sendKeys('admin');
     await signInPage.loginButton.click();
     await signInPage.waitUntilHidden();
     await waitUntilDisplayed(navBarPage.entityMenu);
-    await waitUntilDisplayed(navBarPage.adminMenu);
     await waitUntilDisplayed(navBarPage.accountMenu);
   });
 
@@ -68,9 +67,7 @@ describe('SecurityToken e2e test', () => {
     expect(await securityTokenUpdatePage.getIdRedInput()).to.match(/idRed/);
     await securityTokenUpdatePage.setNameInput('name');
     expect(await securityTokenUpdatePage.getNameInput()).to.match(/name/);
-    await securityTokenUpdatePage.setLaucheDateInput('01/01/2001' + protractor.Key.TAB + '02:30AM');
-    expect(await securityTokenUpdatePage.getLaucheDateInput()).to.contain('2001-01-01T02:30');
-    await securityTokenUpdatePage.setLogoInput(absolutePath);
+    expect(await securityTokenUpdatePage.getLaucheDateInput()).to.contain(moment().format('YYYY-MM-DD'));
     await securityTokenUpdatePage.setSymbolInput('symbol');
     expect(await securityTokenUpdatePage.getSymbolInput()).to.match(/symbol/);
     await securityTokenUpdatePage.juridictionSelectLastOption();
@@ -87,23 +84,17 @@ describe('SecurityToken e2e test', () => {
     expect(await securityTokenUpdatePage.getStoPriceInput()).to.eq('5');
     await securityTokenUpdatePage.setAmountRaisedInput('5');
     expect(await securityTokenUpdatePage.getAmountRaisedInput()).to.eq('5');
-    await securityTokenUpdatePage.categorySelectLastOption();
+    await securityTokenUpdatePage.categorySelect();
+    expect(await securityTokenUpdatePage.getCategorySelect()).to.contain('true');
     await securityTokenUpdatePage.setSummaryInput('summary');
     expect(await securityTokenUpdatePage.getSummaryInput()).to.match(/summary/);
     await securityTokenUpdatePage.setDescriptionInput('description');
     expect(await securityTokenUpdatePage.getDescriptionInput()).to.match(/description/);
     await securityTokenUpdatePage.setRestrictionCountyInput('restrictionCounty');
-    expect(await securityTokenUpdatePage.getRestrictionCountyInput()).to.match(/restrictionCounty/);
     await securityTokenUpdatePage.setRestrictionNationalityInput('restrictionNationality');
-    expect(await securityTokenUpdatePage.getRestrictionNationalityInput()).to.match(/restrictionNationality/);
     await securityTokenUpdatePage.setProspectusInput(absolutePath);
     await securityTokenUpdatePage.statusSelectLastOption();
-    await securityTokenUpdatePage.setRegistrationDateInput('01/01/2001' + protractor.Key.TAB + '02:30AM');
-    expect(await securityTokenUpdatePage.getRegistrationDateInput()).to.contain('2001-01-01T02:30');
-    await securityTokenUpdatePage.setUpdateDateInput('01/01/2001' + protractor.Key.TAB + '02:30AM');
-    expect(await securityTokenUpdatePage.getUpdateDateInput()).to.contain('2001-01-01T02:30');
-    await securityTokenUpdatePage.setDueDiligenceDateInput('01/01/2001' + protractor.Key.TAB + '02:30AM');
-    expect(await securityTokenUpdatePage.getDueDiligenceDateInput()).to.contain('2001-01-01T02:30');
+    expect(await securityTokenUpdatePage.getDueDiligenceDateInput()).to.contain(moment().format('YYYY-MM-DD'));
     await securityTokenUpdatePage.setLastSellingpriceInput('5');
     expect(await securityTokenUpdatePage.getLastSellingpriceInput()).to.eq('5');
     await securityTokenUpdatePage.setLastBuyingPriceInput('5');
@@ -114,6 +105,7 @@ describe('SecurityToken e2e test', () => {
     expect(await securityTokenUpdatePage.getKycAddressInput()).to.match(/kycAddress/);
     await securityTokenUpdatePage.setWebsiteInput('website');
     expect(await securityTokenUpdatePage.getWebsiteInput()).to.match(/website/);
+    await securityTokenUpdatePage.setLogoInput(absolutePath);
     await waitUntilDisplayed(securityTokenUpdatePage.saveButton);
     await securityTokenUpdatePage.save();
     await waitUntilHidden(securityTokenUpdatePage.saveButton);
