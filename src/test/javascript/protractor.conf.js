@@ -2,9 +2,9 @@ exports.config = {
   allScriptsTimeout: 60000,
 
   specs: [
-    // './e2e/modules/account/*.spec.ts',
-    // './e2e/modules/administration/*.spec.ts',
-    './e2e/entities/order/*.spec.ts'
+    './e2e/modules/account/*.spec.ts',
+    './e2e/modules/administration/*.spec.ts',
+    './e2e/entities/**/*.spec.ts'
     /* jhipster-needle-add-protractor-tests - JHipster will add protractors tests here */
   ],
 
@@ -19,7 +19,7 @@ exports.config = {
 
   directConnect: true,
 
-  baseUrl: 'http://localhost:9000/',
+  baseUrl: 'http://localhost:8080/',
 
   framework: 'mocha',
 

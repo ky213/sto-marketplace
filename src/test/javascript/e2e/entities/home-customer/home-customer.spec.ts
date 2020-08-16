@@ -3,8 +3,6 @@ import SignInPage from './../../page-objects/signin-page';
 import HomeCustomerComponentsPage from './home-customer.page-object';
 import { waitUntilDisplayed } from '../../util/utils';
 
-const expect = chai.expect;
-
 describe('HomeCustomer e2e test', () => {
   let navBarPage: NavBarPage;
   let signInPage: SignInPage;

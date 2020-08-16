@@ -3,8 +3,6 @@ import SignInPage from './../../page-objects/signin-page';
 import HomeBankComponentsPage from './home-bank.page-object';
 import { waitUntilDisplayed } from '../../util/utils';
 
-const expect = chai.expect;
-
 describe('HomeBank e2e test', () => {
   let navBarPage: NavBarPage;
   let signInPage: SignInPage;

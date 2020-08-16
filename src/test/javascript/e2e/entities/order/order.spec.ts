@@ -111,26 +111,7 @@ describe('Order e2e test', () => {
     expect(await toast.isPresent()).to.be.true;
   });
 
-  it('should cancel last sell Order', async () => {
-    const deleteButton = orderComponentsPage.getDeleteButton(orderComponentsPage.records.last());
-    await click(deleteButton);
-
-    orderDeleteDialog = new OrderDeleteDialog();
-    await waitUntilDisplayed(orderDeleteDialog.deleteModal);
-    expect(await orderDeleteDialog.getDialogTitle().getAttribute('id')).to.match(/order-cancel-dialog-title/);
-    await orderDeleteDialog.clickOnConfirmButton();
-
-    await waitUntilHidden(orderDeleteDialog.deleteModal);
-
-    expect(await isVisible(orderDeleteDialog.deleteModal)).to.be.false;
-
-    await waitUntilAnyDisplayed([orderComponentsPage.noRecords, orderComponentsPage.table]);
-
-    const afterCount = (await isVisible(orderComponentsPage.noRecords)) ? 0 : await getRecordsCount(orderComponentsPage.table);
-    expect(afterCount).to.eq(beforeRecordsCount);
-  });
-
-  it('should cancel last buy Order', async () => {
+  it('should cancel Order', async () => {
     const deleteButton = orderComponentsPage.getDeleteButton(orderComponentsPage.records.last());
     await click(deleteButton);
 
