@@ -103,16 +103,10 @@ describe('Order e2e test', () => {
     expect(await isVisible(orderConfirmDialog.orderConfirmModal)).to.be.false;
 
     await waitUntilDisplayed(orderComponentsPage.table);
-
-    const toast = getToastByInnerText('A new order is created with identifier');
-
-    await waitUntilDisplayed(toast);
-
-    expect(await toast.isPresent()).to.be.true;
   });
 
   it('should cancel Order', async () => {
-    const deleteButton = orderComponentsPage.getDeleteButton(orderComponentsPage.records.last());
+    const deleteButton = orderComponentsPage.getDeleteButton(orderComponentsPage.records.first());
     await click(deleteButton);
 
     orderDeleteDialog = new OrderDeleteDialog();
@@ -123,11 +117,11 @@ describe('Order e2e test', () => {
     await waitUntilHidden(orderDeleteDialog.deleteModal);
 
     expect(await isVisible(orderDeleteDialog.deleteModal)).to.be.false;
+    const toast = getToastByInnerText('A order is updated with identifier');
 
-    await waitUntilAnyDisplayed([orderComponentsPage.noRecords, orderComponentsPage.table]);
+    await waitUntilDisplayed(toast);
 
-    const afterCount = (await isVisible(orderComponentsPage.noRecords)) ? 0 : await getRecordsCount(orderComponentsPage.table);
-    expect(afterCount).to.eq(beforeRecordsCount);
+    expect(await toast.isPresent()).to.be.true;
   });
 
   after(async () => {

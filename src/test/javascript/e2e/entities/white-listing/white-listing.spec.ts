@@ -61,11 +61,12 @@ describe('WhiteListing e2e test', () => {
 
   it('should create and save WhiteListings', async () => {
     await whiteListingUpdatePage.setCustomerNameInput('user');
-    await waitUntilDisplayed(whiteListingUpdatePage.userSelect);
+    await waitUntilDisplayed(whiteListingUpdatePage.resultsItem);
     await whiteListingUpdatePage.userSelectFirstOption();
-    expect(await whiteListingUpdatePage.getCustomerNameInput()).to.match(/user/);
+    expect(await whiteListingUpdatePage.getCustomerNameInput()).to.contains('user');
     await whiteListingUpdatePage.setStNameInput('Hryvnia projection');
     await waitUntilDisplayed(whiteListingUpdatePage.securitytokenSelect);
+    await waitUntilDisplayed(whiteListingUpdatePage.resultsItem);
     await whiteListingUpdatePage.securitytokenSelectFirstOption();
     expect(await whiteListingUpdatePage.getStNameInput()).to.contains('Hryvnia projection');
 
