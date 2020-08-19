@@ -10,6 +10,7 @@ export default class WhiteListingUpdatePage {
   stNameInput: ElementFinder = element(by.css('input#white-listing-stName'));
   customerNameInput: ElementFinder = element(by.css('input#white-listing-customerName'));
   userSelect: ElementFinder = element(by.css('#user-results'));
+  resultsItem: ElementFinder = element(by.className('item'));
   securitytokenSelect: ElementFinder = element(by.css('#white-listing-results'));
 
   getPageTitle() {
