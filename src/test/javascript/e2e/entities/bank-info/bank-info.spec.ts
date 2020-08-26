@@ -78,7 +78,7 @@ describe('BankInfo e2e test', () => {
 
     await waitUntilDisplayed(bankInfoComponentsPage.bankName);
 
-    expect(await bankInfoComponentsPage.bankName.getText()).to.match(/bankName/);
+    expect(await bankInfoComponentsPage.bankName.getText()).to.contain('Maryland Cameroon facilitate');
   });
 
   it('should delete last BankInfo', async () => {
