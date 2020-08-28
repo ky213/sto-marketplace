@@ -11,7 +11,8 @@ import {
   getRecordsCount,
   waitUntilHidden,
   waitUntilCount,
-  isVisible
+  isVisible,
+  getToastByInnerText
 } from '../../util/utils';
 import path from 'path';
 
@@ -59,8 +60,8 @@ describe('BankInfo e2e test', () => {
   });
 
   it('should create and save BankInfos', async () => {
-    await bankInfoUpdatePage.setBankNameInput('bankName');
-    expect(await bankInfoUpdatePage.getBankNameInput()).to.match(/bankName/);
+    await bankInfoUpdatePage.setBankNameInput('Maryland Cameroon facilitate');
+    expect(await bankInfoUpdatePage.getBankNameInput()).to.contain('Maryland Cameroon facilitate');
     await bankInfoUpdatePage.setLogoInput(absolutePath);
     await bankInfoUpdatePage.countrySelectLastOption();
     await bankInfoUpdatePage.setBicNumberInput('xxxxxxxxxxxx');
@@ -76,9 +77,11 @@ describe('BankInfo e2e test', () => {
     await waitUntilHidden(bankInfoUpdatePage.saveButton);
     expect(await isVisible(bankInfoUpdatePage.saveButton)).to.be.false;
 
-    await waitUntilDisplayed(bankInfoComponentsPage.bankName);
+    const toast = getToastByInnerText('A new bankInfo is created with identifier');
 
-    expect(await bankInfoComponentsPage.bankName.getText()).to.contain('Maryland Cameroon facilitate');
+    await waitUntilDisplayed(toast);
+
+    expect(await toast.isPresent()).to.be.true;
   });
 
   it('should delete last BankInfo', async () => {
