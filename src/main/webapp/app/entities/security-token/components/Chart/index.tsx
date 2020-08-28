@@ -18,7 +18,8 @@ const Chart = (props: ChartProps) => {
     .subtract(7, 'days')
     .toISOString();
   const endDate = moment().toISOString();
-  const data = props.chartData.map(({ price, createDate }) => ({ x: new Date(createDate).getTime(), y: price }));
+  const data = props.chartData.map(({ price, createDate }) => ({ x: new Date(createDate).toDateString(), y: price }));
+  const defaultData = [{ x: new Date().toDateString(), y: props.defaultPrice || 0 }];
 
   useEffect(() => {
     if (props.securityTokenName) props.getChartData(props.securityTokenName, startDate, endDate);
@@ -33,7 +34,7 @@ const Chart = (props: ChartProps) => {
           <XAxis tickFormat={t => moment(t).format('DD MMM')} />
           <VerticalGridLines />
           <HorizontalGridLines />
-          <LineMarkSeries data={data.length ? data : [{ x: new Date(), y: props.defaultPrice || 0 }]} curve="curveBasis" />
+          <LineMarkSeries data={props.chartData.length ? data : defaultData} curve="curveBasis" />
         </FlexibleXYPlot>
       </CardBody>
       <CardFooter className="d-flex py-0">
