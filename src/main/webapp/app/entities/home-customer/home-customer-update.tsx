@@ -13,8 +13,7 @@ import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateT
 export interface IHomeCustomerUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const HomeCustomerUpdate = (props: IHomeCustomerUpdateProps) => {
-  const [userId, setUserId] = useState('0');
-  const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
 
   const { homeCustomerEntity, users, loading, updating } = props;
 

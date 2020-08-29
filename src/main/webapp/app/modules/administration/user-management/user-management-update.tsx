@@ -17,7 +17,7 @@ export interface IUserManagementUpdateProps extends StateProps, DispatchProps, R
 export const UserManagementUpdate = (props: IUserManagementUpdateProps) => {
   const { loading, updating } = props;
   const user = props.users.find(({ login }) => login === props.match.params.login);
-  const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.login);
+  const [isNew] = useState(!props.match.params || !props.match.params.login);
   const [selectedRoles, setSelectedRoles] = useState(new Set(user?.authorities));
   const isInvalid = false;
   const isBank = selectedRoles.has(AUTHORITIES.BANK);

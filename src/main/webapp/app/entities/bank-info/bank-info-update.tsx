@@ -12,7 +12,7 @@ import { getEntity, getEntities, updateEntity, createEntity, setBlob, reset } fr
 export interface IBankInfoUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
-  const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
   const { bank, loading, updating, match } = props;
 
   const handleClose = () => {
@@ -32,7 +32,7 @@ export const BankInfoUpdate = (props: IBankInfoUpdateProps) => {
   };
 
   const clearBlob = name => () => {
-    props.setBlob(name, undefined, undefined);
+    props.setBlob(name, undefined);
   };
 
   useEffect(() => {

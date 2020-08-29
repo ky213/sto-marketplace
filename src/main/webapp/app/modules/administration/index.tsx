@@ -8,21 +8,21 @@ import Health from './health/health';
 import Metrics from './metrics/metrics';
 import Configuration from './configuration/configuration';
 import Audits from './audits/audits';
-import Docs from './docs/docs';
+import Docs from './docs/DocsPage';
 import Tracker from './tracker/tracker';
 
 const Routes = ({ match }) => (
   <Card className="jh-card">
-  <div>
-    <ErrorBoundaryRoute path={`${match.url}/user-management`} component={UserManagement} />
-    <ErrorBoundaryRoute exact path={`${match.url}/tracker`} component={Tracker} />
-    <ErrorBoundaryRoute exact path={`${match.url}/health`} component={Health} />
-    <ErrorBoundaryRoute exact path={`${match.url}/metrics`} component={Metrics} />
-    <ErrorBoundaryRoute exact path={`${match.url}/docs`} component={Docs} />
-    <ErrorBoundaryRoute exact path={`${match.url}/configuration`} component={Configuration} />
-    <ErrorBoundaryRoute exact path={`${match.url}/audits`} component={Audits} />
-    <ErrorBoundaryRoute exact path={`${match.url}/logs`} component={Logs} />
-  </div>
+    <div>
+      <ErrorBoundaryRoute path={`${match.url}/user-management`} component={UserManagement} />
+      <ErrorBoundaryRoute exact path={`${match.url}/tracker`} component={Tracker} />
+      <ErrorBoundaryRoute exact path={`${match.url}/health`} component={Health} />
+      <ErrorBoundaryRoute exact path={`${match.url}/metrics`} component={Metrics} />
+      <ErrorBoundaryRoute exact path={`${match.url}/docs`} component={Docs} />
+      <ErrorBoundaryRoute exact path={`${match.url}/configuration`} component={Configuration} />
+      <ErrorBoundaryRoute exact path={`${match.url}/audits`} component={Audits} />
+      <ErrorBoundaryRoute exact path={`${match.url}/logs`} component={Logs} />
+    </div>
   </Card>
 );
 

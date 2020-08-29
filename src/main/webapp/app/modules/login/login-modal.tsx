@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Label, Alert, Row, Col } from 'reactstrap';
-import { AvForm, AvField, AvGroup, AvInput } from 'availity-reactstrap-validation';
+import { Button, ModalHeader, ModalBody, ModalFooter, Alert, Row, Col } from 'reactstrap';
+import { AvForm, AvField } from 'availity-reactstrap-validation';
 import { Link } from 'react-router-dom';
 
 export interface ILoginModalProps {
@@ -18,10 +18,9 @@ class LoginModal extends React.Component<ILoginModalProps> {
   };
 
   render() {
-    const { loginError, handleClose } = this.props;
+    const { loginError } = this.props;
 
     return (
-      // <Modal isOpen={this.props.showModal} toggle={handleClose} backdrop="static" id="login-page" autoFocus={false}>
       <AvForm onSubmit={this.handleSubmit} className="w-100">
         <ModalHeader id="login-title">Sign in</ModalHeader>
         <ModalBody>
@@ -50,31 +49,19 @@ class LoginModal extends React.Component<ILoginModalProps> {
                 required
                 errorMessage="Password cannot be empty!"
               />
-              {/* <AvGroup check inline>
-                <Label className="form-check-label">
-                  <AvInput type="checkbox" name="rememberMe" /> Remember me
-                </Label>
-              </AvGroup> */}
             </Col>
           </Row>
           <div className="mt-1">&nbsp;</div>
           <Link className="text-primary" to="/account/reset/request">
             Did you forget your password?
           </Link>
-          {/* <Alert color="info">
-            <span>You don&apos;t have an account yet?</span> <Link to="/account/register">Register a new account</Link>
-          </Alert> */}
         </ModalBody>
         <ModalFooter>
-          {/* <Button color="secondary" onClick={handleClose} tabIndex="1">
-            Cancel
-          </Button>{' '} */}
           <Button color="primary" type="submit">
             Sign in
           </Button>
         </ModalFooter>
       </AvForm>
-      // </Modal>
     );
   }
 }

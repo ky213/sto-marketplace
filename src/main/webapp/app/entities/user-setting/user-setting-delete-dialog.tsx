@@ -28,7 +28,6 @@ export const UserSettingDeleteDialog = (props: IUserSettingDeleteDialogProps) =>
     props.deleteEntity(props.userSettingEntity.id);
   };
 
-  const { userSettingEntity } = props;
   return (
     <Modal isOpen toggle={handleClose}>
       <ModalHeader toggle={handleClose}>Confirm delete operation</ModalHeader>

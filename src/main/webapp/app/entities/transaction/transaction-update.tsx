@@ -12,7 +12,7 @@ import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateT
 export interface ITransactionUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const TransactionUpdate = (props: ITransactionUpdateProps) => {
-  const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
 
   const { transactionEntity, loading, updating } = props;
 

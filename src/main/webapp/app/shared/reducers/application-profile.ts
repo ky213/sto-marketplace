@@ -15,18 +15,16 @@ const initialState = {
 export type ApplicationProfileState = Readonly<typeof initialState>;
 
 export default (state: ApplicationProfileState = initialState, action): ApplicationProfileState => {
-  switch (action.type) {
-    case SUCCESS(ACTION_TYPES.GET_PROFILE): {
-      const { data } = action.payload;
-      return {
-        ...state,
-        ribbonEnv: data['display-ribbon-on-profiles'],
-        inProduction: data.activeProfiles.includes('prod'),
-        isSwaggerEnabled: data.activeProfiles.includes('swagger')
-      };
-    }
-    default:
-      return state;
+  if (action.type === SUCCESS(ACTION_TYPES.GET_PROFILE)) {
+    const { data } = action.payload;
+    return {
+      ...state,
+      ribbonEnv: data['display-ribbon-on-profiles'],
+      inProduction: data.activeProfiles.includes('prod'),
+      isSwaggerEnabled: data.activeProfiles.includes('swagger')
+    };
+  } else {
+    return state;
   }
 };
 

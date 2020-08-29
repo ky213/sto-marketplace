@@ -28,7 +28,6 @@ export const WhiteListingDeleteDialog = (props: IWhiteListingDeleteDialogProps) 
     props.deleteEntity(+props.match.params.id);
   };
 
-  const { whiteListingEntity } = props;
   return (
     <Modal isOpen toggle={handleClose}>
       <ModalHeader toggle={handleClose}>Confirm delete operation</ModalHeader>

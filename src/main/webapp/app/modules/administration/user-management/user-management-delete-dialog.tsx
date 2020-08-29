@@ -25,8 +25,6 @@ export const UserManagementDeleteDialog = (props: IUserManagementDeleteDialogPro
     handleClose(event);
   };
 
-  const { user } = props;
-
   return (
     <Modal isOpen toggle={handleClose}>
       <ModalHeader toggle={handleClose}>Confirm delete operation</ModalHeader>

@@ -13,8 +13,7 @@ import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateT
 export interface IUserSettingUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const UserSettingUpdate = (props: IUserSettingUpdateProps) => {
-  const [userId, setUserId] = useState('0');
-  const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
 
   const { userSettingEntity, users, loading, updating } = props;
 

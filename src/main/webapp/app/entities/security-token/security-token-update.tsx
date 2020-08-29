@@ -16,7 +16,7 @@ import './style.scss';
 export interface ISecurityTokenUpdateProps extends StateProps, DispatchProps, RouteComponentProps<{ id: string }> {}
 
 export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
-  const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
 
   const { securityTokenEntity, loading, updating } = props;
 
@@ -39,7 +39,7 @@ export const SecurityTokenUpdate = (props: ISecurityTokenUpdateProps) => {
   };
 
   const clearBlob = name => () => {
-    props.setBlob(name, undefined, undefined);
+    props.setBlob(name, undefined);
   };
 
   useEffect(() => {

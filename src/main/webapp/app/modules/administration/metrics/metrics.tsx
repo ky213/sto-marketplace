@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Button, Col, Progress, Row, Table } from 'reactstrap';
+import { Button, Col, Row } from 'reactstrap';
 import {
   CacheMetrics,
   DatasourceMetrics,
@@ -9,8 +9,7 @@ import {
   JvmMemory,
   JvmThreads,
   EndpointsRequestsMetrics,
-  SystemMetrics,
-  Translate
+  SystemMetrics
 } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -21,8 +20,6 @@ import { IRootState } from 'app/shared/reducers';
 export interface IMetricsPageProps extends StateProps, DispatchProps {}
 
 export const MetricsPage = (props: IMetricsPageProps) => {
-  const [showModal, setShowModal] = useState(false);
-
   useEffect(() => {
     props.systemMetrics();
     props.systemThreadDump();

@@ -18,7 +18,7 @@ export interface IOrderUpdateProps
     RouteComponentProps<{ id: string; securityTokenId: string; type: string }> {}
 
 export const OrderUpdate = (props: IOrderUpdateProps) => {
-  const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
   const [price, setPrice] = useState(0);
   const [volume, setVolume] = useState(0);
 

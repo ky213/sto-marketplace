@@ -1,5 +1,4 @@
 import React from 'react';
-import { Card } from 'reactstrap';
 
 import ErrorBoundaryRoute from 'app/shared/error/error-boundary-route';
 

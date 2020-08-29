@@ -17,7 +17,7 @@ export interface IWhiteListingUpdateProps extends StateProps, DispatchProps, Rou
 
 export const WhiteListingUpdate = (props: IWhiteListingUpdateProps) => {
   const { whiteListingEntity, loading, suggestedUsers, suggestedSecurityTokens } = props;
-  const [isNew, setIsNew] = useState(!props.match.params || !props.match.params.id);
+  const [isNew] = useState(!props.match.params || !props.match.params.id);
   const [user, setUser] = useState<IUser>({});
   const [securityToken, setSecurityToken] = useState<ISecurityToken>({});
 

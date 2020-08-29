@@ -28,7 +28,6 @@ export const HomeCustomerDeleteDialog = (props: IHomeCustomerDeleteDialogProps) 
     props.deleteEntity(props.homeCustomerEntity.id);
   };
 
-  const { homeCustomerEntity } = props;
   return (
     <Modal isOpen toggle={handleClose}>
       <ModalHeader toggle={handleClose}>Confirm delete operation</ModalHeader>
