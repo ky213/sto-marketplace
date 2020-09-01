@@ -45,6 +45,17 @@
     "kubernetesUseDynamicStorage": false,
     "ingressDomain": "",
     "monitoring": "no",
-    "istio": false
+    "istio": false,
+    "gcpProjectId": "exchange-20200401",
+    "gcpCloudSqlInstanceName": "",
+    "gcpCloudSqlUserName": "root",
+    "gcpCloudSqlDatabaseName": "exchange",
+    "gaeServiceName": "exchange",
+    "gaeLocation": "europe-west",
+    "gaeInstanceClass": "F2",
+    "gaeScalingType": "automatic",
+    "gaeMinInstances": "1",
+    "gaeMaxInstances": "3",
+    "gaeCloudSQLInstanceNeeded": "Y"
   }
 }
