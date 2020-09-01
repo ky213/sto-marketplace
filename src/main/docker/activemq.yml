@@ -1,4 +1,4 @@
-version: '2.1'
+version: '2'
 services:
   exchange-activemq:
     image: rmohr/activemq:5.15.9
