@@ -16,12 +16,7 @@ const Routes = ({ match }) => (
     <Switch>
       <PrivateRoute exact path={`${match.url}/:id/delete`} component={SecurityTokenDeleteDialog} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
       <PrivateRoute exact path={`${match.url}/new`} component={SecurityTokenUpdate} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
-      <PrivateRoute
-        exact
-        path={`${match.url}/:id/edit`}
-        component={SecurityTokenUpdate}
-        hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
-      />
+      <PrivateRoute exact path={`${match.url}/:id/edit`} component={SecurityTokenUpdate} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
       <PrivateRoute
         exact
         path={`${match.url}/:id`}

@@ -218,7 +218,7 @@ export const SecurityToken = (props: ISecurityTokenProps) => {
                       <Button tag={Link} to={`${match.url}/${securityToken.id}${isAdmin || isBank ? '' : '/user'}`} color="info" size="sm">
                         <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline">View</span>
                       </Button>
-                      {(isAdmin || isBank) && (
+                      {isAdmin && (
                         <>
                           <Button
                             tag={Link}

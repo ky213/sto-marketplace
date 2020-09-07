@@ -156,7 +156,7 @@ export default (state: SecurityTokenState = initialState, action): SecurityToken
         newEntities[stIndex].lastBuyingPrice = newST.lastBuyingPrice;
         newEntities[stIndex].lastSellingprice = newST.lastSellingprice;
 
-        return { ...state, entities: newEntities };
+        return { ...state, entities: newEntities, entity: newST };
       }
 
       return { ...state };

@@ -14,14 +14,8 @@ const Routes = ({ match }) => (
   <>
     <Switch>
       <ErrorBoundaryRoute exact path={`${match.url}/:id/cancel`} component={OrderCancelDialog} />
-      <PrivateRoute exact path={`${match.url}/new`} component={OrderUpdate} hasAnyAuthorities={[AUTHORITIES.USER]} />
+      <PrivateRoute exact path={`${match.url}/new`} component={OrderUpdate} hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]} />
       <PrivateRoute exact path={`${match.url}/new/:securityTokenId/:type`} component={OrderUpdate} hasAnyAuthorities={[AUTHORITIES.USER]} />
-      {/* <PrivateRoute
-        exact
-        path={`${match.url}/:id/edit`}
-        component={OrderUpdate}
-        hasAnyAuthorities={[AUTHORITIES.ADMIN, AUTHORITIES.BANK]}
-      /> */}
       <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={OrderDetail} />
       <ErrorBoundaryRoute path={match.url} component={Order} />
     </Switch>

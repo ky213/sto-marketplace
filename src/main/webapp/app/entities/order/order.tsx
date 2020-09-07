@@ -150,7 +150,7 @@ export const Order = (props: IOrderProps) => {
             <FontAwesomeIcon icon="download" />
             &nbsp; Export orders
           </Button>
-          {isUser && (
+          {(isAdmin || isBank) && (
             <Link to={`${match.url}/new`} className="btn btn-primary float-right jh-create-entity" id="jh-create-entity">
               <FontAwesomeIcon icon="plus" />
               &nbsp; Create new Order
